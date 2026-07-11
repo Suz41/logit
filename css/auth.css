@@ -142,24 +142,26 @@
 }
 
 .profileHeader {
-  padding: 20px 14px;
+  padding: 32px 14px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(48,209,88,0.08) 0%, transparent 100%);
   border-bottom: 1px solid var(--border);
 }
 
 .profileAvatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 40px;
+  width: 88px;
+  height: 88px;
+  border-radius: 44px;
   background: var(--surface2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  border: 2px solid var(--border);
+  font-size: 36px;
+  border: 2px solid var(--green);
+  box-shadow: 0 0 20px rgba(48,209,88,0.15);
 }
 
 .profileInfo {
@@ -182,6 +184,22 @@
 .profileSection {
   padding: 16px 14px;
   border-bottom: 1px solid var(--border);
+}
+
+.profileCard {
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.profileCard .profileRow {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profileCard .profileRow:last-child {
+  border-bottom: none;
 }
 
 .profileSectionTitle {

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/main.css?v=9">
 <link rel="stylesheet" href="css/components.css?v=9">
 <link rel="stylesheet" href="css/auth.css?v=1">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -44,20 +44,22 @@
   <!-- Sync Status -->
   <div class="profileSection">
     <div class="profileSectionTitle">Sync Status</div>
-    <div class="profileRow">
-      <span class="profileLabel">Status</span>
-      <div class="syncStatus" id="syncStatusBadge">
-        <span class="syncDot"></span>
-        <span id="syncStatusText">Synced</span>
+    <div class="profileCard">
+      <div class="profileRow">
+        <span class="profileLabel">Status</span>
+        <div class="syncStatus" id="syncStatusBadge">
+          <span class="syncDot"></span>
+          <span id="syncStatusText">Synced</span>
+        </div>
       </div>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Last Synced</span>
-      <span class="profileValue" id="lastSyncedTime">-</span>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Pending Changes</span>
-      <span class="profileValue" id="pendingChanges">0</span>
+      <div class="profileRow">
+        <span class="profileLabel">Last Synced</span>
+        <span class="profileValue" id="lastSyncedTime">-</span>
+      </div>
+      <div class="profileRow">
+        <span class="profileLabel">Pending Changes</span>
+        <span class="profileValue" id="pendingChanges">0</span>
+      </div>
     </div>
     <button class="profileButton" id="manualSyncBtn" style="margin-top:12px;">
       Manual Sync
@@ -67,26 +69,30 @@
   <!-- Storage Usage -->
   <div class="profileSection">
     <div class="profileSectionTitle">Storage</div>
-    <div class="profileRow">
-      <span class="profileLabel">Local Storage</span>
-      <span class="profileValue" id="localStorageUsage">-</span>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Movies</span>
-      <span class="profileValue" id="moviesCount">0</span>
+    <div class="profileCard">
+      <div class="profileRow">
+        <span class="profileLabel">Local Storage</span>
+        <span class="profileValue" id="localStorageUsage">-</span>
+      </div>
+      <div class="profileRow">
+        <span class="profileLabel">Movies</span>
+        <span class="profileValue" id="moviesCount">0</span>
+      </div>
     </div>
   </div>
 
   <!-- Sync Settings -->
   <div class="profileSection">
     <div class="profileSectionTitle">Sync Settings</div>
-    <div class="profileRow">
-      <span class="profileLabel">Auto Sync</span>
-      <button class="settingToggle" id="autoSyncToggle"></button>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Sync on Wi-Fi only</span>
-      <button class="settingToggle" id="wifiOnlyToggle"></button>
+    <div class="profileCard">
+      <div class="profileRow">
+        <span class="profileLabel">Auto Sync</span>
+        <button class="settingToggle" id="autoSyncToggle"></button>
+      </div>
+      <div class="profileRow" style="border-bottom:none;">
+        <span class="profileLabel">Sync on Wi-Fi only</span>
+        <button class="settingToggle" id="wifiOnlyToggle"></button>
+      </div>
     </div>
   </div>
 
