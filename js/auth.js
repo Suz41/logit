@@ -150,6 +150,20 @@ Logit.Auth = {
   async signUpWithEmail(email, password, username) {
     const client = Logit.Supabase.getClient();
     if (!client) { this.setMessage('Cloud not configured'); return; }
+
+    // Check if username is taken
+    try {
+      const { data: existing } = await client
+        .from('users')
+        .select('id')
+        .eq('username', username)
+        .limit(1);
+      if (existing && existing.length > 0) {
+        this.setMessage('Username already taken');
+        return;
+      }
+    } catch (e) { /* table might not exist yet, continue */ }
+
     try {
       const { data, error } = await client.auth.signUp({
         email,
@@ -159,8 +173,14 @@ Logit.Auth = {
           data: { username }
         }
       });
-      if (error) { this.setMessage(error.message); return; }
-      this._pendingUsername = username;
+      if (error) {
+        if (error.message.includes('already')) {
+          this.setMessage('Email already registered');
+        } else {
+          this.setMessage(error.message);
+        }
+        return;
+      }
       this.setMessage('Check your email to confirm your account.');
     } catch (e) {
       this.setMessage('Sign-up failed');
