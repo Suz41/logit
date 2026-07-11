@@ -1,0 +1,595 @@
+/* ========= Log!t Design System - Desktop & Tablet Layout (>= 1024px) ========= */
+
+@media (min-width: 1024px) {
+  /* ========= GLOBAL OVERRIDES ========= */
+  body {
+    padding-bottom: 0;
+    padding-left: 0 !important;
+  }
+
+  .header {
+    margin-left: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: #0d0d0d !important;
+    z-index: 100 !important;
+  }
+
+  .headerRow {
+    max-width: none !important;
+    margin: 0 !important;
+    height: 60px;
+    padding: 0 30px !important;
+  }
+
+  .logo {
+    display: block !important;
+  }
+
+  .bottomNav {
+    display: none !important;
+  }
+
+  .pcHeaderNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    padding: 3px;
+    border-radius: 99px;
+    gap: 2px;
+  }
+
+  .pcNavBtn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+  }
+
+  .pcNavBtn:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .pcNavBtn.active {
+    color: #000 !important;
+    background: #ffffff !important;
+    font-weight: 600;
+  }
+
+  /* ========= LIBRARY PAGE OVERRIDES ========= */
+  .pcHeaderNav {
+    margin-right: 16px;
+  }
+
+  .library, .searchResults {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 24px 30px !important;
+  }
+
+  /* Centered and scaled modals on PC */
+  /* Centered and scaled modals on PC */
+  .modal {
+    position: fixed !important;
+    inset: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    transform: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  .modal.active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .modal-content {
+    max-width: 640px;
+    width: 100%;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0d0d0d;
+    padding: 32px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal.active .modal-content {
+    transform: scale(1);
+  }
+
+  .modal-content .results {
+    flex: 1;
+    min-height: 0;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 14px !important;
+    margin-top: 16px;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding-right: 6px;
+    padding-bottom: 8px;
+  }
+
+  .modal-content .result {
+    border-radius: 8px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .modal-content .result:hover {
+    transform: translateY(-4px) scale(1.03) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .searchBox:focus-within {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+  }
+
+  .searchRow input:focus {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+  }
+
+  .moviePosterContainer:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+
+  .moviePosterContainer:hover img {
+    transform: scale(1.04);
+  }
+
+  .pcSearchBar {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 99px;
+    gap: 8px;
+    width: 240px;
+    margin-left: 20px;
+    transition: width 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s;
+  }
+
+  .pcSearchBar:focus-within {
+    width: 280px;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .pcSearchBar svg {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .pcSearchBar input {
+    flex: 1;
+    height: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 13px;
+  }
+
+  .pcSearchBar input::placeholder {
+    color: var(--muted);
+  }
+
+  .pcSearchBar .clearBtn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .pcSearchBar .clearBtn.visible {
+    display: flex;
+  }
+
+  /* Group month title and count together on PC */
+  .monthHead {
+    justify-content: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .monthHead h2 {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+  }
+
+  .monthHead .count {
+    font-size: 10px;
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  /* Center movie details modal on PC */
+  .metaModal {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .meta {
+    max-width: 500px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 20px;
+    transform: scale(0.95) translateY(0);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .metaModal.active .meta {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  .metaHandle {
+    display: none;
+  }
+
+  /* Center poster sheet modal on PC */
+  .posterPicker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .posterSheet {
+    position: relative;
+    max-width: 500px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 20px;
+    transform: scale(0.95) translateY(0);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    left: auto;
+    right: auto;
+    bottom: auto;
+  }
+
+  .posterPicker.active .posterSheet {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  .posterSheetHandle {
+    display: none;
+  }
+
+  /* Hide duplicate mobile search bar inside settings panel on PC */
+  #searchBar {
+    display: none !important;
+  }
+
+  /* Center rating sheet modal on PC */
+  .ratingSheet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sheet {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    animation: sheetInPC 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+  }
+  @keyframes sheetInPC {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .sheet .rates button {
+    transition: background 0.2s, color 0.2s !important;
+  }
+
+  .sheet .rates button:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+  }
+
+  .sheet .rates button.active {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .sheetAdd {
+    transition: background 0.2s, transform 0.1s !important;
+  }
+
+  .sheetAdd:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* Enhance movie grid and poster hover animations on PC */
+  .moviesGrid {
+    gap: 4px !important;
+    padding-top: 10px !important;
+  }
+  .movie img {
+    border-radius: 2px;
+  }
+  .movie:hover img {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
+  }
+  .movieDate {
+    font-size: 11px;
+    padding: 0 4px;
+    margin-top: 6px;
+  }
+
+  /* ========= STATS PAGE OVERRIDES ========= */
+  .headerRow .headBtn {
+    display: none !important;
+  }
+
+  .headerTitle {
+    display: none !important;
+  }
+
+  .headerRow div[style*="width:32px"] {
+    display: none !important;
+  }
+
+  .pcHeaderNav {
+    margin-left: auto;
+  }
+
+  /* Import modal overrides for PC */
+  .importModal {
+    max-width: 500px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%) scale(0.95);
+    bottom: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    background: #000000;
+  }
+  
+  .importModal.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+    display: flex;
+  }
+
+  /* Map/grid alignments for PC */
+  .mapWrap {
+    max-width: none !important;
+    margin: 30px 0 !important;
+    padding: 10px 40px !important;
+    gap: 24px;
+  }
+  
+  #yearCard {
+    grid-column: span 2 !important;
+  }
+  
+  .hero {
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .statBox {
+    padding: 28px 16px;
+    border-radius: 16px;
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  
+  .statBox:hover {
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.02);
+  }
+  
+  .statBox h2, #timeCount {
+    font-size: 38px;
+    letter-spacing: -1px;
+  }
+  
+  .statBox p {
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  
+  .timeSub {
+    font-size: 10px;
+  }
+  
+  .peopleGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .peopleCard {
+    padding: 20px;
+    border-radius: 16px;
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  
+  .person img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .metaGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .metaCard {
+    padding: 20px;
+    border-radius: 16px;
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  
+  .metaGrid .metaCard:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+  
+  .actionGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+  }
+  
+  .actionBtn {
+    background: #000000;
+  }
+  
+  .actionBtn.full {
+    grid-column: span 1;
+  }
+
+  /* ========= ABOUT PAGE OVERRIDES ========= */
+  .mobileSpacer {
+    display: none !important;
+  }
+  .about-page .wrap {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 24px 30px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .about-page .aboutActions {
+    grid-column: span 2;
+    max-width: 500px;
+    margin: 10px auto 0 auto;
+    width: 100%;
+  }
+  .appHero {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .appIcon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    font-size: 28px;
+  }
+  .appMeta h1 {
+    font-size: 26px;
+  }
+  .appMeta p {
+    font-size: 13px;
+  }
+  .stackGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .stackItem {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .stackIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .storageBig {
+    font-size: 36px;
+  }
+  .storageBar {
+    height: 8px;
+  }
+  .storageKey {
+    padding: 12px 16px;
+    border-radius: 14px;
+  }
+  .aboutActions {
+    gap: 12px;
+  }
+  .aboutActions button {
+    height: 50px;
+    font-size: 15px;
+  }
+
+  /* Sleek modern scrollbars for PC */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+@media (max-width: 1023px) {
+  .pcSearchBar {
+    display: none;
+  }
+}

@@ -1,0 +1,282 @@
+/* ========= Log!t Design System - Library Grid & Items ========= */
+
+body {
+  padding-bottom: 64px;
+}
+
+/* ========= LIBRARY SEARCH BAR ========= */
+.searchBar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  margin-left: auto;
+  padding: 0 8px;
+  background: #222;
+  border-radius: 8px;
+  gap: 6px;
+  min-width: 100px;
+  max-width: 140px;
+}
+
+.searchBar svg {
+  flex-shrink: 0;
+  color: #48484a;
+}
+
+.searchBar input {
+  flex: 1;
+  height: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  min-width: 0;
+}
+
+.searchBar input::placeholder {
+  color: #48484a;
+}
+
+.searchBar .clearBtn {
+  display: none;
+}
+.searchBar .clearBtn.visible {
+  display: flex;
+}
+
+.searchResults {
+  padding: 8px 12px 74px;
+  display: grid;
+  grid-template-columns: repeat(var(--grid), 1fr);
+  gap: 3px;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+  color: #48484a;
+  font-size: 13px;
+}
+
+/* ========= LIBRARY ACCORDION CONTAINER ========= */
+.library {
+  padding: 8px 12px 74px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.monthSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.monthMovies {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease-out;
+}
+.monthMovies > .moviesGridWrap {
+  overflow: hidden;
+}
+.monthSection.active .monthMovies {
+  grid-template-rows: 1fr;
+}
+
+.monthHead {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.monthLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.monthArrow {
+  font-size: 9px;
+  color: #48484a;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+  width: 10px;
+  text-align: center;
+}
+.monthSection.active .monthArrow {
+  transform: rotate(90deg);
+}
+
+.monthHead h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.monthHead .count {
+  font-size: 9px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* ========= MOVIE POSTER GRID ========= */
+.moviesGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid), 1fr);
+  gap: 2px;
+  padding-top: 4px;
+  align-items: start;
+}
+
+.movie {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  min-height: 0;
+}
+
+.movie img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s, box-shadow 0.25s;
+}
+
+.movieDate {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 4px;
+  padding: 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.movieDate .day {
+  font-weight: 700;
+  color: #fff;
+}
+.movieDate .rewatch {
+  color: var(--pink);
+  font-weight: 700;
+}
+
+body.hide-dates .movieDate {
+  display: none;
+}
+
+/* ========= GLASS BADGES & OVERLAYS ========= */
+.moviePosterContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  background: var(--surface);
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s;
+}
+
+.moviePosterContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.movieRating {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffb800;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border: 0.5px solid rgba(255,255,255,0.08);
+}
+
+.movieRewatchBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: var(--pink);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ========= EMPTY STATE ========= */
+.empty {
+  height: 65vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.emptyIcon svg {
+  color: var(--muted);
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.emptyHint {
+  font-size: 13px;
+  color: var(--muted);
+}

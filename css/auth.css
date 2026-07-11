@@ -1,0 +1,342 @@
+/* ========= Authentication & Welcome Styles ========= */
+
+.welcomePage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.welcomeContainer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.welcomeContent {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.welcomeLogo {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.welcomeLogo h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin: 0;
+  margin-bottom: 6px;
+}
+
+.welcomeTagline {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.welcomeMessage {
+  text-align: center;
+}
+
+.welcomeMessage p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.welcomeButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.btnPrimary {
+  background: var(--green);
+  color: #000;
+}
+
+.btnPrimary:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+.btnSecondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btnSecondary:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.98);
+}
+
+.welcomeFooter {
+  text-align: center;
+}
+
+.smallText {
+  color: var(--dim);
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ========= Email Auth Modal ========= */
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.authInput {
+  padding: 12px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+}
+
+.authInput::placeholder {
+  color: var(--dim);
+}
+
+.authInput:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========= Profile Page ========= */
+
+.profileContainer {
+  padding-bottom: 80px;
+}
+
+.profileHeader {
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profileAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  border: 2px solid var(--border);
+}
+
+.profileInfo {
+  text-align: center;
+}
+
+.profileName {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.profileEmail {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 0 0;
+}
+
+.profileSection {
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profileSectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0 0 12px 0;
+}
+
+.profileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  gap: 12px;
+}
+
+.profileLabel {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.profileValue {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.syncStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(48, 209, 88, 0.1);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.syncStatus.syncing {
+  background: rgba(10, 132, 255, 0.1);
+  color: #0a84ff;
+}
+
+.syncStatus.offline {
+  background: rgba(255, 69, 58, 0.1);
+  color: var(--red);
+}
+
+.syncStatus.error {
+  background: rgba(255, 69, 58, 0.1);
+  color: var(--red);
+}
+
+.syncDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: currentColor;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+.syncStatus.synced .syncDot {
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.profileButton {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profileButton:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.98);
+}
+
+.profileButton.danger {
+  color: var(--red);
+  border-color: rgba(255, 69, 58, 0.3);
+}
+
+.profileButton.danger:active {
+  background: rgba(255, 69, 58, 0.1);
+}
+
+/* ========= Sync Settings ========= */
+
+.settingToggle {
+  width: 51px;
+  height: 31px;
+  background: #39393d;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.settingToggle.active {
+  background: var(--green);
+}
+
+.settingToggle::after {
+  content: '';
+  width: 27px;
+  height: 27px;
+  background: white;
+  border-radius: 13px;
+  position: absolute;
+  left: 2px;
+  transition: left 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.settingToggle.active::after {
+  left: 22px;
+}
+
+/* ========= Responsive ========= */
+
+@media (min-width: 1024px) {
+  .welcomeContainer {
+    max-width: 480px;
+  }
+
+  .welcomeButtons {
+    gap: 14px;
+  }
+
+  .btn {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  .profileHeader {
+    padding: 32px 20px;
+  }
+}

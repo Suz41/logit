@@ -1,0 +1,304 @@
+/* ========= Log!t Design System - Components ========= */
+
+/* ========= CARDS ========= */
+.card {
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  overflow: hidden;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+/* ========= BUTTONS ========= */
+.headBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.actionBtn {
+  height: 44px;
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.actionBtn:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.actionBtn.full {
+  grid-column: span 2;
+}
+
+.clearBtn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: #48484a;
+  color: #000;
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.clearBtn.visible {
+  display: flex;
+}
+
+/* ========= SETTINGS PILL / PANEL ========= */
+.settingsIcon {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.settingsIcon:hover, .settingsIcon.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.settingsPanel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.settingsPanel.open {
+  max-height: 50px;
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+
+.settingsLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========= iOS TOGGLE SWITCH ========= */
+.settingsToggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #39393d;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.settingsToggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.settingsToggle.on {
+  background: #34c759;
+}
+.settingsToggle.on::after {
+  transform: translateX(16px);
+}
+
+/* Sheet rewatch toggle switch (larger iOS style) */
+.metaCheckbox .toggle-track,
+.sheetToggle .toggle-track {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  background: #39393d;
+  border-radius: 31px;
+  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  flex-shrink: 0;
+}
+.metaCheckbox .toggle-track::after,
+.sheetToggle .toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.metaCheckbox input,
+.sheetToggle input {
+  display: none;
+}
+.metaCheckbox input:checked ~ .toggle-track,
+.sheetToggle input:checked ~ .toggle-track {
+  background: var(--pink);
+}
+.metaCheckbox input:checked ~ .toggle-track::after,
+.sheetToggle input:checked ~ .toggle-track::after {
+  transform: translateX(20px);
+}
+
+/* ========= RANGE SLIDER ========= */
+.gridSlider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.gridSlider input[type="range"] {
+  width: 90px;
+  height: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  outline: none;
+}
+
+.gridSlider input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #39393d;
+  border-radius: 2px;
+}
+
+.gridSlider input[type="range"]::-webkit-slider-container {
+  background: transparent;
+}
+
+.gridTicks {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 90px;
+  height: 14px;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  padding: 0 1px;
+}
+
+.gridTicks span {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #555;
+}
+
+.gridSlider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+.gridSlider input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: #39393d;
+  border-radius: 2px;
+  border: none;
+}
+
+.gridSlider input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+}
+
+.gridValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  min-width: 14px;
+  text-align: center;
+}
+
+/* ========= LOADING ========= */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  gap: 6px;
+}
+
+.loadingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: loadPulse 1s infinite ease-in-out;
+}
+
+.loadingDot:nth-child(2) { animation-delay: 0.15s; }
+.loadingDot:nth-child(3) { animation-delay: 0.3s; }
+
+/* ========= ERROR ========= */
+.errorMsg {
+  text-align: center;
+  padding: 20px;
+  color: var(--red);
+  font-size: 13px;
+}

@@ -1,0 +1,282 @@
+/* ========= Log!t Design System - About Page Components ========= */
+
+:root {
+  --text: #e5e5e5;
+  --muted: #636366;
+  --dim: #48484a;
+  --border: rgba(255,255,255,0.06);
+}
+
+@media (max-width: 1023px) {
+  .headerRow .logo {
+    display: none !important;
+  }
+}
+
+
+.wrap {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ========= APP HERO INFO ========= */
+.appHero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.appIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.appMeta h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: #fff;
+}
+
+.appMeta p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.infoRows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.infoLabel {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+
+.infoValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.infoValue a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ========= TECH STACK GRID ========= */
+.stackGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stackItem {
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stackIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.stackInfo {
+  min-width: 0;
+}
+
+.stackName {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stackDesc {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ========= STORAGE USAGE ========= */
+.storageHero {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.storageBig {
+  font-family: 'Poppins', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+}
+
+.storageUnit {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.storageSub {
+  font-size: 11px;
+  color: var(--dim);
+  margin-bottom: 14px;
+}
+
+.storageBar {
+  height: 6px;
+  background: #111;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.storageFill {
+  height: 100%;
+  background: #fff;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.storageKeys {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storageKey {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+}
+
+.storageKeyLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.storageDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.storageDot.movies { background: #fff; }
+.storageDot.grid { background: var(--muted); }
+.storageDot.other { background: var(--dim); }
+
+.storageKeyName {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.storageKeySize {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ========= DATA FIELDS CHIPS ========= */
+.fieldsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fieldChip {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fieldKey {
+  font-family: monospace;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ========= ABOUT ACTION BUTTONS ========= */
+.aboutActions {
+  display: flex;
+  gap: 10px;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.aboutActions button {
+  flex: 1;
+  height: 48px;
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.aboutActions button:active {
+  transform: scale(0.97);
+}
+
+.aboutActions button.danger {
+  color: var(--red);
+}
