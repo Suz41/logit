@@ -506,6 +506,65 @@
   .mobileSpacer {
     display: none !important;
   }
+
+  /* ========= WELCOME PAGE PC ========= */
+  .welcomePage {
+    background: #000;
+  }
+  .welcomeContainer {
+    max-width: 420px;
+    padding: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+  .welcomeLogo h1 {
+    font-size: 56px;
+  }
+  .authInput {
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+  .btn {
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+
+  /* ========= PROFILE PAGE PC ========= */
+  .profileContainer {
+    max-width: 520px;
+    margin: 20px auto;
+    padding: 0 20px 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .profileHeader {
+    background: linear-gradient(180deg, rgba(48,209,88,0.1) 0%, transparent 100%);
+    padding: 40px 24px 32px;
+  }
+  .profileAvatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 48px;
+    font-size: 40px;
+  }
+  .profileName {
+    font-size: 22px;
+  }
+  .profileSection {
+    padding: 20px 24px;
+  }
+  .profileCard {
+    border-radius: 12px;
+  }
+  .profileButton {
+    border-radius: 10px;
+  }
   .about-page .wrap {
     max-width: none !important;
     margin: 0 !important;
