@@ -60,6 +60,9 @@ This guide covers the authentication and cloud sync system added to Log!t. The s
 
 ## Setup Instructions
 
+> [!NOTE]
+> The app is pre-configured with a default shared staging database out-of-the-box (in `js/supabase.js`). Normal users do not need to perform any configuration. The following setup instructions are **only** required if you want to deploy and use your own private Supabase instance (self-hosting).
+
 ### Step 1: Create Supabase Project
 
 1. Go to [app.supabase.com](https://app.supabase.com)
@@ -83,6 +86,9 @@ In your Supabase project:
 ⚠️ **Important**: Only use the **public (anon) key**, never the service role key
 
 ### Step 3: Configure Log!t
+
+> [!NOTE]
+> If you are using the default staging database, **skip this step**. This step is only for overriding the default credentials with your own custom Supabase project credentials.
 
 **Option A: Via UI**
 1. Open Log!t
