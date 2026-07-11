@@ -189,13 +189,13 @@
         const hasAuth = localStorage.getItem('logit_offline_mode') !== null;
         if (!hasAuth) {
           // First time - redirect to welcome
-          window.location.href = '/welcome.html';
+          window.location.href = 'welcome.html';
         }
       }
     } catch (e) {
       // Error reading movies - might be first time
       if (localStorage.getItem('logit_offline_mode') === null) {
-        window.location.href = '/welcome.html';
+        window.location.href = 'welcome.html';
       }
     }
   }
@@ -212,7 +212,7 @@
         if (!Logit.Auth.isOfflineMode() && Logit.Auth.isAuthenticated()) {
           profileBtn.style.display = 'block';
           profileBtn.addEventListener('click', () => {
-            window.location.href = '/profile.html';
+            window.location.href = 'profile.html';
           });
         }
       }

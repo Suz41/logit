@@ -72,14 +72,14 @@
     try {
       Logit.Supabase.configure(url, key);
       alert('Configuration saved! Cloud features are now enabled.');
-      window.location.href = '/welcome.html';
+      window.location.href = 'welcome.html';
     } catch (e) {
       alert('Configuration failed: ' + e.message);
     }
   });
 
   document.getElementById('skipBtn').addEventListener('click', function() {
-    window.location.href = '/welcome.html';
+    window.location.href = 'welcome.html';
   });
 
   // Load existing config if available

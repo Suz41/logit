@@ -26,7 +26,7 @@ Logit.ProfilePage = {
     const isOffline = localStorage.getItem('logit_offline_mode') === 'true';
 
     if (!user && !isOffline) {
-      window.location.href = '/welcome.html';
+      window.location.href = 'welcome.html';
       return;
     }
 
@@ -145,7 +145,7 @@ Logit.ProfilePage = {
     });
 
     document.getElementById('enableCloudBtn').addEventListener('click', () => {
-      window.location.href = '/welcome.html';
+      window.location.href = 'welcome.html';
     });
 
     document.getElementById('importFileInput').addEventListener('change', (e) => {

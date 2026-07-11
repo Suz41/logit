@@ -301,7 +301,7 @@ Logit.Auth = {
       localStorage.removeItem('logit_auth_token');
       localStorage.removeItem('logit_user_id');
       this._currentUser = null;
-      location.href = '/welcome.html';
+      location.href = 'welcome.html';
     } catch (e) {
       console.error('Sign-out error:', e);
       alert('Failed to sign out.');
@@ -389,7 +389,7 @@ Logit.Auth = {
    */
   redirectToLibrary() {
     setTimeout(() => {
-      window.location.href = '/index.html';
+      window.location.href = 'index.html';
     }, 300);
   }
 };
