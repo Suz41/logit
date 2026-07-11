@@ -90,11 +90,7 @@ Logit.Auth = {
         options: { emailRedirectTo: window.location.origin + '/index.html' }
       });
       if (error) { this.setMessage(error.message); return; }
-      this._currentUser = data.user;
-      localStorage.setItem('logit_offline_mode', 'false');
-      this.setMessage('Account created!');
-      await this.initializeCloudUser();
-      this.redirectToLibrary();
+      this.setMessage('Check your email to confirm your account.');
     } catch (e) {
       this.setMessage('Sign-up failed');
     }
