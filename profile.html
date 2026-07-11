@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/main.css?v=9">
 <link rel="stylesheet" href="css/components.css?v=9">
 <link rel="stylesheet" href="css/auth.css?v=10">
+<link rel="stylesheet" href="css/stats.css?v=9">
 <link rel="stylesheet" href="css/desktop.css?v=9">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
@@ -91,19 +92,16 @@
   <!-- Export -->
   <div class="profileCard">
     <div class="profileSectionTitle">Export</div>
-    <button class="profileButton" id="exportJsonBtn">
-      Export as JSON
-    </button>
-    <button class="profileButton" id="exportTxtBtn">
-      Export as TXT
+    <button class="profileButton" id="exportBtn">
+      Export Movies
     </button>
   </div>
 
   <!-- Import -->
   <div class="profileCard">
     <div class="profileSectionTitle">Import</div>
-    <button class="profileButton" id="importDataBtn">
-      Import from File
+    <button class="profileButton" id="importBtn">
+      Import Movies
     </button>
   </div>
 
@@ -128,11 +126,42 @@
 
 </section>
 
-<input type="file" id="importFileInput" accept=".json,.txt" style="display:none;">
+<!-- ========= IMPORT MODAL ========= -->
+<div class="importModal" id="importModal">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <h3 style="font-size:16px;font-weight:700;">Import Movies</h3>
+    <button class="headBtn" id="importModalClose" style="width:34px;height:34px;">&times;</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    <label style="flex:1;height:44px;border-radius:10px;border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:500;color:#fff;gap:6px;">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload File
+      <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
+    </label>
+  </div>
+  <textarea class="importTextarea" id="importText" placeholder="Or paste text here...&#10;&#10;JSON (from Log!t export):&#10;Paste the full exported JSON array — imports directly with all data.&#10;&#10;One movie per line:&#10;tt0133093  4.5  2024-05-15    (IMDB ID)&#10;tmdb:27205  5  2024-01-10      (TMDB ID)&#10;#550                       (TMDB ID with #)&#10;Inception 3.5&#10;Interstellar - 5/5 - 2024-01-10&#10;Fight Club  2023-12-25  4&#10;&#10;Pipe format:&#10;Movie Name | Rating | IMDb/TMDb_ID | Date | RewatchStatus&#10;The Matrix | 5 | tmdb:603 | 2024-05-15 | rewatch&#10;&#10;Ratings default to 3. Dates default to today."></textarea>
+  <div class="importFooter">
+    <button class="importBtn" id="importStartBtn">Import</button>
+  </div>
+  <div class="importStatus" id="importStatus"></div>
+</div>
+
+<!-- ========= EXPORT MODAL ========= -->
+<div class="exportModal" id="exportModal">
+  <div class="exportSheet">
+    <h3>Export Movies</h3>
+    <div class="exportBtns">
+      <button class="jsonBtn" id="exportJsonBtn">Export as JSON</button>
+      <button class="txtBtn" id="exportTxtBtn">Export as Text</button>
+      <button class="cancelBtn" id="exportCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <script src="js/config.js"></script>
 <script src="js/constants.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/utils.js"></script>
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/offline.js"></script>

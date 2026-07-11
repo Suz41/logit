@@ -66,65 +66,70 @@ Logit.ProfilePage = {
   },
 
   setupListeners() {
-    document.getElementById('backBtn').addEventListener('click', () => { window.history.back(); });
-    document.getElementById('manualSyncBtn').addEventListener('click', () => { this.manualSync(); });
+    const $ = (id) => document.getElementById(id);
 
-    document.getElementById('exportJsonBtn').addEventListener('click', () => {
-      Logit.Export.doExport(Logit.Storage.loadMovies(), 'json');
-    });
-    document.getElementById('exportTxtBtn').addEventListener('click', () => {
-      Logit.Export.doExport(Logit.Storage.loadMovies(), 'txt');
-    });
+    // Back
+    $('backBtn').addEventListener('click', () => { window.history.back(); });
 
-    document.getElementById('importDataBtn').addEventListener('click', () => {
-      document.getElementById('importFileInput').click();
-    });
-    document.getElementById('importFileInput').addEventListener('change', (e) => {
-      this.importData(e);
+    // Manual sync
+    $('manualSyncBtn').addEventListener('click', () => { this.manualSync(); });
+
+    // Export button -> open modal
+    $('exportBtn').addEventListener('click', () => {
+      Logit.Utils.openModal($('exportModal'));
     });
 
-    document.getElementById('signOutBtn').addEventListener('click', () => {
-      if (confirm('Are you sure you want to sign out?')) Logit.Auth.signOut();
+    // Export modal buttons
+    $('exportJsonBtn').addEventListener('click', () => {
+      Logit.Export.doExport(Logit.Storage.loadMovies(), 'json', () => {
+        Logit.Utils.closeModal($('exportModal'));
+      });
     });
-    document.getElementById('deleteAccountBtn').addEventListener('click', () => { this.deleteAccount(); });
-    document.getElementById('enableCloudBtn').addEventListener('click', () => { window.location.href = 'welcome.html'; });
-
-    // Settings toggles
-    const autoSyncToggle = document.getElementById('autoSyncToggle');
-    const autoSyncEnabled = localStorage.getItem('logit_auto_sync') !== 'false';
-    autoSyncToggle.classList.toggle('active', autoSyncEnabled);
-    autoSyncToggle.addEventListener('click', () => {
-      autoSyncToggle.classList.toggle('active');
-      localStorage.setItem('logit_auto_sync', autoSyncToggle.classList.contains('active') ? 'true' : 'false');
+    $('exportTxtBtn').addEventListener('click', () => {
+      Logit.Export.doExport(Logit.Storage.loadMovies(), 'txt', () => {
+        Logit.Utils.closeModal($('exportModal'));
+      });
     });
-  },
+    $('exportCancelBtn').addEventListener('click', () => {
+      Logit.Utils.closeModal($('exportModal'));
+    });
 
-  async manualSync() {
-    const btn = document.getElementById('manualSyncBtn');
-    btn.disabled = true;
-    btn.textContent = 'Syncing...';
-    try {
-      const result = await Logit.Sync.sync();
-      alert(result.success ? 'Synced ' + result.count + ' changes!' : 'Sync failed: ' + result.message);
-    } catch (e) { alert('Sync error: ' + e.message); }
-    btn.disabled = false;
-    btn.textContent = 'Manual Sync';
-    this.updateSyncStatus();
-  },
+    // Import button -> open modal
+    $('importBtn').addEventListener('click', () => {
+      Logit.Utils.openModal($('importModal'));
+      $('importText').value = '';
+      $('importStatus').textContent = '';
+      $('importText').focus();
+    });
 
-  /**
-   * Import — exact same logic as stats page
-   */
-  importData(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const text = event.target.result.trim();
+    // Import modal close
+    $('importModalClose').addEventListener('click', () => {
+      Logit.Utils.closeModal($('importModal'));
+      $('importText').value = '';
+      $('importStatus').textContent = '';
+    });
+
+    // File input loads file into textarea
+    $('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        $('importText').value = ev.target.result;
+        $('importStatus').textContent = 'File loaded: ' + file.name;
+      };
+      reader.readAsText(file);
+    });
+
+    // Import start button — same logic as stats page
+    $('importStartBtn').onclick = async () => {
+      const text = $('importText').value.trim();
       if (!text) return;
 
       const API = Logit.Config.getApiKey();
       let movies = Logit.Storage.loadMovies();
+      const statusEl = $('importStatus');
+      const importStartBtn = $('importStartBtn');
 
       /* ======== JSON Import ======== */
       if (text.charAt(0) === '[' || text.charAt(0) === '{') {
@@ -133,7 +138,8 @@ Logit.ProfilePage = {
           const arr = Array.isArray(parsed) ? parsed : (parsed.movies || []);
 
           if (Logit.Import.isSlimExport(arr)) {
-            if (!API) { alert('TMDB API key required. Set it from main page.'); return; }
+            if (!API) { statusEl.textContent = 'TMDB API key required. Set it from main page.'; return; }
+            importStartBtn.disabled = true;
             const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
             const existingIds = new Set(movies.map(m => m.id));
             let imported = 0, failed = 0;
@@ -142,6 +148,9 @@ Logit.ProfilePage = {
               const entry = arr[i];
               if ((!entry.t && !entry.id) || !entry.tmdb_id) { failed++; continue; }
               if (existingIds.has(entry.id) || existingTmdbIds.has(entry.tmdb_id)) { continue; }
+
+              statusEl.textContent = 'Fetching ' + (i + 1) + '/' + arr.length + ': ' + entry.t;
+
               try {
                 const detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdb_id + '?api_key=' + API + '&append_to_response=credits,images');
                 if (!detail) { failed++; continue; }
@@ -150,8 +159,9 @@ Logit.ProfilePage = {
               } catch (err) { failed++; }
             }
             Logit.Storage.saveMovies(movies);
-            alert(imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : ''));
-            this.updateStorageInfo();
+            statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
+            importStartBtn.disabled = false;
+            setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); }, 1500);
             return;
           }
 
@@ -167,24 +177,27 @@ Logit.ProfilePage = {
             count++;
           });
           Logit.Storage.saveMovies(movies);
-          alert(count + ' imported from JSON');
-          this.updateStorageInfo();
+          statusEl.textContent = count + ' imported from JSON';
+          setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); }, 1500);
           return;
-        } catch (err) { alert('Invalid JSON format'); return; }
+        } catch (err) { statusEl.textContent = 'Invalid JSON format'; return; }
       }
 
-      /* ======== Text / CSV / TXT Import ======== */
-      if (!API) { alert('TMDB API key required. Set it from main page.'); return; }
+      /* ======== Text / TXT Import ======== */
+      if (!API) { statusEl.textContent = 'TMDB API key required. Set it from main page.'; return; }
 
       const lines = text.split('\n').filter(l => l.trim());
       if (lines.length === 0) return;
 
+      importStartBtn.disabled = true;
       let imported = 0, failed = 0;
       const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
 
       for (let i = 0; i < lines.length; i++) {
         const entry = Logit.Import.parseLine(lines[i]);
         if (!entry) { failed++; continue; }
+
+        statusEl.textContent = 'Importing ' + (i + 1) + '/' + lines.length + ': ' + (entry.title || entry.tmdbId || entry.imdbId);
 
         try {
           let detail = null;
@@ -228,11 +241,39 @@ Logit.ProfilePage = {
       }
 
       Logit.Storage.saveMovies(movies);
-      alert(imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : ''));
-      this.updateStorageInfo();
+      statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
+      importStartBtn.disabled = false;
+      setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); }, 1500);
     };
-    reader.readAsText(file);
-    e.target.value = '';
+
+    // Account
+    $('signOutBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) Logit.Auth.signOut();
+    });
+    $('deleteAccountBtn').addEventListener('click', () => { this.deleteAccount(); });
+    $('enableCloudBtn').addEventListener('click', () => { window.location.href = 'welcome.html'; });
+
+    // Settings toggles
+    const autoSyncToggle = $('autoSyncToggle');
+    const autoSyncEnabled = localStorage.getItem('logit_auto_sync') !== 'false';
+    autoSyncToggle.classList.toggle('active', autoSyncEnabled);
+    autoSyncToggle.addEventListener('click', () => {
+      autoSyncToggle.classList.toggle('active');
+      localStorage.setItem('logit_auto_sync', autoSyncToggle.classList.contains('active') ? 'true' : 'false');
+    });
+  },
+
+  async manualSync() {
+    const btn = document.getElementById('manualSyncBtn');
+    btn.disabled = true;
+    btn.textContent = 'Syncing...';
+    try {
+      const result = await Logit.Sync.sync();
+      alert(result.success ? 'Synced ' + result.count + ' changes!' : 'Sync failed: ' + result.message);
+    } catch (e) { alert('Sync error: ' + e.message); }
+    btn.disabled = false;
+    btn.textContent = 'Manual Sync';
+    this.updateSyncStatus();
   },
 
   async deleteAccount() {
