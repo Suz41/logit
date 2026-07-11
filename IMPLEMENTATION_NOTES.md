@@ -304,6 +304,7 @@ Queue item = {
 // Invalid email format → alert user
 // Missing required fields → alert user
 // Malformed JSON → console.error + skip
+// Username already taken → queries 'users' table first to verify uniqueness and alerts user
 ```
 
 ### Auth Errors
@@ -312,6 +313,7 @@ Queue item = {
 // Invalid credentials → OAuth provider handles
 // Expired token → Auto-refresh (Supabase handles)
 // CORS issues → Check OAuth redirect URIs
+// Duplicate email signup → detects "already" in error message and overrides with "Email already registered" message
 ```
 
 ### Database Errors

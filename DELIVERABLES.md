@@ -15,7 +15,7 @@ Successfully implemented optional authentication and cloud sync for Log!t while 
 1. **Authentication (`auth.js`)**
    - Google OAuth
    - GitHub OAuth
-   - Email + Password
+   - Email + Password (with username uniqueness validation and custom duplicate email checking on signup)
    - Magic Link (via email)
    - Session management
    - Sign out & account deletion

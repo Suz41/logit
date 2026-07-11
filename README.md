@@ -8,7 +8,7 @@ This is the staging, experimentation, and testing environment for **Log!t**. New
 
 ---
 
-`v2.0.0` · Full PC layout (header navigation, inline settings), modular CSS/JS structure, mobile bottom-nav scroll hide/show, and optimized stats dashboard
+`v2.0.0` · Full PC layout (header navigation, inline settings), modular CSS/JS structure, mobile bottom-nav scroll hide/show, optimized stats dashboard, username uniqueness check, and custom duplicate email registration messages
 `v1.6-beta` · Compact stats, XSS fixes, profile page
 `v1.4` · iOS redesign, grid 3-10 columns, Android back button
 `v1.3` · Bottom nav (Library + Add + Stats)
@@ -45,7 +45,7 @@ This is the staging, experimentation, and testing environment for **Log!t**. New
 
 ## Cloud Features (v3.0.0+)
 
-- **Authentication** - Google, GitHub, Email
+- **Authentication** - Google, GitHub, Email (with username uniqueness validation and custom duplicate email handling)
 - **Cloud Sync** - Automatic backup of your library
 - **Multi-Device** - Access your movies anywhere
 - **Offline Fallback** - Works great without internet
