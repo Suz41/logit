@@ -4,7 +4,7 @@
 
 This is the staging, experimentation, and testing environment for **Log!t**. New features, updates, and UI layouts are tested here before they go live on the main repository.
 
-👉 **[suz41.github.io/logitv4](https://suz41.github.io/logitv4)**
+👉 **[suz41.github.io/log5](https://suz41.github.io/log5)**
 
 ---
 
