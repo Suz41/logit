@@ -21,7 +21,11 @@ Logit.Export = {
       ext = 'csv';
     } else {
       const lines = movies.map(function(m) {
-        return m.t + ' | ' + (m.r || '') + '/5 | ' + (m.d || '') + ' | ' + (m.w || '') + ' | ' + (m.yr || '') + ' | ' + (m.tmdb_id || '') + ' | ' + (m.imdb_id || '');
+        const rating = (m.r || '').toString().replace('/5', '');
+        let idField = '';
+        if (m.tmdb_id) idField = 'tmdb:' + m.tmdb_id;
+        else if (m.imdb_id) idField = m.imdb_id;
+        return m.t + ' | ' + rating + ' | ' + idField + ' | ' + (m.d || '') + ' | ' + (m.w ? 'rewatch' : '');
       });
       data = lines.join('\n');
       mime = 'text/plain';
