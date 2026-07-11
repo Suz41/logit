@@ -200,14 +200,14 @@ Logit.ProfilePage = {
   },
 
   /**
-   * Import data from file (JSON or CSV)
+   * Import data from file (JSON, CSV, or TXT)
    */
   importData(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const text = event.target.result;
         let movies = [];
@@ -215,36 +215,44 @@ Logit.ProfilePage = {
         if (file.name.endsWith('.json')) {
           const data = JSON.parse(text);
           movies = data.movies || data || [];
-        } else if (file.name.endsWith('.csv')) {
-          const lines = text.split('\n').slice(1);
-          movies = lines.filter(l => l.trim()).map(line => {
-            const cols = line.split(',');
-            return {
-              id: Date.now() + Math.random(),
-              t: (cols[0] || '').replace(/"/g, ''),
-              r: parseFloat(cols[1]) || 0,
-              d: cols[2] || '',
-              w: cols[3] === 'Yes',
-              yr: cols[4] || '',
-              tmdb_id: cols[5] || '',
-              imdb_id: cols[6] || ''
-            };
-          });
+
+          // JSON import: check if slim format (needs TMDB fetch)
+          if (movies.length > 0 && movies[0].t && !movies[0].sp && movies[0].tmdb_id) {
+            movies = await this.fetchTMDBForMovies(movies);
+          }
         } else {
-          const lines = text.split('\n').filter(l => l.trim());
-          movies = lines.map(line => {
-            const parts = line.split('|').map(p => p.trim());
-            return {
-              id: Date.now() + Math.random(),
-              t: parts[0] || '',
-              r: parseFloat(parts[1]) || 0,
-              d: parts[2] || '',
-              w: parts[3] === 'rewatch',
-              yr: parts[4] || '',
-              tmdb_id: parts[5] || '',
-              imdb_id: parts[6] || ''
-            };
-          });
+          // CSV or TXT: parse and fetch TMDB data
+          let parsed = [];
+          if (file.name.endsWith('.csv')) {
+            const lines = text.split('\n').slice(1);
+            parsed = lines.filter(l => l.trim()).map(line => {
+              const cols = line.split(',');
+              return {
+                t: (cols[0] || '').replace(/"/g, ''),
+                r: parseFloat(cols[1]) || 3,
+                d: cols[2] || '',
+                w: cols[3] === 'Yes',
+                yr: cols[4] || '',
+                tmdb_id: cols[5] || '',
+                imdb_id: cols[6] || ''
+              };
+            });
+          } else {
+            const lines = text.split('\n').filter(l => l.trim());
+            parsed = lines.map(line => {
+              const parts = line.split('|').map(p => p.trim());
+              return {
+                t: parts[0] || '',
+                r: parseFloat(parts[1]) || 3,
+                d: parts[2] || '',
+                w: parts[3] === 'rewatch',
+                yr: parts[4] || '',
+                tmdb_id: parts[5] || '',
+                imdb_id: parts[6] || ''
+              };
+            });
+          }
+          movies = await this.fetchTMDBForMovies(parsed);
         }
 
         if (!Array.isArray(movies) || movies.length === 0) {
@@ -266,6 +274,100 @@ Logit.ProfilePage = {
     };
     reader.readAsText(file);
     e.target.value = '';
+  },
+
+  /**
+   * Fetch TMDB metadata for imported movies
+   */
+  async fetchTMDBForMovies(movies) {
+    const API = Logit.Config.getApiKey();
+    if (!API) {
+      alert('Set your TMDB API key first (Settings on main page).');
+      return movies;
+    }
+
+    const results = [];
+    for (let i = 0; i < movies.length; i++) {
+      const m = movies[i];
+
+      // Already has full data (poster exists)
+      if (m.sp || m.g) {
+        results.push(m);
+        continue;
+      }
+
+      try {
+        let detail = null;
+
+        if (m.tmdb_id) {
+          detail = await Logit.Search.tmdb(
+            'https://api.themoviedb.org/3/movie/' + m.tmdb_id + '?api_key=' + API + '&append_to_response=credits,images'
+          );
+        } else if (m.imdb_id) {
+          const findData = await Logit.Search.tmdb(
+            'https://api.themoviedb.org/3/find/' + m.imdb_id + '?api_key=' + API + '&external_source=imdb_id'
+          );
+          if (findData && findData.movie_results && findData.movie_results[0]) {
+            const foundId = findData.movie_results[0].id;
+            detail = await Logit.Search.tmdb(
+              'https://api.themoviedb.org/3/movie/' + foundId + '?api_key=' + API + '&append_to_response=credits,images'
+            );
+          }
+        } else if (m.t) {
+          const searchData = await Logit.Search.tmdb(
+            'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(m.t)
+          );
+          if (searchData && searchData.results && searchData.results[0]) {
+            detail = await Logit.Search.tmdb(
+              'https://api.themoviedb.org/3/movie/' + searchData.results[0].id + '?api_key=' + API + '&append_to_response=credits,images'
+            );
+          }
+        }
+
+        if (detail) {
+          results.push(Logit.MovieFactory.fromTMDB(detail, m.r, m.w, m.d));
+        } else {
+          // Fallback: basic movie without metadata
+          results.push({
+            id: crypto.randomUUID(),
+            tmdb_id: m.tmdb_id || '',
+            imdb_id: m.imdb_id || '',
+            t: m.t || '',
+            yr: m.yr || '',
+            r: m.r,
+            d: m.d,
+            w: m.w,
+            sp: '',
+            g: '',
+            dr: '',
+            c: '',
+            lg: '',
+            ct: '',
+            rt: 0
+          });
+        }
+      } catch (err) {
+        console.error('TMDB fetch failed for:', m.t, err);
+        results.push({
+          id: crypto.randomUUID(),
+          tmdb_id: m.tmdb_id || '',
+          imdb_id: m.imdb_id || '',
+          t: m.t || '',
+          yr: m.yr || '',
+          r: m.r,
+          d: m.d,
+          w: m.w,
+          sp: '',
+          g: '',
+          dr: '',
+          c: '',
+          lg: '',
+          ct: '',
+          rt: 0
+        });
+      }
+    }
+    return results;
   },
 
   /**
