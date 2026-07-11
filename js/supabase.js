@@ -16,11 +16,16 @@ Logit.Supabase = {
    * Initialize Supabase client
    * @returns {Object} Supabase client
    */
+  _defaults: {
+    url: 'https://rxhkexxpsfaxctmkrlyl.supabase.co',
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4aGtleHhwc2ZheGN0bWtybHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzE3MjgsImV4cCI6MjA5OTM0NzcyOH0.KohaWfHtwhsDA0FJ1kHCliWU1_2nZ5Ihany_2v3TkIE'
+  },
+
   init() {
     if (this._initialized) return this._client;
 
-    const url = localStorage.getItem('supabase_url');
-    const key = localStorage.getItem('supabase_anon_key');
+    const url = localStorage.getItem('supabase_url') || this._defaults.url;
+    const key = localStorage.getItem('supabase_anon_key') || this._defaults.key;
 
     if (!url || !key) {
       console.warn('Supabase credentials not configured. Cloud features disabled.');
