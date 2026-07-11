@@ -1,15 +1,9 @@
 window.Logit = window.Logit || {};
 
-/**
- * Profile Page
- */
 Logit.ProfilePage = {
   _user: null,
   _syncStatusInterval: null,
 
-  /**
-   * Initialize profile page
-   */
   async init() {
     this.checkAuth();
     this.setupListeners();
@@ -18,418 +12,254 @@ Logit.ProfilePage = {
     this.setupSyncStatusUpdates();
   },
 
-  /**
-   * Check if user is authenticated
-   */
   async checkAuth() {
     const user = await Logit.Supabase.getUser();
     const isOffline = localStorage.getItem('logit_offline_mode') === 'true';
-
     if (!user && !isOffline) {
       window.location.href = 'welcome.html';
       return;
     }
-
     this._user = user;
     this.showOfflineModeUI(isOffline && !user);
   },
 
-  /**
-   * Load and display profile
-   */
   async loadProfile() {
     if (this._user) {
-      document.getElementById('profileName').textContent = 
-        this._user.user_metadata?.full_name || this._user.email?.split('@')[0] || 'User';
+      document.getElementById('profileName').textContent =
+        this._user.user_metadata?.username || this._user.email?.split('@')[0] || 'User';
       document.getElementById('profileEmail').textContent = this._user.email || '';
-      
       const initial = (this._user.email || 'U')[0].toUpperCase();
       document.getElementById('profileAvatar').textContent = initial;
     } else {
       document.getElementById('profileName').textContent = 'Offline Mode';
       document.getElementById('profileEmail').textContent = 'Local storage only';
     }
-
     this.updateStorageInfo();
   },
 
-  /**
-   * Update storage information
-   */
   updateStorageInfo() {
     const movies = Logit.Storage.loadMovies();
     const storageInfo = Logit.Storage.getStorageSize();
     const formatted = Logit.Storage.formatBytes(storageInfo.total);
-
     document.getElementById('moviesCount').textContent = movies.length;
-    document.getElementById('localStorageUsage').textContent = 
-      `${formatted.val} ${formatted.unit}`;
+    document.getElementById('localStorageUsage').textContent =
+      formatted.val + ' ' + formatted.unit;
   },
 
-  /**
-   * Update sync status
-   */
   updateSyncStatus() {
     const status = Logit.Sync.getSyncStatus();
     const lastSync = Logit.Sync.getLastSyncTime();
     const pending = Logit.Offline.getPending();
-
     const badge = document.getElementById('syncStatusBadge');
     const statusText = document.getElementById('syncStatusText');
-
     badge.className = 'syncStatus ' + status;
-
-    if (status === 'offline') {
-      statusText.textContent = 'Offline';
-    } else if (status === 'syncing') {
-      statusText.textContent = 'Syncing...';
-    } else {
-      statusText.textContent = 'Synced';
-    }
-
-    if (lastSync) {
-      const time = this.formatTime(lastSync);
-      document.getElementById('lastSyncedTime').textContent = time;
-    } else {
-      document.getElementById('lastSyncedTime').textContent = 'Never';
-    }
-
+    if (status === 'offline') statusText.textContent = 'Offline';
+    else if (status === 'syncing') statusText.textContent = 'Syncing...';
+    else statusText.textContent = 'Synced';
+    document.getElementById('lastSyncedTime').textContent = lastSync ? this.formatTime(lastSync) : 'Never';
     document.getElementById('pendingChanges').textContent = pending.length;
   },
 
-  /**
-   * Setup sync status updates
-   */
   setupSyncStatusUpdates() {
-    Logit.Sync.onSyncStatusChange((status) => {
-      this.updateSyncStatus();
-    });
-
-    this._syncStatusInterval = setInterval(() => {
-      this.updateSyncStatus();
-    }, 1000);
+    Logit.Sync.onSyncStatusChange(() => { this.updateSyncStatus(); });
+    this._syncStatusInterval = setInterval(() => { this.updateSyncStatus(); }, 1000);
   },
 
-  /**
-   * Setup button listeners
-   */
   setupListeners() {
-    document.getElementById('backBtn').addEventListener('click', () => {
-      window.history.back();
-    });
-
-    document.getElementById('manualSyncBtn').addEventListener('click', () => {
-      this.manualSync();
-    });
+    document.getElementById('backBtn').addEventListener('click', () => { window.history.back(); });
+    document.getElementById('manualSyncBtn').addEventListener('click', () => { this.manualSync(); });
 
     document.getElementById('exportJsonBtn').addEventListener('click', () => {
-      const movies = Logit.Storage.loadMovies();
-      Logit.Export.doExport(movies, 'json');
+      Logit.Export.doExport(Logit.Storage.loadMovies(), 'json');
     });
-
     document.getElementById('exportCsvBtn').addEventListener('click', () => {
-      const movies = Logit.Storage.loadMovies();
-      Logit.Export.doExport(movies, 'csv');
+      Logit.Export.doExport(Logit.Storage.loadMovies(), 'csv');
     });
-
     document.getElementById('exportTxtBtn').addEventListener('click', () => {
-      const movies = Logit.Storage.loadMovies();
-      Logit.Export.doExport(movies, 'txt');
+      Logit.Export.doExport(Logit.Storage.loadMovies(), 'txt');
     });
 
     document.getElementById('importDataBtn').addEventListener('click', () => {
       document.getElementById('importFileInput').click();
     });
-
-    document.getElementById('signOutBtn').addEventListener('click', () => {
-      if (confirm('Are you sure you want to sign out?')) {
-        Logit.Auth.signOut();
-      }
-    });
-
-    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-      this.deleteAccount();
-    });
-
-    document.getElementById('enableCloudBtn').addEventListener('click', () => {
-      window.location.href = 'welcome.html';
-    });
-
     document.getElementById('importFileInput').addEventListener('change', (e) => {
       this.importData(e);
     });
 
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) Logit.Auth.signOut();
+    });
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => { this.deleteAccount(); });
+    document.getElementById('enableCloudBtn').addEventListener('click', () => { window.location.href = 'welcome.html'; });
+
     // Settings toggles
     const autoSyncToggle = document.getElementById('autoSyncToggle');
-
     const autoSyncEnabled = localStorage.getItem('logit_auto_sync') !== 'false';
-
     autoSyncToggle.classList.toggle('active', autoSyncEnabled);
-
     autoSyncToggle.addEventListener('click', () => {
       autoSyncToggle.classList.toggle('active');
-      const enabled = autoSyncToggle.classList.contains('active');
-      localStorage.setItem('logit_auto_sync', enabled ? 'true' : 'false');
+      localStorage.setItem('logit_auto_sync', autoSyncToggle.classList.contains('active') ? 'true' : 'false');
     });
   },
 
-  /**
-   * Manual sync
-   */
   async manualSync() {
     const btn = document.getElementById('manualSyncBtn');
-    const originalText = btn.textContent;
-
     btn.disabled = true;
     btn.textContent = 'Syncing...';
-
     try {
       const result = await Logit.Sync.sync();
-      if (result.success) {
-        alert(`Synced ${result.count} changes!`);
-      } else {
-        alert(`Sync failed: ${result.message}`);
-      }
-    } catch (e) {
-      alert('Sync error: ' + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = originalText;
-      this.updateSyncStatus();
-    }
+      alert(result.success ? 'Synced ' + result.count + ' changes!' : 'Sync failed: ' + result.message);
+    } catch (e) { alert('Sync error: ' + e.message); }
+    btn.disabled = false;
+    btn.textContent = 'Manual Sync';
+    this.updateSyncStatus();
   },
 
   /**
-   * Import data from file (JSON, CSV, or TXT)
+   * Import — exact same logic as stats page
    */
   importData(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = async (event) => {
-      try {
-        const text = event.target.result;
-        let movies = [];
+      const text = event.target.result.trim();
+      if (!text) return;
 
-        if (file.name.endsWith('.json')) {
-          const data = JSON.parse(text);
-          movies = data.movies || data || [];
+      const API = Logit.Config.getApiKey();
+      let movies = Logit.Storage.loadMovies();
 
-          // Fetch TMDB data for any movie missing poster
-          const needsFetch = movies.some(m => !m.sp && (m.tmdb_id || m.imdb_id || m.t));
-          if (needsFetch) {
-            movies = await this.fetchTMDBForMovies(movies);
+      /* ======== JSON Import ======== */
+      if (text.charAt(0) === '[' || text.charAt(0) === '{') {
+        try {
+          const parsed = JSON.parse(text);
+          const arr = Array.isArray(parsed) ? parsed : (parsed.movies || []);
+
+          if (Logit.Import.isSlimExport(arr)) {
+            if (!API) { alert('TMDB API key required. Set it from main page.'); return; }
+            const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
+            const existingIds = new Set(movies.map(m => m.id));
+            let imported = 0, failed = 0;
+
+            for (let i = 0; i < arr.length; i++) {
+              const entry = arr[i];
+              if ((!entry.t && !entry.id) || !entry.tmdb_id) { failed++; continue; }
+              if (existingIds.has(entry.id) || existingTmdbIds.has(entry.tmdb_id)) { continue; }
+              try {
+                const detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdb_id + '?api_key=' + API + '&append_to_response=credits,images');
+                if (!detail) { failed++; continue; }
+                movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.r || 3, entry.w || '1st Watch', entry.d || Logit.Import.normalizeDate(null)));
+                imported++;
+              } catch (err) { failed++; }
+            }
+            Logit.Storage.saveMovies(movies);
+            alert(imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : ''));
+            this.updateStorageInfo();
+            return;
           }
-        } else {
-          // CSV or TXT: use same parser as stats page
-          const lines = text.split('\n').filter(l => l.trim());
-          parsed = lines.map(line => {
-            const entry = Logit.Import.parseLine(line);
-            if (!entry) return null;
-            return {
-              t: entry.title || '',
-              r: entry.rating || 3,
-              d: entry.date || '',
-              w: entry.rewatch || false,
-              yr: entry.year || '',
-              tmdb_id: entry.tmdbId || '',
-              imdb_id: entry.imdbId || ''
-            };
-          }).filter(m => m && m.t || m.tmdb_id || m.imdb_id);
-          movies = await this.fetchTMDBForMovies(parsed);
-        }
 
-        if (!Array.isArray(movies) || movies.length === 0) {
-          alert('No movies found in file.');
+          // Full JSON
+          let count = 0;
+          const existingIds = new Set(movies.map(m => m.id));
+          const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
+          arr.forEach(m => {
+            if (!m.t && !m.id) return;
+            if (existingIds.has(m.id)) return;
+            if (m.tmdb_id && existingTmdbIds.has(m.tmdb_id)) return;
+            movies.unshift(m);
+            count++;
+          });
+          Logit.Storage.saveMovies(movies);
+          alert(count + ' imported from JSON');
+          this.updateStorageInfo();
           return;
-        }
-
-        const existing = Logit.Storage.loadMovies();
-        const existingIds = new Set(existing.map(m => m.id));
-        const newMovies = movies.filter(m => !existingIds.has(m.id));
-        const merged = [...existing, ...newMovies];
-
-        Logit.Storage.saveMovies(merged);
-        alert(`Imported ${newMovies.length} new movies!`);
-        this.updateStorageInfo();
-      } catch (err) {
-        alert('Failed to import: ' + err.message);
+        } catch (err) { alert('Invalid JSON format'); return; }
       }
+
+      /* ======== Text / CSV / TXT Import ======== */
+      if (!API) { alert('TMDB API key required. Set it from main page.'); return; }
+
+      const lines = text.split('\n').filter(l => l.trim());
+      if (lines.length === 0) return;
+
+      let imported = 0, failed = 0;
+      const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
+
+      for (let i = 0; i < lines.length; i++) {
+        const entry = Logit.Import.parseLine(lines[i]);
+        if (!entry) { failed++; continue; }
+
+        try {
+          let detail = null;
+
+          if (entry.tmdbId) {
+            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
+          } else if (entry.imdbId) {
+            const findData = await Logit.Search.tmdb('https://api.themoviedb.org/3/find/' + entry.imdbId + '?api_key=' + API + '&external_source=imdb_id');
+            if (findData && findData.movie_results && findData.movie_results.length > 0) {
+              const foundId = findData.movie_results[0].id;
+              detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + foundId + '?api_key=' + API + '&append_to_response=credits,images');
+            }
+          } else {
+            let searchUrl = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(entry.title);
+            if (entry.year) searchUrl += '&year=' + entry.year;
+            const searchData = await Logit.Search.tmdb(searchUrl);
+            if (!searchData || !searchData.results || searchData.results.length === 0) { failed++; continue; }
+
+            const titleLow = entry.title.toLowerCase();
+            let candidates = searchData.results.filter(m => m.poster_path);
+            if (candidates.length === 0) candidates = searchData.results;
+            let result = candidates[0];
+            for (let ci = 1; ci < candidates.length; ci++) {
+              const c = candidates[ci];
+              if ((c.title || '').toLowerCase() === titleLow && (result.title || '').toLowerCase() !== titleLow) { result = c; continue; }
+              if (entry.year && c.release_date && result.release_date) {
+                if (c.release_date.slice(0, 4) === entry.year && result.release_date.slice(0, 4) !== entry.year) { result = c; }
+              }
+            }
+            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + result.id + '?api_key=' + API + '&append_to_response=credits,images');
+          }
+
+          if (!detail) { failed++; continue; }
+          if (existingTmdbIds.has(String(detail.id))) { continue; }
+
+          const watch = entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || '');
+          movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, watch, Logit.Import.normalizeDate(entry.date)));
+          existingTmdbIds.add(String(detail.id));
+          imported++;
+        } catch (err) { failed++; }
+      }
+
+      Logit.Storage.saveMovies(movies);
+      alert(imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : ''));
+      this.updateStorageInfo();
     };
     reader.readAsText(file);
     e.target.value = '';
   },
 
-  /**
-   * Parse a CSV line handling quoted fields
-   */
-  parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        inQuotes = !inQuotes;
-      } else if (ch === ',' && !inQuotes) {
-        result.push(current);
-        current = '';
-      } else {
-        current += ch;
-      }
-    }
-    result.push(current);
-    return result;
-  },
-
-  /**
-   * Fetch TMDB metadata for imported movies
-   */
-  async fetchTMDBForMovies(movies) {
-    const API = Logit.Config.getApiKey();
-    if (!API) {
-      alert('Set your TMDB API key first (Settings on main page).');
-      return movies;
-    }
-
-    const results = [];
-    for (let i = 0; i < movies.length; i++) {
-      const m = movies[i];
-
-      // Already has full data (poster and genres exist)
-      if (m.sp && m.g) {
-        results.push(m);
-        continue;
-      }
-
-      try {
-        let detail = null;
-
-        if (m.tmdb_id) {
-          detail = await Logit.Search.tmdb(
-            'https://api.themoviedb.org/3/movie/' + m.tmdb_id + '?api_key=' + API + '&append_to_response=credits,images'
-          );
-        } else if (m.imdb_id) {
-          const findData = await Logit.Search.tmdb(
-            'https://api.themoviedb.org/3/find/' + m.imdb_id + '?api_key=' + API + '&external_source=imdb_id'
-          );
-          if (findData && findData.movie_results && findData.movie_results[0]) {
-            const foundId = findData.movie_results[0].id;
-            detail = await Logit.Search.tmdb(
-              'https://api.themoviedb.org/3/movie/' + foundId + '?api_key=' + API + '&append_to_response=credits,images'
-            );
-          }
-        } else if (m.t) {
-          const searchData = await Logit.Search.tmdb(
-            'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(m.t)
-          );
-          if (searchData && searchData.results && searchData.results[0]) {
-            detail = await Logit.Search.tmdb(
-              'https://api.themoviedb.org/3/movie/' + searchData.results[0].id + '?api_key=' + API + '&append_to_response=credits,images'
-            );
-          }
-        }
-
-        if (detail) {
-          results.push(Logit.MovieFactory.fromTMDB(detail, m.r, m.w, m.d));
-        } else {
-          // Fallback: basic movie without metadata
-          results.push({
-            id: crypto.randomUUID(),
-            tmdb_id: m.tmdb_id || '',
-            imdb_id: m.imdb_id || '',
-            t: m.t || '',
-            yr: m.yr || '',
-            r: m.r,
-            d: m.d,
-            w: m.w,
-            sp: '',
-            g: '',
-            dr: '',
-            c: '',
-            lg: '',
-            ct: '',
-            rt: 0
-          });
-        }
-      } catch (err) {
-        console.error('TMDB fetch failed for:', m.t, err);
-        results.push({
-          id: crypto.randomUUID(),
-          tmdb_id: m.tmdb_id || '',
-          imdb_id: m.imdb_id || '',
-          t: m.t || '',
-          yr: m.yr || '',
-          r: m.r,
-          d: m.d,
-          w: m.w,
-          sp: '',
-          g: '',
-          dr: '',
-          c: '',
-          lg: '',
-          ct: '',
-          rt: 0
-        });
-      }
-    }
-    return results;
-  },
-
-  /**
-   * Delete account
-   */
   async deleteAccount() {
     if (!confirm('Are you sure? This cannot be undone.')) return;
     if (!confirm('This will delete your account and all cloud data. Continue?')) return;
-
-    const client = Logit.Supabase.getClient();
-    if (!client) {
-      localStorage.clear();
-      location.reload();
-      return;
-    }
-
-    try {
-      // Delete user profile and movies via admin API
-      // For now, just sign out and clear data
-      await Logit.Auth.signOut();
-      alert('Account deleted.');
-    } catch (e) {
-      alert('Delete failed: ' + e.message);
-    }
+    try { await Logit.Auth.signOut(); alert('Account deleted.'); }
+    catch (e) { alert('Delete failed: ' + e.message); }
   },
 
-  /**
-   * Show/hide offline mode UI
-   */
   showOfflineModeUI(show) {
     const section = document.getElementById('offlineModeSection');
-    if (section) {
-      section.style.display = show ? 'block' : 'none';
-    }
-
-    if (show) {
-      document.getElementById('manualSyncBtn').style.display = 'none';
-    }
+    if (section) section.style.display = show ? 'block' : 'none';
+    if (show) document.getElementById('manualSyncBtn').style.display = 'none';
   },
 
-  /**
-   * Format time for display
-   */
   formatTime(date) {
-    const now = new Date();
-    const diff = now - date;
+    const diff = Date.now() - date;
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-
     if (minutes < 1) return 'just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-
+    if (minutes < 60) return minutes + 'm ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days < 7) return days + 'd ago';
     return date.toLocaleDateString();
   }
 };
