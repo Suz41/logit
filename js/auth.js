@@ -168,7 +168,7 @@ Logit.Auth = {
       const { data, error } = await client.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: window.location.origin + '/index.html'
+          redirectTo: window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/index.html'
         }
       });
 
@@ -197,7 +197,7 @@ Logit.Auth = {
       const { error } = await client.auth.signInWithOtp({
         email: email,
         options: {
-          emailRedirectTo: window.location.origin + '/index.html'
+          emailRedirectTo: window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/index.html'
         }
       });
 
