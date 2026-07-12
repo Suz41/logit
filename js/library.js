@@ -155,7 +155,9 @@ Logit.LibraryPage = {
               }
 
               // Remove movies deleted on other devices
-              const synced = localMovies.filter(m => remoteIds.has(m.id));
+              var deletedIds = JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]');
+              var deletedSet = new Set(deletedIds);
+              var synced = localMovies.filter(m => remoteIds.has(m.id) && !deletedSet.has(m.id));
               Logit.Storage.saveMovies(synced);
             }
           }
@@ -491,14 +493,20 @@ Logit.LibraryPage = {
         const delId = state.current.id;
         state.movies = state.movies.filter(function(m) { return m.id !== delId; });
         localStorage.setItem('movies', JSON.stringify(state.movies));
-        // Delete from cloud (fire and forget)
+        // Delete from cloud
         try {
           const client = Logit.Supabase.getClient();
           const userId = localStorage.getItem('logit_user_id');
           if (client && userId) {
-            client.from('movies').delete().eq('id', delId).eq('user_id', userId);
+            client.from('movies').delete().eq('id', delId).eq('user_id', userId).then(function(res) {
+              if (res.error) console.error('Cloud delete error:', res.error);
+            });
           }
-        } catch (e) {}
+        } catch (e) { console.error('Cloud delete failed:', e); }
+        // Track deleted IDs so pull doesn't re-add them
+        var deleted = JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]');
+        deleted.push(delId);
+        localStorage.setItem('logit_deleted_ids', JSON.stringify(deleted));
         state.current = null;
         Logit.Overlays.closeTop();
         renderMovies();
