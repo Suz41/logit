@@ -121,9 +121,20 @@ Logit.Storage = {
     const filtered = movies.filter(m => m.id !== movieId);
     this.saveMovies(filtered);
 
-    // Queue for sync if authenticated
-    if (!Logit.Auth.isOfflineMode()) {
-      Logit.Offline.enqueue('delete', 'movie', movieId, { id: movieId });
+    // Auto-delete from cloud
+    this._deleteFromCloud(movieId);
+  },
+
+  /** Delete movie from cloud in background */
+  async _deleteFromCloud(movieId) {
+    try {
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+      if (!client || !userId) return;
+
+      await client.from('movies').delete().eq('id', movieId).eq('user_id', userId);
+    } catch (e) {
+      console.error('Auto-delete from cloud failed:', e);
     }
   }
 };
