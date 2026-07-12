@@ -15,18 +15,20 @@ Logit.ProfilePage = {
   },
 
   async checkAuth() {
-    const isOffline = localStorage.getItem('logit_offline_mode') === 'true';
     this._user = null;
     try {
-      const client = Logit.Supabase.getClient();
-      if (client) {
-        const { data: { session } } = await client.auth.getSession();
-        if (session && session.user) {
-          this._user = session.user;
-          localStorage.setItem('logit_offline_mode', 'false');
+      const userId = localStorage.getItem('logit_user_id');
+      const isOffline = localStorage.getItem('logit_offline_mode') === 'true';
+      if (userId && !isOffline) {
+        const client = Logit.Supabase.getClient();
+        if (client) {
+          const { data: { user } } = await client.auth.getUser();
+          if (user) {
+            this._user = user;
+          }
         }
       }
-    } catch (e) {}
+    } catch (e) { console.error('Auth check error:', e); }
     this.showOfflineModeUI(!this._user);
   },
 
