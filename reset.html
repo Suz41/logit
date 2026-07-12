@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reset Password - Log!t</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css?v=9">
+<link rel="stylesheet" href="css/auth.css?v=10">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body class="welcomePage">
+
+<div class="welcomeContainer">
+  <div class="welcomeContent">
+    <div class="welcomeLogo">
+      <h1>Log!t</h1>
+      <p class="welcomeTagline">Reset your password</p>
+    </div>
+
+    <div class="authCard">
+      <div class="authForm">
+        <input type="password" placeholder="New password" id="newPassword" class="authInput">
+        <input type="password" placeholder="Confirm password" id="confirmPassword" class="authInput">
+        <div class="authActions">
+          <button class="btnPrimary" id="resetBtn">Reset Password</button>
+        </div>
+        <span class="authMessage" id="authMessage"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('resetBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('authMessage');
+    const newPass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+
+    if (!newPass || !confirmPass) { msg.textContent = 'Fill all fields'; return; }
+    if (newPass.length < 6) { msg.textContent = 'Password must be 6+ characters'; return; }
+    if (newPass !== confirmPass) { msg.textContent = 'Passwords do not match'; return; }
+
+    const client = window.supabase.createClient(
+      'https://rxhkexxpsfaxctmkrlyl.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4aGtleHhwc2ZheGN0bWtybHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzE3MjgsImV4cCI6MjA5OTM0NzcyOH0.KohaWfHtwhsDA0FJ1kHCliWU1_2nZ5Ihany_2v3TkIE'
+    );
+
+    try {
+      const { error } = await client.auth.updateUser({ password: newPass });
+      if (error) { msg.textContent = error.message; return; }
+      msg.textContent = 'Password updated! Redirecting...';
+      setTimeout(() => { window.location.href = 'welcome.html'; }, 1500);
+    } catch (e) {
+      msg.textContent = 'Failed to reset password';
+    }
+  });
+</script>
+</body>
+</html>
