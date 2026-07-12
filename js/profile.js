@@ -302,10 +302,22 @@ Logit.ProfilePage = {
     btn.disabled = true;
     btn.textContent = 'Syncing...';
     try {
-      const uploadResult = await Logit.Sync.uploadExistingMovies();
-      const syncResult = await Logit.Sync.sync();
-      const count = uploadResult.count || 0;
-      alert(count + ' movies uploaded to cloud!');
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+      if (!client || !userId) { alert('Not connected to cloud'); btn.disabled = false; btn.textContent = 'Manual Sync'; return; }
+
+      const localMovies = Logit.Storage.loadMovies();
+      if (localMovies.length > 0) {
+        const moviesToInsert = localMovies.map(m => ({
+          ...m,
+          user_id: userId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }));
+        const { error } = await client.from('movies').upsert(moviesToInsert, { onConflict: 'id' });
+        if (error) throw new Error(error.message);
+      }
+      alert(localMovies.length + ' movies synced to cloud!');
     } catch (e) { alert('Sync error: ' + e.message); }
     btn.disabled = false;
     btn.textContent = 'Manual Sync';
