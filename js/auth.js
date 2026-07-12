@@ -16,14 +16,15 @@ Logit.Auth = {
       if (session && user) {
         this._currentUser = user;
         localStorage.setItem('logit_offline_mode', 'false');
-        this.redirectToLibrary();
         return;
       }
       if (localStorage.getItem('logit_offline_mode') !== 'false') {
         localStorage.setItem('logit_offline_mode', 'true');
       }
     } catch (e) {
-      localStorage.setItem('logit_offline_mode', 'true');
+      if (localStorage.getItem('logit_offline_mode') !== 'false') {
+        localStorage.setItem('logit_offline_mode', 'true');
+      }
     }
   },
 
