@@ -59,32 +59,7 @@ Logit.ProfilePage = {
       const usageEl = document.getElementById('localStorageUsage');
       if (countEl) countEl.textContent = movies.length;
       if (usageEl) usageEl.textContent = formatted.val + ' ' + formatted.unit;
-
-      // Update stats
-      const totalEl = document.getElementById('statsTotal');
-      const avgEl = document.getElementById('statsAvg');
-      const rewatchEl = document.getElementById('statsRewatch');
-      if (totalEl) totalEl.textContent = movies.length;
-      if (avgEl) {
-        const rated = movies.filter(m => m.r > 0);
-        const avg = rated.length > 0 ? (rated.reduce((s, m) => s + Number(m.r), 0) / rated.length).toFixed(1) : '-';
-        avgEl.textContent = avg;
-      }
-      if (rewatchEl) {
-        const rewatches = movies.filter(m => m.w && m.w.toString().includes('Rewatch'));
-        rewatchEl.textContent = rewatches.length;
-      }
-
-      this.updateApiKeyStatus();
     } catch (e) { console.error('Storage info error:', e); }
-  },
-
-  updateApiKeyStatus() {
-    const statusEl = document.getElementById('apiKeyStatus');
-    if (!statusEl) return;
-    const key = Logit.Config.getApiKey();
-    statusEl.textContent = key ? 'Configured' : 'Not set';
-    statusEl.style.color = key ? 'var(--green)' : 'var(--red)';
   },
 
   updateSyncStatus() {
@@ -323,16 +298,6 @@ Logit.ProfilePage = {
         if (res.error) alert(res.error.message);
         else alert('Password updated!');
       });
-    });
-
-    // Change API Key
-    const changeApiKeyBtn = $('changeApiKeyBtn');
-    if (changeApiKeyBtn) changeApiKeyBtn.addEventListener('click', () => {
-      const key = prompt('Enter TMDB API Key:', Logit.Config.getApiKey());
-      if (key !== null) {
-        Logit.Config.setApiKey(key);
-        this.updateApiKeyStatus();
-      }
     });
 
     // Clear All Data

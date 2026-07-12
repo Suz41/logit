@@ -44,9 +44,9 @@
     </div>
   </div>
 
-  <!-- Sync Status -->
+  <!-- Sync Status + Auto Sync -->
   <div class="profileCard">
-    <div class="profileSectionTitle">Sync Status</div>
+    <div class="profileSectionTitle">Sync</div>
     <div class="profileRow">
       <span class="profileLabel">Status</span>
       <div class="syncStatus" id="syncStatusBadge">
@@ -62,13 +62,13 @@
       <span class="profileLabel">Pending Changes</span>
       <span class="profileValue" id="pendingChanges">0</span>
     </div>
+    <div class="profileRow">
+      <span class="profileLabel">Auto Sync</span>
+      <button class="settingToggle" id="autoSyncToggle"></button>
+    </div>
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="profileButton" id="manualSyncBtn" style="flex:1;">
-        Push to Cloud
-      </button>
-      <button class="profileButton" id="pullCloudBtn" style="flex:1;">
-        Pull from Cloud
-      </button>
+      <button class="profileButton" id="manualSyncBtn" style="flex:1;">Push</button>
+      <button class="profileButton" id="pullCloudBtn" style="flex:1;">Pull</button>
     </div>
   </div>
 
@@ -85,90 +85,36 @@
     </div>
   </div>
 
-  <!-- Sync Settings -->
+  <!-- Import / Export -->
   <div class="profileCard">
-    <div class="profileSectionTitle">Sync Settings</div>
-    <div class="profileRow">
-      <span class="profileLabel">Auto Sync</span>
-      <button class="settingToggle" id="autoSyncToggle"></button>
-    </div>
+    <div class="profileSectionTitle">Import / Export</div>
+    <button class="profileButton" id="exportBtn">Export Movies</button>
+    <button class="profileButton" id="importBtn">Import Movies</button>
   </div>
 
-  <!-- Export -->
-  <div class="profileCard">
-    <div class="profileSectionTitle">Export</div>
-    <button class="profileButton" id="exportBtn">
-      Export Movies
-    </button>
-  </div>
-
-  <!-- Import -->
-  <div class="profileCard">
-    <div class="profileSectionTitle">Import</div>
-    <button class="profileButton" id="importBtn">
-      Import Movies
-    </button>
-  </div>
-
-  <div class="profileCard">
-    <div class="profileSectionTitle">Your Stats</div>
-    <div class="profileRow">
-      <span class="profileLabel">Total Movies</span>
-      <span class="profileValue" id="statsTotal">0</span>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Average Rating</span>
-      <span class="profileValue" id="statsAvg">-</span>
-    </div>
-    <div class="profileRow">
-      <span class="profileLabel">Rewatches</span>
-      <span class="profileValue" id="statsRewatch">0</span>
-    </div>
-  </div>
-
-  <div class="profileCard">
-    <div class="profileSectionTitle">TMDB API Key</div>
-    <div class="profileRow">
-      <span class="profileLabel">Status</span>
-      <span class="profileValue" id="apiKeyStatus">-</span>
-    </div>
-    <button class="profileButton" id="changeApiKeyBtn">
-      Change API Key
-    </button>
-  </div>
-
+  <!-- Account -->
   <div class="profileCard">
     <div class="profileSectionTitle">Account</div>
-    <button class="profileButton" id="changePasswordBtn">
-      Change Password
-    </button>
-    <button class="profileButton" id="signOutBtn">
-      Sign Out
-    </button>
-    <button class="profileButton danger" id="deleteAccountBtn">
-      Delete Account
-    </button>
+    <button class="profileButton" id="changePasswordBtn">Change Password</button>
+    <button class="profileButton" id="signOutBtn">Sign Out</button>
+    <button class="profileButton danger" id="deleteAccountBtn">Delete Account</button>
   </div>
 
-  <div class="profileCard">
-    <div class="profileSectionTitle">Danger Zone</div>
-    <button class="profileButton danger" id="clearDataBtn">
-      Clear All Local Data
-    </button>
+  <!-- Clear Data -->
+  <div style="padding:16px 0;">
+    <button class="profileButton danger" id="clearDataBtn" style="width:100%;text-align:center;">Clear All Local Data</button>
   </div>
 
   <!-- Offline Mode -->
   <div class="profileCard offlineSection" id="offlineModeSection" style="display:none;">
     <div class="profileSectionTitle">Offline Mode</div>
     <p class="smallText" style="margin:0;color:var(--muted);">You're currently using Log!t in offline mode.</p>
-    <button class="profileButton" id="enableCloudBtn" style="margin-top:12px;">
-      Enable Cloud Sync
-    </button>
+    <button class="profileButton" id="enableCloudBtn" style="margin-top:12px;">Enable Cloud Sync</button>
   </div>
 
 </section>
 
-<!-- ========= IMPORT MODAL ========= -->
+<!-- Import Modal -->
 <div class="importModal" id="importModal">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
     <h3 style="font-size:16px;font-weight:700;">Import Movies</h3>
@@ -181,14 +127,14 @@
       <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
     </label>
   </div>
-  <textarea class="importTextarea" id="importText" placeholder="Or paste text here...&#10;&#10;JSON (from Log!t export):&#10;Paste the full exported JSON array — imports directly with all data.&#10;&#10;One movie per line:&#10;tt0133093  4.5  2024-05-15    (IMDB ID)&#10;tmdb:27205  5  2024-01-10      (TMDB ID)&#10;#550                       (TMDB ID with #)&#10;Inception 3.5&#10;Interstellar - 5/5 - 2024-01-10&#10;Fight Club  2023-12-25  4&#10;&#10;Pipe format:&#10;Movie Name | Rating | IMDb/TMDb_ID | Date | RewatchStatus&#10;The Matrix | 5 | tmdb:603 | 2024-05-15 | rewatch&#10;&#10;Ratings default to 3. Dates default to today."></textarea>
+  <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>
   <div class="importFooter">
     <button class="importBtn" id="importStartBtn">Import</button>
   </div>
   <div class="importStatus" id="importStatus"></div>
 </div>
 
-<!-- ========= EXPORT MODAL ========= -->
+<!-- Export Modal -->
 <div class="exportModal" id="exportModal">
   <div class="exportSheet">
     <h3>Export Movies</h3>
