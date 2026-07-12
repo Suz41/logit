@@ -127,41 +127,7 @@ Logit.LibraryPage = {
     // Load movies — pull from cloud first if logged in
     async function loadAndRender() {
       if (!Logit.Auth.isOfflineMode()) {
-        try {
-          const client = Logit.Supabase.getClient();
-          const userId = localStorage.getItem('logit_user_id');
-          if (client && userId) {
-            const { data: remoteMovies } = await client
-              .from('movies')
-              .select('*')
-              .eq('user_id', userId);
-
-            if (remoteMovies) {
-              const localMovies = Logit.Storage.loadMovies();
-              const localMap = new Map(localMovies.map(m => [m.id, m]));
-              const remoteIds = new Set(remoteMovies.map(m => m.id));
-
-              // Add or update from cloud
-              for (const rm of remoteMovies) {
-                const sanitized = { id: rm.id, t: rm.t, yr: rm.yr, rt: rm.rt, g: rm.g, dr: rm.dr, c: rm.c, lg: rm.lg, ct: rm.ct, r: rm.r, w: rm.w, d: rm.d, sp: rm.sp, tmdb_id: rm.tmdb_id, imdb_id: rm.imdb_id, updated_at: rm.updated_at };
-                const local = localMap.get(rm.id);
-                if (!local) {
-                  localMovies.push(sanitized);
-                } else {
-                  const rTime = new Date(rm.updated_at || 0).getTime();
-                  const lTime = new Date(local.updated_at || 0).getTime();
-                  if (rTime > lTime) Object.assign(local, sanitized);
-                }
-              }
-
-              // Remove movies deleted on other devices
-              var deletedIds = JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]');
-              var deletedSet = new Set(deletedIds);
-              var synced = localMovies.filter(m => remoteIds.has(m.id) && !deletedSet.has(m.id));
-              Logit.Storage.saveMovies(synced);
-            }
-          }
-        } catch (e) { console.error('Cloud pull failed:', e); }
+        try { await Logit.Sync.pullFromCloud(); } catch (e) { console.error('Cloud pull failed:', e); }
       }
       state.movies = Logit.Storage.loadMovies();
       renderMovies();
@@ -488,29 +454,14 @@ Logit.LibraryPage = {
     };
 
     $('deleteBtn').onclick = function() {
-      try {
-        if (!confirm('Delete "' + state.current.t + '" ?')) return;
-        const delId = state.current.id;
-        state.movies = state.movies.filter(function(m) { return m.id !== delId; });
-        localStorage.setItem('movies', JSON.stringify(state.movies));
-        // Delete from cloud
-        try {
-          const client = Logit.Supabase.getClient();
-          const userId = localStorage.getItem('logit_user_id');
-          if (client && userId) {
-            client.from('movies').delete().eq('id', delId).eq('user_id', userId).then(function(res) {
-              if (res.error) console.error('Cloud delete error:', res.error);
-            });
-          }
-        } catch (e) { console.error('Cloud delete failed:', e); }
-        // Track deleted IDs so pull doesn't re-add them
-        var deleted = JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]');
-        deleted.push(delId);
-        localStorage.setItem('logit_deleted_ids', JSON.stringify(deleted));
-        state.current = null;
-        Logit.Overlays.closeTop();
-        renderMovies();
-      } catch (e) { console.error('Delete error:', e); }
+      if (!confirm('Delete "' + state.current.t + '" ?')) return;
+      const delId = state.current.id;
+      state.movies = state.movies.filter(function(m) { return m.id !== delId; });
+      localStorage.setItem('movies', JSON.stringify(state.movies));
+      Logit.Sync.deleteFromCloud(delId).catch(function(e) { console.error('Cloud delete:', e); });
+      state.current = null;
+      Logit.Overlays.closeTop();
+      renderMovies();
     };
 
     $('changePoster').onclick = function() {

@@ -28,37 +28,14 @@ Logit.Storage = {
   saveMovies(movies) {
     try {
       const now = new Date().toISOString();
-      movies.forEach(function(m) {
-        m.updated_at = now;
-      });
+      movies.forEach(function(m) { m.updated_at = now; });
       localStorage.setItem('movies', JSON.stringify(movies));
-
       // Auto-push to cloud if logged in
-      if (!Logit.Auth.isOfflineMode()) {
-        this._pushToCloud(movies);
+      if (!Logit.Auth.isOfflineMode() && Logit.Sync && Logit.Sync.pushToCloud) {
+        Logit.Sync.pushToCloud().catch(function() {});
       }
     } catch (e) {
       console.error('Failed to save movies to localStorage:', e);
-      alert('Storage is full or inaccessible! Changes could not be saved.');
-    }
-  },
-
-  /** Push movies to cloud in background */
-  async _pushToCloud(movies) {
-    try {
-      const client = Logit.Supabase.getClient();
-      const userId = localStorage.getItem('logit_user_id');
-      if (!client || !userId) return;
-
-      const moviesToInsert = movies.map(m => ({
-        ...m,
-        user_id: userId,
-        updated_at: m.updated_at || new Date().toISOString()
-      }));
-
-      await client.from('movies').upsert(moviesToInsert, { onConflict: 'id' });
-    } catch (e) {
-      console.error('Auto-push failed:', e);
     }
   },
 
@@ -113,28 +90,12 @@ Logit.Storage = {
   },
 
   /**
-   * Delete movie and queue for sync
+   * Delete movie locally
    * @param {string} movieId
    */
   deleteMovie(movieId) {
     const movies = this.loadMovies();
-    const filtered = movies.filter(m => m.id !== movieId);
-    this.saveMovies(filtered);
-
-    // Auto-delete from cloud
-    this._deleteFromCloud(movieId);
-  },
-
-  /** Delete movie from cloud in background */
-  async _deleteFromCloud(movieId) {
-    try {
-      const client = Logit.Supabase.getClient();
-      const userId = localStorage.getItem('logit_user_id');
-      if (!client || !userId) return;
-      await client.from('movies').delete().eq('id', movieId).eq('user_id', userId);
-    } catch (e) {
-      console.error('Auto-delete from cloud failed:', e);
-    }
+    this.saveMovies(movies.filter(m => m.id !== movieId));
   }
 };
 

@@ -298,6 +298,64 @@ Logit.Sync = {
     return localMovie;
   },
 
+  /** Pull all movies from cloud and merge with local */
+  async pullFromCloud() {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+
+    const { data: remoteMovies } = await client
+      .from('movies').select('*').eq('user_id', userId);
+
+    if (!remoteMovies) return;
+
+    const localMovies = Logit.Storage.loadMovies();
+    const localMap = new Map(localMovies.map(m => [m.id, m]));
+    const remoteIds = new Set(remoteMovies.map(m => m.id));
+    const deletedIds = new Set(JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]'));
+
+    for (const rm of remoteMovies) {
+      if (deletedIds.has(rm.id)) continue;
+      const clean = this.sanitizeRemoteMovie(rm);
+      const local = localMap.get(rm.id);
+      if (!local) {
+        localMovies.push(clean);
+      } else if (new Date(rm.updated_at || 0) > new Date(local.updated_at || 0)) {
+        Object.assign(local, clean);
+      }
+    }
+
+    const synced = localMovies.filter(m => remoteIds.has(m.id) && !deletedIds.has(m.id));
+    Logit.Storage.saveMovies(synced);
+  },
+
+  /** Push all local movies to cloud */
+  async pushToCloud() {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+
+    const movies = Logit.Storage.loadMovies();
+    if (movies.length === 0) return;
+
+    const now = new Date().toISOString();
+    const toInsert = movies.map(m => ({ ...m, user_id: userId, updated_at: m.updated_at || now }));
+    await client.from('movies').upsert(toInsert, { onConflict: 'id' });
+  },
+
+  /** Delete a movie from cloud */
+  async deleteFromCloud(movieId) {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+
+    await client.from('movies').delete().eq('id', movieId).eq('user_id', userId);
+
+    const deleted = JSON.parse(localStorage.getItem('logit_deleted_ids') || '[]');
+    deleted.push(movieId);
+    localStorage.setItem('logit_deleted_ids', JSON.stringify(deleted));
+  },
+
   /**
    * Upload existing local movies to cloud
    * Called on first login
