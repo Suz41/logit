@@ -489,8 +489,9 @@ Logit.LibraryPage = {
       if (!confirm('Delete "' + state.current.t + '" ?')) return;
       const delId = state.current.id;
       state.movies = state.movies.filter(function(m) { return m.id !== delId; });
-      Logit.Storage.saveMovies(state.movies);
-      // Auto-delete from cloud
+      // Save locally without triggering cloud upsert (we delete from cloud separately)
+      localStorage.setItem('movies', JSON.stringify(state.movies));
+      // Delete from cloud
       const client = Logit.Supabase.getClient();
       const userId = localStorage.getItem('logit_user_id');
       if (client && userId) {
