@@ -270,7 +270,7 @@ Logit.ProfilePage = {
       if (lines.length === 0) { if (statusEl) statusEl.textContent = 'No valid lines found'; return; }
       btn.disabled = true;
       let imported = 0, failed = 0, skipped = 0;
-      const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
+      const existingTmdbIds = new Set(movies.filter(m => m.tmdb_id).map(m => String(m.tmdb_id)));
       for (let i = 0; i < lines.length; i++) {
         const entry = Logit.Import.parseLine(lines[i]);
         if (!entry) { failed++; continue; }
@@ -290,12 +290,7 @@ Logit.ProfilePage = {
           if (!tmdbId) { failed++; continue; }
           if (existingTmdbIds.has(tmdbId)) { skipped++; continue; }
 
-          let detail = null;
-          if (entry.tmdbId) {
-            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
-          } else {
-            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
-          }
+          let detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
           if (!detail) { failed++; continue; }
           movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || ''), Logit.Import.normalizeDate(entry.date)));
           existingTmdbIds.add(tmdbId);
