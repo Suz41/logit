@@ -384,10 +384,26 @@ Logit.ProfilePage = {
   },
 
   async deleteAccount() {
-    if (!confirm('Delete your account?')) return;
+    if (!confirm('Delete your account? This deletes all your data from cloud.')) return;
     if (!confirm('This cannot be undone. Continue?')) return;
-    try { await Logit.Auth.signOut(); alert('Account deleted.'); }
-    catch (e) { alert('Delete failed: ' + e.message); }
+    try {
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+
+      // Delete movies from cloud
+      if (client && userId) {
+        await client.from('movies').delete().eq('user_id', userId);
+        await client.from('users').delete().eq('id', userId);
+      }
+
+      // Clear local data
+      localStorage.clear();
+
+      // Sign out
+      if (client) await client.auth.signOut();
+      alert('Account and all data deleted.');
+      window.location.href = 'welcome.html';
+    } catch (e) { alert('Delete failed: ' + e.message); }
   },
 
   showOfflineModeUI(show) {
