@@ -44,6 +44,8 @@ Logit.ProfilePage = {
       if (avatarEl) avatarEl.textContent = savedAvatar || username[0].toUpperCase();
       if (savedAvatar && savedAvatar.startsWith('data:')) {
         avatarEl.innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        const removeBtn = document.getElementById('removeAvatarBtn');
+        if (removeBtn) removeBtn.style.display = 'flex';
       }
     } else {
       if (nameEl) nameEl.textContent = 'Offline Mode';
@@ -150,8 +152,20 @@ Logit.ProfilePage = {
         localStorage.setItem('logit_avatar', dataUrl);
         const avatarEl = $('profileAvatar');
         if (avatarEl) avatarEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        const removeBtn = $('removeAvatarBtn');
+        if (removeBtn) removeBtn.style.display = 'flex';
       };
       reader.readAsDataURL(file);
+    });
+
+    // Remove avatar
+    if ($('removeAvatarBtn')) $('removeAvatarBtn').addEventListener('click', () => {
+      localStorage.removeItem('logit_avatar');
+      const avatarEl = $('profileAvatar');
+      const nameEl = $('profileName');
+      if (avatarEl) avatarEl.textContent = (nameEl?.textContent || 'U')[0].toUpperCase();
+      const removeBtn = $('removeAvatarBtn');
+      if (removeBtn) removeBtn.style.display = 'none';
     });
 
     // Edit username
