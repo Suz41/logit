@@ -255,38 +255,41 @@ Logit.ProfilePage = {
       const lines = text.split('\n').filter(l => l.trim());
       if (lines.length === 0) { if (statusEl) statusEl.textContent = 'No valid lines found'; return; }
       btn.disabled = true;
-      let imported = 0, failed = 0;
+      let imported = 0, failed = 0, skipped = 0;
       const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
       for (let i = 0; i < lines.length; i++) {
         const entry = Logit.Import.parseLine(lines[i]);
-        if (!entry) { console.log('Failed to parse line:', lines[i]); failed++; continue; }
+        if (!entry) { failed++; continue; }
         if (statusEl) statusEl.textContent = 'Importing ' + (i + 1) + '/' + lines.length + ': ' + (entry.title || entry.tmdbId || entry.imdbId);
         try {
-          let detail = null;
-          if (entry.tmdbId) {
-            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
-          } else if (entry.imdbId) {
+          let tmdbId = entry.tmdbId || '';
+          if (!tmdbId && entry.imdbId) {
             const fd = await Logit.Search.tmdb('https://api.themoviedb.org/3/find/' + entry.imdbId + '?api_key=' + API + '&external_source=imdb_id');
-            if (fd && fd.movie_results && fd.movie_results.length > 0) {
-              detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + fd.movie_results[0].id + '?api_key=' + API + '&append_to_response=credits,images');
-            }
-          } else {
+            if (fd && fd.movie_results && fd.movie_results.length > 0) tmdbId = String(fd.movie_results[0].id);
+          }
+          if (!tmdbId && entry.title) {
             let url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(entry.title);
             if (entry.year) url += '&year=' + entry.year;
             const sd = await Logit.Search.tmdb(url);
-            if (!sd || !sd.results || sd.results.length === 0) { failed++; continue; }
-            const c = sd.results.filter(function(m) { return m.poster_path; });
-            let r = (c.length ? c : sd.results)[0];
-            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + r.id + '?api_key=' + API + '&append_to_response=credits,images');
+            if (sd && sd.results && sd.results.length > 0) tmdbId = String(sd.results[0].id);
           }
-          if (!detail || existingTmdbIds.has(String(detail.id))) { failed++; continue; }
+          if (!tmdbId) { failed++; continue; }
+          if (existingTmdbIds.has(tmdbId)) { skipped++; continue; }
+
+          let detail = null;
+          if (entry.tmdbId) {
+            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
+          } else {
+            detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
+          }
+          if (!detail) { failed++; continue; }
           movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || ''), Logit.Import.normalizeDate(entry.date)));
-          existingTmdbIds.add(String(detail.id));
+          existingTmdbIds.add(tmdbId);
           imported++;
-        } catch (err) { console.error('Import line error:', err); failed++; }
+        } catch (err) { console.error('Import error:', err); failed++; }
       }
       Logit.Storage.saveMovies(movies);
-      if (statusEl) statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
+      if (statusEl) statusEl.textContent = imported + ' imported' + (skipped > 0 ? ', ' + skipped + ' skipped' : '') + (failed > 0 ? ', ' + failed + ' failed' : '');
       btn.disabled = false;
       setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1500);
     };
