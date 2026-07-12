@@ -22,7 +22,6 @@
     </div>
     <div class="pcHeaderNav">
       <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>
-      <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
       <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
     </div>
     <div style="display:flex;gap:6px;">
@@ -37,14 +36,21 @@
 
   <!-- Profile Header -->
   <div class="profileCard profileHeader">
-    <div class="profileAvatar" id="profileAvatar">👤</div>
+    <div style="position:relative;">
+      <div class="profileAvatar" id="profileAvatar">👤</div>
+      <button id="editAvatarBtn" style="position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--green);border:none;color:#000;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+    </div>
     <div class="profileInfo">
-      <h2 class="profileName" id="profileName">Loading...</h2>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <h2 class="profileName" id="profileName">Loading...</h2>
+        <button id="editUsernameBtn" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px;">✏️</button>
+      </div>
       <p class="profileEmail" id="profileEmail"></p>
     </div>
   </div>
 
-  <!-- Sync Status + Auto Sync -->
+  <!-- Sync -->
   <div class="profileCard">
     <div class="profileSectionTitle">Sync</div>
     <div class="profileRow">
@@ -59,8 +65,12 @@
       <span class="profileValue" id="lastSyncedTime">-</span>
     </div>
     <div class="profileRow">
-      <span class="profileLabel">Pending Changes</span>
-      <span class="profileValue" id="pendingChanges">0</span>
+      <span class="profileLabel">Synced</span>
+      <span class="profileValue" id="syncedCount">0</span>
+    </div>
+    <div class="profileRow">
+      <span class="profileLabel">Not Synced</span>
+      <span class="profileValue" id="unsyncedCount" style="color:var(--red);">0</span>
     </div>
     <div class="profileRow">
       <span class="profileLabel">Auto Sync</span>
@@ -92,6 +102,20 @@
     <button class="profileButton" id="importBtn">Import Movies</button>
   </div>
 
+  <!-- Settings -->
+  <div class="profileCard">
+    <div class="profileSectionTitle">Settings</div>
+    <div class="profileRow">
+      <span class="profileLabel">TMDB API Key</span>
+      <span class="profileValue" id="apiKeyStatus">-</span>
+    </div>
+    <button class="profileButton" id="changeApiKeyBtn">Change API Key</button>
+    <div class="profileRow">
+      <span class="profileLabel">Grid Columns</span>
+      <span class="profileValue" id="gridCount">-</span>
+    </div>
+  </div>
+
   <!-- Account -->
   <div class="profileCard">
     <div class="profileSectionTitle">Account</div>
@@ -101,8 +125,8 @@
   </div>
 
   <!-- Clear Data -->
-  <div style="padding:16px 0;">
-    <button class="profileButton danger" id="clearDataBtn" style="width:100%;text-align:center;">Clear All Local Data</button>
+  <div style="padding:16px 0;display:flex;justify-content:center;">
+    <button class="profileButton danger" id="clearDataBtn" style="min-width:240px;text-align:center;">Clear All Local Data</button>
   </div>
 
   <!-- Offline Mode -->
