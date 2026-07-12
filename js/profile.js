@@ -49,9 +49,6 @@ Logit.ProfilePage = {
       if (nameEl) nameEl.textContent = 'Offline Mode';
       if (emailEl) emailEl.textContent = 'Local storage only';
     }
-
-    this.updateApiKeyStatus();
-    this.updateGridCount();
   },
 
   updateStorageInfo() {
@@ -134,19 +131,6 @@ Logit.ProfilePage = {
       const lastSyncEl = document.getElementById('lastSyncedTime');
       if (lastSyncEl) lastSyncEl.textContent = lastSync ? this.formatTime(lastSync) : 'Never';
     } catch (e) {}
-  },
-
-  updateApiKeyStatus() {
-    const statusEl = document.getElementById('apiKeyStatus');
-    if (!statusEl) return;
-    const key = Logit.Config.getApiKey();
-    statusEl.textContent = key ? 'Set' : 'Not set';
-    statusEl.style.color = key ? 'var(--green)' : 'var(--red)';
-  },
-
-  updateGridCount() {
-    const el = document.getElementById('gridCount');
-    if (el) el.textContent = localStorage.getItem('grid') || '4';
   },
 
   setupListeners() {
@@ -304,12 +288,6 @@ Logit.ProfilePage = {
       btn.disabled = false;
       setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1500);
     };
-
-    // Settings
-    if ($('changeApiKeyBtn')) $('changeApiKeyBtn').addEventListener('click', () => {
-      const key = prompt('Enter TMDB API Key:', Logit.Config.getApiKey());
-      if (key !== null) { Logit.Config.setApiKey(key); this.updateApiKeyStatus(); }
-    });
 
     // Account
     if ($('changePasswordBtn')) $('changePasswordBtn').addEventListener('click', async () => {
