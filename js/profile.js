@@ -302,8 +302,10 @@ Logit.ProfilePage = {
     btn.disabled = true;
     btn.textContent = 'Syncing...';
     try {
-      const result = await Logit.Sync.sync();
-      alert(result.success ? 'Synced ' + result.count + ' changes!' : 'Sync failed: ' + result.message);
+      const uploadResult = await Logit.Sync.uploadExistingMovies();
+      const syncResult = await Logit.Sync.sync();
+      const count = uploadResult.count || 0;
+      alert(count + ' movies uploaded to cloud!');
     } catch (e) { alert('Sync error: ' + e.message); }
     btn.disabled = false;
     btn.textContent = 'Manual Sync';
