@@ -250,29 +250,34 @@ Logit.Sync = {
     if (!userId) return;
 
     try {
-      const lastSync = new Date(this._lastSyncTime).toISOString();
-
+      // Fetch ALL movies from cloud
       const { data: remoteMovies, error } = await client
         .from('movies')
         .select('*')
-        .eq('user_id', userId)
-        .gt('updated_at', lastSync);
+        .eq('user_id', userId);
 
       if (error) throw new Error(error.message);
 
       const localMovies = Logit.Storage.loadMovies();
+      const localMap = new Map(localMovies.map(m => [m.id, m]));
 
       for (const remoteMovie of remoteMovies || []) {
-        const localMovie = localMovies.find(m => m.id === remoteMovie.id);
+        const sanitized = this.sanitizeRemoteMovie(remoteMovie);
+        const localMovie = localMap.get(remoteMovie.id);
 
         if (!localMovie) {
           // New movie from another device
-          localMovies.push(this.sanitizeRemoteMovie(remoteMovie));
-        } else if (remoteMovie.updated_at > localMovie.updated_at) {
-          // Remote is newer
-          Object.assign(localMovie, this.sanitizeRemoteMovie(remoteMovie));
+          localMovies.push(sanitized);
+        } else {
+          // Compare timestamps - remote always wins (last write wins)
+          const remoteTime = new Date(remoteMovie.updated_at || 0).getTime();
+          const localTime = new Date(localMovie.updated_at || 0).getTime();
+
+          if (remoteTime > localTime) {
+            // Remote is newer - overwrite local
+            Object.assign(localMovie, sanitized);
+          }
         }
-        // Otherwise local is newer or same - keep local
       }
 
       Logit.Storage.saveMovies(localMovies);

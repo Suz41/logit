@@ -91,6 +91,9 @@ Logit.ProfilePage = {
     const manualSyncBtn = $('manualSyncBtn');
     if (manualSyncBtn) manualSyncBtn.addEventListener('click', () => { this.manualSync(); });
 
+    const pullCloudBtn = $('pullCloudBtn');
+    if (pullCloudBtn) pullCloudBtn.addEventListener('click', () => { this.pullFromCloud(); });
+
     // Export
     const exportBtn = $('exportBtn');
     if (exportBtn) exportBtn.addEventListener('click', () => {
@@ -294,6 +297,52 @@ Logit.ProfilePage = {
         localStorage.setItem('logit_auto_sync', autoSyncToggle.classList.contains('active') ? 'true' : 'false');
       });
     }
+  },
+
+  async pullFromCloud() {
+    const btn = document.getElementById('pullCloudBtn');
+    if (!btn) return;
+    btn.disabled = true;
+    btn.textContent = 'Pulling...';
+    try {
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+      if (!client || !userId) { alert('Not connected to cloud'); btn.disabled = false; btn.textContent = 'Pull from Cloud'; return; }
+
+      const { data: remoteMovies, error } = await client
+        .from('movies')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) throw new Error(error.message);
+
+      const localMovies = Logit.Storage.loadMovies();
+      const localMap = new Map(localMovies.map(m => [m.id, m]));
+      let updated = 0, added = 0;
+
+      for (const remoteMovie of remoteMovies || []) {
+        const sanitized = Logit.Sync.sanitizeRemoteMovie(remoteMovie);
+        const localMovie = localMap.get(remoteMovie.id);
+
+        if (!localMovie) {
+          localMovies.push(sanitized);
+          added++;
+        } else {
+          const remoteTime = new Date(remoteMovie.updated_at || 0).getTime();
+          const localTime = new Date(localMovie.updated_at || 0).getTime();
+          if (remoteTime > localTime) {
+            Object.assign(localMovie, sanitized);
+            updated++;
+          }
+        }
+      }
+
+      Logit.Storage.saveMovies(localMovies);
+      alert('Done! ' + added + ' new, ' + updated + ' updated');
+      this.updateStorageInfo();
+    } catch (e) { alert('Pull error: ' + e.message); }
+    btn.disabled = false;
+    btn.textContent = 'Pull from Cloud';
   },
 
   async manualSync() {

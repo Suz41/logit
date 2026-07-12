@@ -27,6 +27,11 @@ Logit.Storage = {
   /** @param {Array} movies */
   saveMovies(movies) {
     try {
+      // Set updated_at on all movies for sync conflict detection
+      const now = new Date().toISOString();
+      movies.forEach(function(m) {
+        m.updated_at = now;
+      });
       localStorage.setItem('movies', JSON.stringify(movies));
     } catch (e) {
       console.error('Failed to save movies to localStorage:', e);
