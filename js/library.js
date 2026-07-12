@@ -46,7 +46,7 @@ Logit.LibraryPage = {
       const rewatchBadge = Logit.Utils.isRewatch(movie) ? ' <span class="rewatch">R</span>' : '';
       const dataIdAttr = withDataId ? ' data-id="' + esc(movie.id) + '"' : '';
       return '<div class="movie"' + dataIdAttr + '>'
-        + '<img src="' + esc(img(movie.sp)) + '" loading="lazy">'
+        + '<img src="' + esc(img(movie.sp)) + '" loading="lazy" decoding="async">'
         + '<div class="movieDate"><span class="day">' + formatted.day + '</span> ' + formatted.month + rewatchBadge + '</div>'
         + '</div>';
     }
