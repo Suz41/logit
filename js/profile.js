@@ -289,15 +289,26 @@ Logit.ProfilePage = {
 
     // Change Password
     const changePasswordBtn = $('changePasswordBtn');
-    if (changePasswordBtn) changePasswordBtn.addEventListener('click', () => {
+    if (changePasswordBtn) changePasswordBtn.addEventListener('click', async () => {
+      const currentPass = prompt('Enter current password:');
+      if (!currentPass) return;
       const newPass = prompt('Enter new password (6+ characters):');
       if (!newPass || newPass.length < 6) { alert('Password must be 6+ characters'); return; }
       const client = Logit.Supabase.getClient();
       if (!client) { alert('Not connected'); return; }
-      client.auth.updateUser({ password: newPass }).then(res => {
-        if (res.error) alert(res.error.message);
-        else alert('Password updated!');
-      });
+
+      // Re-login with current password to verify
+      const user = await client.auth.getUser();
+      const email = user.data?.user?.email;
+      if (!email) { alert('Not logged in'); return; }
+
+      const { error: loginError } = await client.auth.signInWithPassword({ email, password: currentPass });
+      if (loginError) { alert('Current password is wrong'); return; }
+
+      // Update to new password
+      const { error } = await client.auth.updateUser({ password: newPass });
+      if (error) { alert(error.message); return; }
+      alert('Password updated!');
     });
 
     // Clear All Data
