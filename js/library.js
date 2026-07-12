@@ -451,6 +451,7 @@ Logit.LibraryPage = {
       const delId = state.current.id;
       state.movies = state.movies.filter(function(m) { return m.id !== delId; });
       Logit.Storage.saveMovies(state.movies);
+      Logit.Offline.enqueue('movie', 'delete', delId, {});
       renderMovies();
       Logit.Overlays.closeTop();
     };
