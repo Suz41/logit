@@ -63,7 +63,34 @@ Logit.ProfilePage = {
       const usageEl = document.getElementById('localStorageUsage');
       if (countEl) countEl.textContent = movies.length;
       if (usageEl) usageEl.textContent = formatted.val + ' ' + formatted.unit;
+
+      // Cloud storage
+      this.updateCloudStorage();
     } catch (e) {}
+  },
+
+  async updateCloudStorage() {
+    const cloudCountEl = document.getElementById('cloudMoviesCount');
+    const cloudUsageEl = document.getElementById('cloudStorageUsage');
+    try {
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+      if (!client || !userId) {
+        if (cloudCountEl) cloudCountEl.textContent = '-';
+        if (cloudUsageEl) cloudUsageEl.textContent = '-';
+        return;
+      }
+      const { data } = await client.from('movies').select('id, t, sp, g, c, dr').eq('user_id', userId);
+      if (data) {
+        const bytes = new TextEncoder().encode(JSON.stringify(data)).length;
+        const formatted = Logit.Storage.formatBytes(bytes);
+        if (cloudCountEl) cloudCountEl.textContent = data.length;
+        if (cloudUsageEl) cloudUsageEl.textContent = formatted.val + ' ' + formatted.unit;
+      }
+    } catch (e) {
+      if (cloudCountEl) cloudCountEl.textContent = '-';
+      if (cloudUsageEl) cloudUsageEl.textContent = '-';
+    }
   },
 
   async updateSyncCounts() {
