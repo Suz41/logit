@@ -259,7 +259,7 @@ Logit.ProfilePage = {
       const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
       for (let i = 0; i < lines.length; i++) {
         const entry = Logit.Import.parseLine(lines[i]);
-        if (!entry) { failed++; continue; }
+        if (!entry) { console.log('Failed to parse line:', lines[i]); failed++; continue; }
         if (statusEl) statusEl.textContent = 'Importing ' + (i + 1) + '/' + lines.length + ': ' + (entry.title || entry.tmdbId || entry.imdbId);
         try {
           let detail = null;
@@ -283,7 +283,7 @@ Logit.ProfilePage = {
           movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || ''), Logit.Import.normalizeDate(entry.date)));
           existingTmdbIds.add(String(detail.id));
           imported++;
-        } catch (err) { failed++; }
+        } catch (err) { console.error('Import line error:', err); failed++; }
       }
       Logit.Storage.saveMovies(movies);
       if (statusEl) statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
