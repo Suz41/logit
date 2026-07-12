@@ -486,19 +486,23 @@ Logit.LibraryPage = {
     };
 
     $('deleteBtn').onclick = function() {
-      if (!confirm('Delete "' + state.current.t + '" ?')) return;
-      const delId = state.current.id;
-      state.movies = state.movies.filter(function(m) { return m.id !== delId; });
-      // Save locally without triggering cloud upsert (we delete from cloud separately)
-      localStorage.setItem('movies', JSON.stringify(state.movies));
-      // Delete from cloud
-      const client = Logit.Supabase.getClient();
-      const userId = localStorage.getItem('logit_user_id');
-      if (client && userId) {
-        client.from('movies').delete().eq('id', delId).eq('user_id', userId).catch(function(e) { console.error('Cloud delete failed:', e); });
-      }
-      renderMovies();
-      Logit.Overlays.closeTop();
+      try {
+        if (!confirm('Delete "' + state.current.t + '" ?')) return;
+        const delId = state.current.id;
+        state.movies = state.movies.filter(function(m) { return m.id !== delId; });
+        localStorage.setItem('movies', JSON.stringify(state.movies));
+        // Delete from cloud (fire and forget)
+        try {
+          const client = Logit.Supabase.getClient();
+          const userId = localStorage.getItem('logit_user_id');
+          if (client && userId) {
+            client.from('movies').delete().eq('id', delId).eq('user_id', userId);
+          }
+        } catch (e) {}
+        state.current = null;
+        Logit.Overlays.closeTop();
+        renderMovies();
+      } catch (e) { console.error('Delete error:', e); }
     };
 
     $('changePoster').onclick = function() {
