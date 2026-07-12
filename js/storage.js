@@ -131,7 +131,6 @@ Logit.Storage = {
       const client = Logit.Supabase.getClient();
       const userId = localStorage.getItem('logit_user_id');
       if (!client || !userId) return;
-
       await client.from('movies').delete().eq('id', movieId).eq('user_id', userId);
     } catch (e) {
       console.error('Auto-delete from cloud failed:', e);

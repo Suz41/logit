@@ -491,12 +491,10 @@ Logit.LibraryPage = {
       state.movies = state.movies.filter(function(m) { return m.id !== delId; });
       Logit.Storage.saveMovies(state.movies);
       // Auto-delete from cloud
-      if (!Logit.Auth.isOfflineMode()) {
-        const client = Logit.Supabase.getClient();
-        const userId = localStorage.getItem('logit_user_id');
-        if (client && userId) {
-          client.from('movies').delete().eq('id', delId).eq('user_id', userId).catch(function() {});
-        }
+      const client = Logit.Supabase.getClient();
+      const userId = localStorage.getItem('logit_user_id');
+      if (client && userId) {
+        client.from('movies').delete().eq('id', delId).eq('user_id', userId).catch(function(e) { console.error('Cloud delete failed:', e); });
       }
       renderMovies();
       Logit.Overlays.closeTop();
