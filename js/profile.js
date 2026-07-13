@@ -247,11 +247,7 @@ Logit.ProfilePage = {
             btn.disabled = false;
             if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
               if (statusEl) statusEl.textContent = 'Syncing...';
-              const result = await Logit.Sync.sync();
-              if (result && !result.success) {
-                if (statusEl) statusEl.textContent = 'Sync failed: ' + result.message;
-                await new Promise(r => setTimeout(r, 4000));
-              }
+              try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
             }
             setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
             return;
@@ -273,11 +269,7 @@ Logit.ProfilePage = {
           if (statusEl) statusEl.textContent = count + ' imported from JSON';
           if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
             if (statusEl) statusEl.textContent = 'Syncing...';
-            const result = await Logit.Sync.sync();
-            if (result && !result.success) {
-              if (statusEl) statusEl.textContent = 'Sync failed: ' + result.message;
-              await new Promise(r => setTimeout(r, 4000));
-            }
+            try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
           }
           setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
           return;
@@ -326,11 +318,7 @@ Logit.ProfilePage = {
       btn.disabled = false;
       if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
         if (statusEl) statusEl.textContent = 'Syncing...';
-        const result = await Logit.Sync.sync();
-        if (result && !result.success) {
-          if (statusEl) statusEl.textContent = 'Sync failed: ' + result.message;
-          await new Promise(r => setTimeout(r, 4000));
-        }
+        try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
       }
       setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
     };
