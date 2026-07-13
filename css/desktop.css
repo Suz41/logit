@@ -699,4 +699,20 @@
   .pcSearchBar {
     display: none;
   }
+
+  .settingsPanel.open {
+    max-height: 90px;
+  }
+
+  .settingsRow {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 8px 14px;
+  }
+
+  .settingsRow #searchBar {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
 }
