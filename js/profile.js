@@ -243,13 +243,15 @@ Logit.ProfilePage = {
       }
       grid.innerHTML = html;
 
-      // Click on poster to change
+      // Click on poster to change poster (like library)
       grid.querySelectorAll('.favPoster').forEach(poster => {
         poster.addEventListener('click', (e) => {
           if (e.target.classList.contains('favRemove')) return;
           const idx = parseInt(poster.dataset.index);
-          this._editingFavIndex = idx;
-          this.openFavModal();
+          const fav = favs[idx];
+          if (fav && fav.id) {
+            this.changeFavPoster(idx, fav);
+          }
         });
       });
 
@@ -371,6 +373,21 @@ Logit.ProfilePage = {
     favs.splice(index, 1);
     localStorage.setItem('logit_favorites', JSON.stringify(favs));
     this.loadFavorites();
+  },
+
+  changeFavPoster(index, fav) {
+    const API = Logit.Config.getApiKey();
+    if (!API) { alert('TMDB API key not set'); return; }
+    // Build a fake movie object for posterPicker
+    const movie = { tmdb_id: fav.id, sp: fav.poster.replace('https://image.tmdb.org/t/p/w342', '') };
+    Logit.PosterPicker.open(movie, API, (newPoster) => {
+      const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
+      if (favs[index]) {
+        favs[index].poster = 'https://image.tmdb.org/t/p/w342' + newPoster;
+        localStorage.setItem('logit_favorites', JSON.stringify(favs));
+        this.loadFavorites();
+      }
+    });
   },
 
   setupListeners() {
