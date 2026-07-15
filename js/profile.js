@@ -12,6 +12,10 @@ Logit.ProfilePage = {
     try {
       this.setupListeners();
       this.setupTabs();
+      // Load avatar from cloud first
+      if (!Logit.Auth.isOfflineMode()) {
+        try { await this.loadAvatarFromCloud(); } catch (e) {}
+      }
       this.loadProfile();
       // Pull movies from cloud first for accurate stats
       if (!Logit.Auth.isOfflineMode()) {
@@ -52,7 +56,13 @@ Logit.ProfilePage = {
       const username = user.user_metadata?.username || user.email?.split('@')[0] || 'User';
       if (nameEl) nameEl.textContent = username;
       if (emailEl) emailEl.textContent = user.email || '';
-      if (avatarEl) avatarEl.textContent = username[0].toUpperCase();
+      // Load saved avatar
+      const savedAvatar = localStorage.getItem('logit_avatar');
+      if (savedAvatar && avatarEl) {
+        avatarEl.innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+      } else if (avatarEl) {
+        avatarEl.textContent = username[0].toUpperCase();
+      }
     } else {
       if (nameEl) nameEl.textContent = 'Offline Mode';
       if (emailEl) emailEl.textContent = 'Local storage only';
@@ -428,6 +438,35 @@ Logit.ProfilePage = {
     }
   },
 
+  async syncAvatarToCloud(avatarData) {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+    try {
+      await client.from('settings').upsert({
+        user_id: userId,
+        avatar: avatarData,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+    } catch (e) {
+      console.error('Failed to sync avatar:', e);
+    }
+  },
+
+  async loadAvatarFromCloud() {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+    try {
+      const { data } = await client.from('settings').select('avatar').eq('user_id', userId).single();
+      if (data && data.avatar) {
+        localStorage.setItem('logit_avatar', data.avatar);
+      }
+    } catch (e) {
+      console.error('Failed to load avatar from cloud:', e);
+    }
+  },
+
   setupListeners() {
     const $ = (id) => document.getElementById(id);
 
@@ -441,9 +480,27 @@ Logit.ProfilePage = {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
-        const avatarEl = $('profileAvatar');
-        if (avatarEl) avatarEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        // Compress avatar to reduce localStorage usage
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const size = 200; // max 200px
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          // Center crop
+          const scale = Math.max(size / img.width, size / img.height);
+          const x = (size - img.width * scale) / 2;
+          const y = (size - img.height * scale) / 2;
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+          const compressed = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+          localStorage.setItem('logit_avatar', compressed);
+          const avatarEl = $('profileAvatar');
+          if (avatarEl) avatarEl.innerHTML = '<img src="' + compressed + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+          // Sync to cloud
+          this.syncAvatarToCloud(compressed);
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     });
