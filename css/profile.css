@@ -1086,6 +1086,10 @@
     gap: 24px;
   }
 
+  .twoColumn .colRight {
+    order: -1;
+  }
+
   .favGrid {
     gap: 8px;
     flex-wrap: wrap;
