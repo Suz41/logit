@@ -354,7 +354,7 @@ Logit.ProfilePage = {
       const self = this;
       results.innerHTML = directors.slice(0, 8).map(p => {
         const imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
-        return '<div class="directorItem" onclick="Logit.ProfilePage.setDirectorAvatar(\'' + imgUrl + '\')">'
+        return '<div class="directorItem" data-img="' + imgUrl + '">'
           + '<img src="' + imgUrl + '" alt="' + Logit.Utils.esc(p.name) + '">'
           + '<div class="directorItemInfo">'
           + '<div class="directorItemName">' + Logit.Utils.esc(p.name) + '</div>'
@@ -362,6 +362,16 @@ Logit.ProfilePage = {
           + '</div>'
           + '</div>';
       }).join('');
+
+      // Attach click handlers after DOM update
+      setTimeout(() => {
+        results.querySelectorAll('.directorItem').forEach(item => {
+          item.onclick = function() {
+            const url = this.getAttribute('data-img');
+            self.setDirectorAvatar(url);
+          };
+        });
+      }, 0);
 
       if (directors.length === 0) {
         results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">No directors found</div>';
