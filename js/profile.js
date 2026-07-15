@@ -351,9 +351,10 @@ Logit.ProfilePage = {
 
       // Filter to directors only
       const directors = data.results.filter(p => p.known_for_department === 'Directing' && p.profile_path);
+      const self = this;
       results.innerHTML = directors.slice(0, 8).map(p => {
         const imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
-        return '<div class="directorItem" data-img="' + imgUrl + '" data-name="' + Logit.Utils.esc(p.name) + '">'
+        return '<div class="directorItem" onclick="Logit.ProfilePage.setDirectorAvatar(\'' + imgUrl + '\')">'
           + '<img src="' + imgUrl + '" alt="' + Logit.Utils.esc(p.name) + '">'
           + '<div class="directorItemInfo">'
           + '<div class="directorItemName">' + Logit.Utils.esc(p.name) + '</div>'
@@ -365,22 +366,15 @@ Logit.ProfilePage = {
       if (directors.length === 0) {
         results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">No directors found</div>';
       }
-
-      results.querySelectorAll('.directorItem').forEach(item => {
-        item.addEventListener('click', () => {
-          const imgUrl = item.dataset.img;
-          this.setDirectorAvatar(imgUrl);
-        });
-      });
     } catch (e) {
       console.error('Director search failed:', e);
     }
   },
 
   setDirectorAvatar(imgUrl) {
-    // Fetch image and compress it
+    // Fetch image via proxy to avoid CORS issues
+    const proxyUrl = 'https://image.tmdb.org/t/p/w185' + imgUrl.replace('https://image.tmdb.org/t/p/w185', '');
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const size = 200;
@@ -396,6 +390,14 @@ Logit.ProfilePage = {
       const avatarEl = document.getElementById('profileAvatar');
       if (avatarEl) avatarEl.innerHTML = '<img src="' + compressed + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       this.syncAvatarToCloud(compressed);
+      this.closeDirectorModal();
+    };
+    img.onerror = () => {
+      // Fallback: just use the URL directly
+      localStorage.setItem('logit_avatar', imgUrl);
+      const avatarEl = document.getElementById('profileAvatar');
+      if (avatarEl) avatarEl.innerHTML = '<img src="' + imgUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+      this.syncAvatarToCloud(imgUrl);
       this.closeDirectorModal();
     };
     img.src = imgUrl;
