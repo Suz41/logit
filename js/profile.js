@@ -378,8 +378,9 @@ Logit.ProfilePage = {
   changeFavPoster(index, fav) {
     const API = Logit.Config.getApiKey();
     if (!API) { alert('TMDB API key not set'); return; }
-    // Build a fake movie object for posterPicker
-    const movie = { tmdb_id: fav.id, sp: fav.poster.replace('https://image.tmdb.org/t/p/w342', '') };
+    // Extract poster path from URL
+    const posterPath = fav.poster ? fav.poster.replace(/.*\/t\/p\/\w+/, '') : '';
+    const movie = { tmdb_id: fav.id, sp: posterPath };
     Logit.PosterPicker.open(movie, API, (newPoster) => {
       const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
       if (favs[index]) {
