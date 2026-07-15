@@ -6,10 +6,10 @@
 <title>Profile - Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=10">
-<link rel="stylesheet" href="css/components.css?v=10">
-<link rel="stylesheet" href="css/profile.css?v=10">
-<link rel="stylesheet" href="css/desktop.css?v=10">
+<link rel="stylesheet" href="css/main.css?v=11">
+<link rel="stylesheet" href="css/components.css?v=11">
+<link rel="stylesheet" href="css/profile.css?v=11">
+<link rel="stylesheet" href="css/desktop.css?v=11">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -21,7 +21,7 @@
     </div>
     <div class="pcHeaderNav">
       <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>
-      <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
+      <button class="pcNavBtn active" onclick="location.href='PS.html'">Stats</button>
     </div>
     <div style="display:flex;gap:6px;">
       <button class="settingsIcon" id="backBtn" title="Back">
@@ -33,221 +33,232 @@
 
 <section class="profilePage">
 
-  <!-- Profile Hero -->
-  <div class="profileHero">
-    <div class="profileHeroBg"></div>
-    <div class="profileHeroContent">
-      <div class="avatarWrap" id="avatarWrap">
-        <div class="avatar" id="profileAvatar">S</div>
-        <button class="avatarEdit" id="editAvatarBtn" title="Change avatar">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </button>
-        <button class="avatarRemove" id="removeAvatarBtn" style="display:none;">
-          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-      </div>
-      <div class="profileNameRow">
-        <h1 class="profileName" id="profileName">Loading...</h1>
-        <button class="editNameBtn" id="editUsernameBtn" title="Edit username">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-        </button>
-      </div>
-      <p class="profileEmail" id="profileEmail"></p>
-      <p class="profileBio" id="profileBio">Movie enthusiast. Tracking every watch.</p>
-    </div>
+  <!-- Banner -->
+  <div class="profileBanner" id="profileBanner">
+    <div class="bannerOverlay"></div>
   </div>
 
-  <!-- Stats Row -->
-  <div class="statsRow" id="statsRow">
-    <div class="statItem">
-      <span class="statNum" id="statFilms">0</span>
-      <span class="statLabel">Films</span>
-    </div>
-    <div class="statItem">
-      <span class="statNum" id="statRating">0.0</span>
-      <span class="statLabel">Avg Rating</span>
-    </div>
-    <div class="statItem">
-      <span class="statNum" id="statRewatch">0</span>
-      <span class="statLabel">Rewatches</span>
-    </div>
-    <div class="statItem">
-      <span class="statNum" id="statHours">0</span>
-      <span class="statLabel">Hours</span>
-    </div>
-  </div>
-
-  <!-- Recent Films -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Recent Films</h2>
-      <a href="PS.html" class="sectionLink">View All</a>
-    </div>
-    <div class="filmGrid" id="recentFilmsGrid">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-
-  <!-- Top Genres -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Top Genres</h2>
-    </div>
-    <div class="genreList" id="genreList">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-
-  <!-- Sync -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Cloud Sync</h2>
-    </div>
-    <div class="syncCard">
-      <div class="syncRow">
-        <span class="syncLabel">Status</span>
-        <div class="syncBadge" id="syncStatusBadge">
-          <span class="syncDot"></span>
-          <span id="syncStatusText">Synced</span>
+  <!-- Profile Header -->
+  <div class="profileHeader">
+    <div class="profileHeaderInner">
+      <div class="avatarSection">
+        <div class="avatarWrap" id="avatarWrap">
+          <div class="avatar" id="profileAvatar">S</div>
+          <button class="avatarEdit" id="editAvatarBtn" title="Change avatar">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+          <input type="file" id="avatarInput" accept="image/*" style="display:none;">
         </div>
       </div>
-      <div class="syncRow">
-        <span class="syncLabel">Last Synced</span>
-        <span class="syncValue" id="lastSyncedTime">-</span>
-      </div>
-      <div class="syncRow">
-        <span class="syncLabel">Synced</span>
-        <span class="syncValue" id="syncedCount">0</span>
-      </div>
-      <div class="syncRow">
-        <span class="syncLabel">Not Synced</span>
-        <span class="syncValue" id="unsyncedCount">0</span>
-      </div>
-      <div class="syncRow">
-        <span class="syncLabel">Auto Sync</span>
-        <button class="toggle" id="autoSyncToggle"></button>
-      </div>
-      <div class="syncActions">
-        <button class="syncBtn" id="manualSyncBtn">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Push to Cloud
-        </button>
-        <button class="syncBtn" id="pullCloudBtn">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Pull from Cloud
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Storage -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Storage</h2>
-    </div>
-    <div class="storageCard">
-      <div class="storageRow">
-        <div class="storageInfo">
-          <span class="storageLabel">Local</span>
-          <span class="storageUsage" id="localStorageUsage">- / 5 MB</span>
+      <div class="profileInfoSection">
+        <div class="profileNameRow">
+          <h1 class="profileName" id="profileName">Loading...</h1>
+          <button class="editNameBtn" id="editUsernameBtn" title="Edit username">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          </button>
         </div>
-        <div class="storageBar">
-          <div class="storageBarFill" id="localStorageBar" style="width: 0%"></div>
+        <p class="profileEmail" id="profileEmail"></p>
+      </div>
+      <div class="profileStatsRow">
+        <div class="headerStat">
+          <span class="headerStatNum" id="statFilms">0</span>
+          <span class="headerStatLabel">FILMS</span>
+        </div>
+        <div class="headerStat">
+          <span class="headerStatNum" id="statRating">0.0</span>
+          <span class="headerStatLabel">AVG</span>
+        </div>
+        <div class="headerStat">
+          <span class="headerStatNum" id="statRewatch">0</span>
+          <span class="headerStatLabel">REWATCH</span>
+        </div>
+        <div class="headerStat">
+          <span class="headerStatNum" id="statHours">0</span>
+          <span class="headerStatLabel">HOURS</span>
         </div>
       </div>
-      <div class="storageRow">
-        <div class="storageInfo">
-          <span class="storageLabel">Cloud</span>
-          <span class="storageUsage" id="cloudStorageUsage">- / 500 MB</span>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="profileTabs">
+    <button class="profileTab active" data-tab="profile">Profile</button>
+    <button class="profileTab" data-tab="films">Films</button>
+    <button class="profileTab" data-tab="stats">Stats</button>
+    <button class="profileTab" data-tab="settings">Settings</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="profileContent">
+
+    <!-- Profile Tab -->
+    <div class="tabPanel active" id="panel-profile">
+      <div class="twoColumn">
+        <div class="colLeft">
+          <div class="contentBlock">
+            <h3 class="blockTitle">FAVORITE FILMS</h3>
+            <div class="filmGrid" id="recentFilmsGrid"></div>
+          </div>
+          <div class="contentBlock">
+            <h3 class="blockTitle">TOP GENRES</h3>
+            <div class="genreList" id="genreList"></div>
+          </div>
         </div>
-        <div class="storageBar">
-          <div class="storageBarFill cloud" id="cloudStorageBar" style="width: 0%"></div>
+        <div class="colRight">
+          <div class="contentBlock">
+            <h3 class="blockTitle">BIO</h3>
+            <p class="bioText" id="profileBio">Movie enthusiast. Tracking every watch.</p>
+          </div>
+          <div class="contentBlock">
+            <h3 class="blockTitle">CLOUD SYNC</h3>
+            <div class="miniSyncCard">
+              <div class="syncBadge" id="syncStatusBadge">
+                <span class="syncDot"></span>
+                <span id="syncStatusText">Synced</span>
+              </div>
+              <div class="syncMeta">
+                <span>Last sync: <span id="lastSyncedTime">-</span></span>
+              </div>
+              <div class="syncActions">
+                <button class="miniBtn" id="manualSyncBtn">Push</button>
+                <button class="miniBtn" id="pullCloudBtn">Pull</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="storageMeta">
-        <span><span id="moviesCount">0</span> local movies</span>
-        <span><span id="cloudMoviesCount">0</span> cloud movies</span>
+    </div>
+
+    <!-- Films Tab -->
+    <div class="tabPanel" id="panel-films">
+      <div class="contentBlock">
+        <h3 class="blockTitle">ALL FILMS</h3>
+        <div class="filmGrid large" id="allFilmsGrid"></div>
       </div>
     </div>
-  </div>
 
-  <!-- Import / Export -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Import / Export</h2>
+    <!-- Stats Tab -->
+    <div class="tabPanel" id="panel-stats">
+      <div class="contentBlock">
+        <h3 class="blockTitle">STATISTICS</h3>
+        <div class="statsCard">
+          <div class="statsGrid">
+            <div class="statsItem">
+              <span class="statsNum" id="statTotalFilms">0</span>
+              <span class="statsLabel">Total Films</span>
+            </div>
+            <div class="statsItem">
+              <span class="statsNum" id="statAvgRating">0.0</span>
+              <span class="statsLabel">Avg Rating</span>
+            </div>
+            <div class="statsItem">
+              <span class="statsNum" id="statTotalRewatch">0</span>
+              <span class="statsLabel">Rewatches</span>
+            </div>
+            <div class="statsItem">
+              <span class="statsNum" id="statTotalHours">0</span>
+              <span class="statsLabel">Hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contentBlock">
+        <h3 class="blockTitle">STORAGE</h3>
+        <div class="storageCard">
+          <div class="storageRow">
+            <div class="storageInfo">
+              <span class="storageLabel">Local</span>
+              <span class="storageUsage" id="localStorageUsage">- / 5 MB</span>
+            </div>
+            <div class="storageBar">
+              <div class="storageBarFill" id="localStorageBar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="storageRow">
+            <div class="storageInfo">
+              <span class="storageLabel">Cloud</span>
+              <span class="storageUsage" id="cloudStorageUsage">- / 500 MB</span>
+            </div>
+            <div class="storageBar">
+              <div class="storageBarFill cloud" id="cloudStorageBar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="storageMeta">
+            <span><span id="moviesCount">0</span> local</span>
+            <span><span id="cloudMoviesCount">0</span> cloud</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="actionGrid">
-      <button class="actionCard" id="importBtn">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span>Import</span>
-      </button>
-      <button class="actionCard" id="exportBtn">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span>Export</span>
-      </button>
-    </div>
-  </div>
 
-  <!-- Account -->
-  <div class="sectionBlock">
-    <div class="sectionHeader">
-      <h2 class="sectionTitle">Account</h2>
+    <!-- Settings Tab -->
+    <div class="tabPanel" id="panel-settings">
+      <div class="settingsSection">
+        <div class="contentBlock">
+          <h3 class="blockTitle">ACCOUNT</h3>
+          <div class="settingsList">
+            <button class="settingsItem" id="changePasswordBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Change Password</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="signOutBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Sign Out</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="contentBlock">
+          <h3 class="blockTitle">DATA</h3>
+          <div class="settingsList">
+            <button class="settingsItem" id="importBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Import Movies</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="exportBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export Movies</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem danger" id="deleteAccountBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Delete Account</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem danger" id="clearDataBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>Clear All Local Data</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="accountList">
-      <button class="accountItem" id="changePasswordBtn">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Change Password</span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="accountItem" id="signOutBtn">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>Sign Out</span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="accountItem danger" id="deleteAccountBtn">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        <span>Delete Account</span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
 
-  <!-- Clear Data -->
-  <div class="sectionBlock">
-    <button class="clearDataBtn" id="clearDataBtn">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-      Clear All Local Data
-    </button>
-  </div>
-
-  <!-- Offline Mode -->
-  <div class="sectionBlock offlineBlock" id="offlineModeSection" style="display:none;">
-    <div class="offlineIcon">
-      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
-    </div>
-    <p class="offlineText">You're using Log!t in offline mode</p>
-    <button class="offlineBtn" id="enableCloudBtn">Enable Cloud Sync</button>
   </div>
 
 </section>
 
 <!-- Import Modal -->
 <div class="importModal" id="importModal">
-  <div class="modalHeader">
-    <h3>Import Movies</h3>
-    <button class="modalClose" id="importModalClose">&times;</button>
+  <div class="importSheet">
+    <div class="modalHeader">
+      <h3>Import Movies</h3>
+      <button class="modalClose" id="importModalClose">&times;</button>
+    </div>
+    <div class="uploadArea">
+      <label class="uploadLabel">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload File
+        <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
+      </label>
+    </div>
+    <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>
+    <button class="importBtn" id="importStartBtn">Import</button>
+    <div class="importStatus" id="importStatus"></div>
   </div>
-  <div class="uploadArea">
-    <label class="uploadLabel">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Upload File
-      <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
-    </label>
-  </div>
-  <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>
-  <button class="importBtn" id="importStartBtn">Import</button>
-  <div class="importStatus" id="importStatus"></div>
 </div>
 
 <!-- Export Modal -->
@@ -266,18 +277,18 @@
 <script src="js/constants.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/supabase.js?v=10"></script>
-<script src="js/auth.js?v=10"></script>
-<script src="js/offline.js?v=10"></script>
-<script src="js/sync.js?v=10"></script>
-<script src="js/ui.js?v=10"></script>
-<script src="js/import.js?v=10"></script>
-<script src="js/search.js?v=10"></script>
-<script src="js/movieFactory.js?v=10"></script>
-<script src="js/movies.js?v=10"></script>
-<script src="js/statutils.js?v=10"></script>
-<script src="js/export.js?v=10"></script>
-<script src="js/profile.js?v=10"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/offline.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/import.js"></script>
+<script src="js/search.js"></script>
+<script src="js/movieFactory.js"></script>
+<script src="js/movies.js"></script>
+<script src="js/statutils.js"></script>
+<script src="js/export.js"></script>
+<script src="js/profile.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.ProfilePage.init();

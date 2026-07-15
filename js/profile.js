@@ -8,6 +8,7 @@ Logit.ProfilePage = {
       if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
       await this.checkAuth();
       this.setupListeners();
+      this.setupTabs();
       this.loadProfile();
       this.updateSyncStatus();
       this.updateStorageInfo();
@@ -15,6 +16,7 @@ Logit.ProfilePage = {
       this.loadStats();
       this.loadRecentFilms();
       this.loadTopGenres();
+      this.loadAllFilms();
     } catch (e) { console.error('Profile init error:', e); }
   },
 
@@ -159,6 +161,57 @@ Logit.ProfilePage = {
       const hours = Math.round(totalMins / 60);
       const hoursEl = document.getElementById('statHours');
       if (hoursEl) hoursEl.textContent = hours;
+
+      // Stats tab
+      const statTotalFilms = document.getElementById('statTotalFilms');
+      const statAvgRating = document.getElementById('statAvgRating');
+      const statTotalRewatch = document.getElementById('statTotalRewatch');
+      const statTotalHours = document.getElementById('statTotalHours');
+      if (statTotalFilms) statTotalFilms.textContent = movies.length;
+      if (statAvgRating) statAvgRating.textContent = avgRating;
+      if (statTotalRewatch) statTotalRewatch.textContent = rewatchCount;
+      if (statTotalHours) statTotalHours.textContent = hours;
+    } catch (e) {}
+  },
+
+  setupTabs() {
+    const tabs = document.querySelectorAll('.profileTab');
+    const panels = document.querySelectorAll('.tabPanel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+
+        tab.classList.add('active');
+        const panel = document.getElementById('panel-' + target);
+        if (panel) panel.classList.add('active');
+      });
+    });
+  },
+
+  loadAllFilms() {
+    try {
+      const movies = Logit.Storage.loadMovies();
+      const grid = document.getElementById('allFilmsGrid');
+      if (!grid) return;
+
+      if (movies.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-size:13px;">No films logged yet</div>';
+        return;
+      }
+
+      const sorted = [...movies].sort((a, b) => (b.d || '').localeCompare(a.d || ''));
+
+      grid.innerHTML = sorted.map(m => {
+        const poster = m.sp
+          ? `<img src="https://image.tmdb.org/t/p/w342${m.sp}" alt="${m.t}" loading="lazy">`
+          : `<div class="filmPosterPlaceholder">${m.t ? m.t.substring(0, 20) : '?'}</div>`;
+        const rating = m.r ? `<div class="filmRating">${m.r}★</div>` : '';
+        return `<div class="filmPoster" title="${m.t}">${poster}${rating}</div>`;
+      }).join('');
     } catch (e) {}
   },
 

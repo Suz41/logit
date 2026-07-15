@@ -538,145 +538,112 @@
   /* ========= PROFILE PAGE PC ========= */
   .profilePage {
     max-width: 100%;
-    padding: 20px 40px 40px;
+    padding: 0;
   }
 
-  .profileHero {
-    padding: 48px 40px 32px;
+  .profileBanner {
+    height: 320px;
+  }
+
+  .profileHeader {
+    padding: 0 40px;
+    margin-top: -70px;
   }
 
   .avatar {
-    width: 120px;
-    height: 120px;
-    font-size: 48px;
-    border-width: 4px;
+    width: 140px;
+    height: 140px;
+    font-size: 56px;
+    border-width: 5px;
   }
 
   .profileName {
     font-size: 32px;
   }
 
-  .profileBio {
-    font-size: 15px;
+  .profileEmail {
+    font-size: 14px;
   }
 
-  .statsRow {
-    margin: 0;
-    padding: 28px 32px;
-    border-radius: 16px;
+  .headerStatNum {
+    font-size: 24px;
   }
 
-  .statNum {
-    font-size: 28px;
+  .headerStatLabel {
+    font-size: 11px;
   }
 
-  .statLabel {
-    font-size: 12px;
+  .profileTabs {
+    padding: 0 40px;
+    margin-top: 24px;
   }
 
-  .sectionBlock {
-    margin: 28px 0;
+  .profileTab {
+    padding: 14px 24px;
+    font-size: 14px;
   }
 
-  .sectionTitle {
-    font-size: 15px;
-    letter-spacing: 0.8px;
+  .profileContent {
+    padding: 32px 40px 48px;
+  }
+
+  .twoColumn {
+    grid-template-columns: 1fr 360px;
+    gap: 40px;
+  }
+
+  .blockTitle {
+    font-size: 13px;
+    margin-bottom: 20px;
   }
 
   .filmGrid {
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 8px;
   }
 
+  .filmGrid.large {
+    grid-template-columns: repeat(10, 1fr);
+  }
+
   .filmPoster {
-    border-radius: 6px;
+    border-radius: 4px;
   }
 
   .filmPoster:hover {
     transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   }
 
   .genreTag {
-    padding: 8px 16px;
+    padding: 8px 18px;
     font-size: 13px;
     border-radius: 24px;
   }
 
-  .syncCard, .storageCard {
-    padding: 20px 24px;
-    border-radius: 16px;
+  .statsCard {
+    padding: 24px;
   }
 
-  .syncRow {
-    padding: 14px 0;
+  .statsNum {
+    font-size: 28px;
   }
 
-  .syncLabel {
-    font-size: 14px;
+  .storageCard {
+    padding: 20px;
   }
 
-  .syncValue {
-    font-size: 13px;
+  .settingsList {
+    border-radius: 12px;
   }
 
-  .syncActions {
-    margin-top: 16px;
-    gap: 12px;
-  }
-
-  .syncBtn {
-    height: 44px;
-    font-size: 13px;
-    border-radius: 10px;
-  }
-
-  .storageBar {
-    height: 6px;
-    border-radius: 3px;
-  }
-
-  .actionGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-
-  .actionCard {
-    padding: 24px 16px;
-    border-radius: 16px;
-    font-size: 14px;
-  }
-
-  .actionCard:hover {
-    transform: translateY(-2px);
-  }
-
-  .accountList {
-    border-radius: 16px;
-  }
-
-  .accountItem {
+  .settingsItem {
     padding: 16px 20px;
     font-size: 14px;
   }
 
-  .clearDataBtn {
-    padding: 14px 20px;
-    font-size: 14px;
-    border-radius: 12px;
-  }
-
-  .toggle {
-    width: 48px;
-    height: 28px;
-  }
-
-  .toggle::after {
-    width: 24px;
-    height: 24px;
-  }
-
-  .toggle.active::after {
-    transform: translateX(20px);
+  .importSheet, .exportSheet {
+    max-width: 480px;
   }
   .about-page .wrap {
     max-width: none !important;
