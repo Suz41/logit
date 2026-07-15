@@ -13,6 +13,10 @@ Logit.ProfilePage = {
       this.setupListeners();
       this.setupTabs();
       this.loadProfile();
+      // Pull movies from cloud first for accurate stats
+      if (!Logit.Auth.isOfflineMode()) {
+        try { await Logit.Sync.pullFromCloud(); } catch (e) {}
+      }
       this.loadStats();
       await this.loadFavoritesFromCloud();
       this.loadFavorites();
@@ -144,21 +148,21 @@ Logit.ProfilePage = {
   loadStats() {
     try {
       const movies = Logit.Storage.loadMovies();
-      console.log('Movies loaded:', movies.length);
       const stats = Logit.StatUtils.aggregate(movies);
 
       // Films count
       const filmsEl = document.getElementById('statFilms');
       if (filmsEl) filmsEl.textContent = movies.length;
 
-      // Average rating
-      const avgRating = movies.length > 0
-        ? (movies.reduce((a, b) => a + (Number(b.r) || 0), 0) / movies.length).toFixed(1)
+      // Average rating (only count rated movies)
+      const ratedMovies = movies.filter(m => Number(m.r) > 0);
+      const avgRating = ratedMovies.length > 0
+        ? (ratedMovies.reduce((a, b) => a + Number(b.r), 0) / ratedMovies.length).toFixed(1)
         : '0.0';
       const ratingEl = document.getElementById('statRating');
       if (ratingEl) ratingEl.textContent = avgRating;
 
-      // Rewatches
+      // Rewatches (movies watched more than once)
       const rewatchCount = Object.values(stats.rewatchMap).filter(r => r.count > 1).length;
       const rewatchEl = document.getElementById('statRewatch');
       if (rewatchEl) rewatchEl.textContent = rewatchCount;
