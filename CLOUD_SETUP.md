@@ -120,20 +120,22 @@ CREATE TABLE public.users (
 
 -- Create movies table
 CREATE TABLE public.movies (
-  id TEXT PRIMARY KEY,
+  id UUID PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  year INTEGER,
-  rating INTEGER,
-  watched_date DATE,
-  runtime INTEGER,
-  director TEXT,
-  language TEXT,
-  country TEXT,
-  notes TEXT,
-  favorite BOOLEAN DEFAULT FALSE,
-  rewatch BOOLEAN DEFAULT FALSE,
-  poster_url TEXT,
+  tmdb_id TEXT,
+  imdb_id TEXT,
+  t TEXT NOT NULL,          -- title
+  yr TEXT,                  -- year
+  rt INTEGER,               -- runtime
+  g TEXT,                   -- genres
+  dr TEXT,                  -- director
+  c TEXT,                   -- cast
+  lg TEXT,                  -- language
+  ct TEXT,                  -- country
+  r NUMERIC(3, 1),          -- rating
+  w TEXT,                   -- watch type / rewatch status
+  d DATE,                   -- watch date
+  sp TEXT,                  -- poster path
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -400,18 +402,18 @@ Logit.Storage.formatBytes(1048576)  // "1.0 MB"
 When the same movie is edited on two devices:
 
 1. **Last Write Wins**: The most recently updated version takes precedence
-2. **User Preferences Preserved**: Rating, notes, favorite, and rewatch status always use the local value (user's device)
-3. **Other Fields Merged**: Title, year, runtime, director, language, country from remote (likely more accurate)
+2. **User Preferences Preserved**: Rating (`r`), watch type (`w`), and watch date (`d`) use the local value (user's device)
+3. **Other Fields Merged**: Title (`t`), year (`yr`), runtime (`rt`), director (`dr`), language (`lg`), country (`ct`), genres (`g`), cast (`c`), and poster path (`sp`) from remote
 
 Example:
 ```
-Device A updates rating to 8
-Device B updates notes to "Great film"
+Device A updates rating (r) to 4
+Device B updates watch type (w) to "Rewatch"
 
 Conflict resolution:
-- Uses rating from Device A (local)
-- Uses notes from Device B (more recent)
-- Final: rating=8, notes="Great film"
+- Uses rating (r) from Device A (local preference)
+- Uses watch type (w) from Device B (more recent)
+- Final: r=4, w="Rewatch"
 ```
 
 ---

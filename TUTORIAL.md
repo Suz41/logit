@@ -56,20 +56,22 @@ CREATE TABLE public.users (
 
 -- Movies Library
 CREATE TABLE public.movies (
-  id TEXT PRIMARY KEY,
+  id UUID PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  year INTEGER,
-  rating NUMERIC(2, 1), -- supports decimal ratings (e.g. 4.5)
-  watched_date DATE,
-  runtime INTEGER,
-  director TEXT,
-  language TEXT,
-  country TEXT,
-  notes TEXT,
-  favorite BOOLEAN DEFAULT FALSE,
-  rewatch BOOLEAN DEFAULT FALSE,
-  poster_url TEXT,
+  tmdb_id TEXT,
+  imdb_id TEXT,
+  t TEXT NOT NULL,          -- title
+  yr TEXT,                  -- year
+  rt INTEGER,               -- runtime
+  g TEXT,                   -- genres
+  dr TEXT,                  -- director
+  c TEXT,                   -- cast
+  lg TEXT,                  -- language
+  ct TEXT,                  -- country
+  r NUMERIC(3, 1),          -- rating
+  w TEXT,                   -- watch type / rewatch status
+  d DATE,                   -- watch date
+  sp TEXT,                  -- poster path
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -166,4 +168,4 @@ Every **5 minutes** (or when manually triggered via the Profile page), the sync 
 ### 3. Conflict Resolution Strategy
 If a movie was edited on multiple devices:
 * **Last Write Wins**: The version with the most recent `updated_at` timestamp takes priority.
-* **User Preferences Preserved**: The merge prioritizes local user actions. Critical fields like `rating`, `notes`, `favorite`, and `rewatch` statuses are preserved from local inputs, while global metadata (e.g., `title`, `year`, `director`) is merged from the remote database.
+* **User Preferences Preserved**: The merge prioritizes local user actions. Critical fields like rating (`r`), watch type (`w`), and watch date (`d`) are preserved from local inputs, while global metadata (e.g., title `t`, year `yr`, director `dr`) is merged from the remote database.

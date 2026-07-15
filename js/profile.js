@@ -5,6 +5,7 @@ Logit.ProfilePage = {
 
   async init() {
     try {
+      if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
       await this.checkAuth();
       this.setupListeners();
       this.loadProfile();
@@ -40,16 +41,10 @@ Logit.ProfilePage = {
     const avatarEl = document.getElementById('profileAvatar');
 
     if (user) {
-      const savedAvatar = localStorage.getItem('logit_avatar');
       const username = user.user_metadata?.username || user.email?.split('@')[0] || 'User';
       if (nameEl) nameEl.textContent = username;
       if (emailEl) emailEl.textContent = user.email || '';
-      if (avatarEl) avatarEl.textContent = savedAvatar || username[0].toUpperCase();
-      if (savedAvatar && savedAvatar.startsWith('data:')) {
-        avatarEl.innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        const removeBtn = document.getElementById('removeAvatarBtn');
-        if (removeBtn) removeBtn.style.display = 'flex';
-      }
+      if (avatarEl) avatarEl.textContent = username[0].toUpperCase();
     } else {
       if (nameEl) nameEl.textContent = 'Offline Mode';
       if (emailEl) emailEl.textContent = 'Local storage only';
@@ -320,14 +315,22 @@ Logit.ProfilePage = {
               try {
                 const detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + entry.tmdb_id + '?api_key=' + API + '&append_to_response=credits,images');
                 if (!detail) { failed++; continue; }
-                movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.r || 3, entry.w || '1st Watch', entry.d || Logit.Import.normalizeDate(null)));
+                const newMovie = Logit.MovieFactory.fromTMDB(detail, entry.r || 3, entry.w || '1st Watch', entry.d || Logit.Import.normalizeDate(null));
+                movies.unshift(newMovie);
                 imported++;
-              } catch (err) { failed++; }
+                if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+                  Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
+                }
+              } catch (err) { console.error('JSON slim import item error:', err); failed++; }
             }
             Logit.Storage.saveMovies(movies);
             if (statusEl) statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
             btn.disabled = false;
-            setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1500);
+            if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+              if (statusEl) statusEl.textContent = 'Syncing...';
+              try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+            }
+            setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
             return;
           }
           let count = 0;
@@ -337,11 +340,19 @@ Logit.ProfilePage = {
             if (!m.t && !m.id) return;
             if (existingIds.has(m.id)) return;
             if (m.tmdb_id && existingTmdbIds.has(m.tmdb_id)) return;
-            movies.unshift(m); count++;
+            movies.unshift(m);
+            count++;
+            if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+              Logit.Offline.enqueue('create', 'movie', m.id, m);
+            }
           });
           Logit.Storage.saveMovies(movies);
-          if (statusEl) statusEl.textContent = count + ' imported';
-          setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1500);
+          if (statusEl) statusEl.textContent = count + ' imported from JSON';
+          if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+            if (statusEl) statusEl.textContent = 'Syncing...';
+            try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+          }
+          setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
           return;
         } catch (err) { if (statusEl) statusEl.textContent = 'Invalid JSON'; return; }
       }
@@ -373,15 +384,24 @@ Logit.ProfilePage = {
 
           let detail = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images');
           if (!detail) { failed++; continue; }
-          movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || ''), Logit.Import.normalizeDate(entry.date)));
+          const watch = entry.rewatch ? 'Rewatch' : Logit.Movies.watchType(movies, detail.title || '');
+          const newMovie = Logit.MovieFactory.fromTMDB(detail, entry.rating || 3, watch, Logit.Import.normalizeDate(entry.date));
+          movies.unshift(newMovie);
           existingTmdbIds.add(tmdbId);
           imported++;
-        } catch (err) { console.error('Import error:', err); failed++; }
+          if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+            Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
+          }
+        } catch (err) { console.error('Text import item error:', err); failed++; }
       }
       Logit.Storage.saveMovies(movies);
       if (statusEl) statusEl.textContent = imported + ' imported' + (skipped > 0 ? ', ' + skipped + ' skipped' : '') + (failed > 0 ? ', ' + failed + ' failed' : '');
       btn.disabled = false;
-      setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1500);
+      if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+        if (statusEl) statusEl.textContent = 'Syncing...';
+        try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+      }
+      setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
     };
 
     // Account

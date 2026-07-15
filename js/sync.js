@@ -94,8 +94,14 @@ Logit.Sync = {
       this._lastSyncTime = Date.now();
       localStorage.setItem('logit_last_sync', this._lastSyncTime.toString());
 
+      const failedItems = Logit.Offline.getFailed();
+      if (failedItems.length > 0) {
+        this.notifySyncStatus('error');
+        return { success: false, message: 'Some items failed to sync: ' + failedItems[0].error };
+      }
+
       this.notifySyncStatus('synced');
-      return { success: true, count: pending.length };
+      return { success: true, count: pending.length - failedItems.length };
     } catch (e) {
       console.error('Sync error:', e);
       this.notifySyncStatus('error');
@@ -220,11 +226,10 @@ Logit.Sync = {
     // Preserve user's local preferences if they're different
     const merged = {
       ...remote,
-      // Local user always has precedence over rating and notes
-      rating: local.rating !== remote.rating ? local.rating : remote.rating,
-      notes: local.notes !== remote.notes ? local.notes : remote.notes,
-      favorite: local.favorite !== remote.favorite ? local.favorite : remote.favorite,
-      rewatch: local.rewatch !== remote.rewatch ? local.rewatch : remote.rewatch,
+      // Local user always has precedence over rating, watch type, and watch date
+      r: local.r !== remote.r ? local.r : remote.r,
+      w: local.w !== remote.w ? local.w : remote.w,
+      d: local.d !== remote.d ? local.d : remote.d,
       updated_at: new Date().toISOString()
     };
 

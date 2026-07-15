@@ -1,7 +1,18 @@
 window.Logit = window.Logit || {};
 
 Logit.StatsPage = {
-  init() {
+  async init() {
+    if (typeof Logit.Supabase !== 'undefined') {
+      Logit.Supabase.init();
+      try {
+        await Logit.Supabase.getSession();
+        await Logit.Supabase.getUser();
+      } catch (e) {
+        console.error('Stats page auth restore error:', e);
+      }
+    }
+    if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
+
     const API = Logit.Config.getApiKey();
     const esc = Logit.Utils.esc;
     const $ = Logit.Utils.byId;
@@ -254,10 +265,13 @@ Logit.StatsPage = {
                   if (!detail) { failed++; continue; }
 
                   const watch = entry.w || '1st Watch';
-
-                  movies.unshift(Logit.MovieFactory.fromTMDB(detail, entry.r || 3, watch, entry.d || Logit.Import.normalizeDate(null)));
+                  const newMovie = Logit.MovieFactory.fromTMDB(detail, entry.r || 3, watch, entry.d || Logit.Import.normalizeDate(null));
+                  movies.unshift(newMovie);
                   imported++;
-                } catch (e) { failed++; }
+                  if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+                    Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
+                  }
+                } catch (e) { console.error('JSON slim import item error:', e); failed++; }
               }
 
               Logit.Storage.saveMovies(movies);
@@ -277,6 +291,9 @@ Logit.StatsPage = {
               if (m.tmdb_id && existingTmdbFull.has(m.tmdb_id)) return;
               movies.unshift(m);
               count++;
+              if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+                Logit.Offline.enqueue('create', 'movie', m.id, m);
+              }
             });
             Logit.Storage.saveMovies(movies);
             $('importStatus').textContent = count + ' imported from JSON';
@@ -363,7 +380,10 @@ Logit.StatsPage = {
             if (newImdbId) existingImdbIds.add(newImdbId);
 
             imported++;
-          } catch (e) { failed++; }
+            if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
+              Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
+            }
+          } catch (e) { console.error('Text import item error:', e); failed++; }
         }
 
         Logit.Storage.saveMovies(movies);
