@@ -347,17 +347,6 @@ Logit.ProfilePage = {
     this.loadFavorites();
   },
 
-      if (genres.length === 0) {
-        list.innerHTML = '<div style="color:var(--muted);font-size:13px;">No genre data yet</div>';
-        return;
-      }
-
-      list.innerHTML = genres.map(([genre, count]) => {
-        return `<div class="genreTag">${genre} <span class="genreCount">${count}</span></div>`;
-      }).join('');
-    } catch (e) {}
-  },
-
   setupListeners() {
     const $ = (id) => document.getElementById(id);
 
