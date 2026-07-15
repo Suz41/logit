@@ -264,6 +264,7 @@ Logit.ProfilePage = {
   },
 
   openFavModal() {
+    console.log('Opening fav modal');
     const modal = document.getElementById('favModal');
     if (modal) {
       modal.classList.add('active');
@@ -279,6 +280,8 @@ Logit.ProfilePage = {
       if (results) results.innerHTML = '';
       const confirmBtn = document.getElementById('favConfirmBtn');
       if (confirmBtn) confirmBtn.disabled = true;
+    } else {
+      console.log('Fav modal not found');
     }
   },
 
@@ -288,9 +291,12 @@ Logit.ProfilePage = {
   },
 
   async searchFavMovies(query) {
+    console.log('Searching:', query);
     const API = Logit.Config.getApiKey();
+    console.log('API key:', API ? 'exists' : 'missing');
     const results = document.getElementById('favSearchResults');
     if (!results || !API || !query) {
+      console.log('Search aborted:', { results: !!results, API: !!API, query });
       if (results) results.innerHTML = '';
       return;
     }

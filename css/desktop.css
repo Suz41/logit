@@ -642,13 +642,14 @@
     max-width: 480px;
   }
 
-  .favGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+  .favPoster {
+    width: 80px;
+    height: 120px;
   }
 
-  .favPoster {
-    border-radius: 8px;
+  .favPosterPlaceholder {
+    width: 80px;
+    height: 120px;
   }
   .about-page .wrap {
     max-width: none !important;
