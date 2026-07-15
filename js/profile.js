@@ -453,6 +453,21 @@ Logit.ProfilePage = {
     }
   },
 
+  async clearAvatarFromCloud() {
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return;
+    try {
+      await client.from('settings').upsert({
+        user_id: userId,
+        avatar: null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+    } catch (e) {
+      console.error('Failed to clear avatar:', e);
+    }
+  },
+
   async loadAvatarFromCloud() {
     const client = Logit.Supabase.getClient();
     const userId = localStorage.getItem('logit_user_id');
@@ -475,6 +490,16 @@ Logit.ProfilePage = {
 
     // Edit avatar
     if ($('editAvatarBtn')) $('editAvatarBtn').addEventListener('click', () => $('avatarInput')?.click());
+    // Clear avatar
+    if ($('clearAvatarBtn')) $('clearAvatarBtn').addEventListener('click', () => {
+      if (!confirm('Remove avatar?')) return;
+      localStorage.removeItem('logit_avatar');
+      this.clearAvatarFromCloud();
+      const avatarEl = $('profileAvatar');
+      const user = this._user;
+      const username = user?.user_metadata?.username || user?.email?.split('@')[0] || 'User';
+      if (avatarEl) avatarEl.innerHTML = username[0].toUpperCase();
+    });
     if ($('avatarInput')) $('avatarInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
