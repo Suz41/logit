@@ -449,6 +449,63 @@ Logit.ProfilePage = {
         localStorage.setItem('logit_auto_sync', autoSyncToggle.classList.contains('active') ? 'true' : 'false');
       });
     }
+
+    // Profile settings
+    this.initProfileSettings();
+  },
+
+  initProfileSettings() {
+    const $ = (id) => document.getElementById(id);
+
+    // Date toggle
+    const dateToggle = $('dateToggle');
+    if (dateToggle) {
+      const showDates = localStorage.getItem('logit_show_dates') !== 'false';
+      dateToggle.classList.toggle('active', showDates);
+      dateToggle.addEventListener('click', () => {
+        dateToggle.classList.toggle('active');
+        localStorage.setItem('logit_show_dates', dateToggle.classList.contains('active') ? 'true' : 'false');
+      });
+    }
+
+    // Grid slider
+    const gridSlider = $('gridSlider');
+    const gridValue = $('gridValue');
+    if (gridSlider && gridValue) {
+      const savedCols = parseInt(localStorage.getItem('logit_grid_cols') || '5');
+      gridSlider.value = savedCols;
+      gridValue.textContent = savedCols;
+      gridSlider.addEventListener('input', () => {
+        const val = gridSlider.value;
+        gridValue.textContent = val;
+        localStorage.setItem('logit_grid_cols', val);
+      });
+    }
+
+    // Auto sync toggle (profile version)
+    const autoSyncProfile = $('autoSyncToggleProfile');
+    if (autoSyncProfile) {
+      const autoSync = localStorage.getItem('logit_auto_sync') !== 'false';
+      autoSyncProfile.classList.toggle('active', autoSync);
+      autoSyncProfile.addEventListener('click', () => {
+        autoSyncProfile.classList.toggle('active');
+        localStorage.setItem('logit_auto_sync', autoSyncProfile.classList.contains('active') ? 'true' : 'false');
+        // Sync with main toggle if exists
+        const mainToggle = $('autoSyncToggle');
+        if (mainToggle) mainToggle.classList.toggle('active', autoSyncProfile.classList.contains('active'));
+      });
+    }
+
+    // Compact mode toggle
+    const compactToggle = $('compactToggle');
+    if (compactToggle) {
+      const compact = localStorage.getItem('logit_compact_mode') === 'true';
+      compactToggle.classList.toggle('active', compact);
+      compactToggle.addEventListener('click', () => {
+        compactToggle.classList.toggle('active');
+        localStorage.setItem('logit_compact_mode', compactToggle.classList.contains('active') ? 'true' : 'false');
+      });
+    }
   },
 
   async manualSync() {

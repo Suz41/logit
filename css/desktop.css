@@ -536,82 +536,163 @@
   }
 
   /* ========= PROFILE PAGE PC ========= */
-  .profileContainer {
-    max-width: 100%;
-    margin: 0;
-    padding: 24px 32px 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  .profilePage {
+    max-width: 900px;
+    padding: 20px 32px 40px;
   }
-  .profileCard.profileHeader {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-    padding: 28px 32px;
+
+  .profileHero {
+    padding: 48px 32px 32px;
   }
-  .profileAvatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 36px;
-    font-size: 30px;
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    font-size: 48px;
+    border-width: 4px;
   }
-  .profileInfo {
-    text-align: left;
-  }
+
   .profileName {
-    font-size: 22px;
+    font-size: 32px;
   }
-  .profileEmail {
+
+  .profileBio {
+    font-size: 15px;
+  }
+
+  .statsRow {
+    margin: 0;
+    padding: 28px 32px;
+    border-radius: 16px;
+  }
+
+  .statNum {
+    font-size: 28px;
+  }
+
+  .statLabel {
+    font-size: 12px;
+  }
+
+  .sectionBlock {
+    margin: 28px 0;
+  }
+
+  .sectionTitle {
+    font-size: 15px;
+    letter-spacing: 0.8px;
+  }
+
+  .filmGrid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+  }
+
+  .filmPoster {
+    border-radius: 6px;
+  }
+
+  .filmPoster:hover {
+    transform: scale(1.08);
+  }
+
+  .genreTag {
+    padding: 8px 16px;
     font-size: 13px;
-    margin-top: 2px;
+    border-radius: 24px;
   }
-  .profileCard:not(.profileHeader) {
+
+  .syncCard, .storageCard, .settingsCard {
     padding: 20px 24px;
     border-radius: 16px;
   }
-  .profileSectionTitle {
-    font-size: 11px;
-    letter-spacing: 0.8px;
-    margin-bottom: 14px;
+
+  .syncRow, .settingRow {
+    padding: 14px 0;
   }
-  .profileRow {
-    padding: 11px 0;
-  }
-  .profileLabel {
+
+  .syncLabel, .settingName {
     font-size: 14px;
   }
-  .profileValue {
-    font-size: 14px;
+
+  .syncValue, .settingDesc {
+    font-size: 13px;
   }
-  .profileButton {
+
+  .syncActions {
+    margin-top: 16px;
+    gap: 12px;
+  }
+
+  .syncBtn {
     height: 44px;
+    font-size: 13px;
     border-radius: 10px;
+  }
+
+  .storageBar {
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  .actionGrid {
+    gap: 12px;
+  }
+
+  .actionCard {
+    padding: 24px 16px;
+    border-radius: 16px;
     font-size: 14px;
   }
-  .settingToggle {
-    width: 46px;
-    height: 26px;
+
+  .actionCard:hover {
+    transform: translateY(-2px);
   }
-  .settingToggle::after {
-    width: 22px;
-    height: 22px;
+
+  .accountList {
+    border-radius: 16px;
   }
-  .settingToggle.active::after {
-    transform: translateX(20px);
+
+  .accountItem {
+    padding: 16px 20px;
+    font-size: 14px;
   }
-  .settingToggle {
+
+  .clearDataBtn {
+    padding: 14px 20px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .toggle {
     width: 48px;
     height: 28px;
   }
-  .settingToggle::after {
+
+  .toggle::after {
     width: 24px;
     height: 24px;
   }
-  .settingToggle.active::after {
+
+  .toggle.active::after {
     transform: translateX(20px);
+  }
+
+  /* Two-column layout for wider screens */
+  @media (min-width: 1200px) {
+    .profilePage {
+      max-width: 1000px;
+    }
+
+    .sectionBlock.twoCol {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .sectionBlock.twoCol .sectionHeader {
+      grid-column: 1 / -1;
+    }
   }
   .about-page .wrap {
     max-width: none !important;

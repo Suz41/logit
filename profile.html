@@ -78,6 +78,46 @@
     </div>
   </div>
 
+  <!-- Settings -->
+  <div class="sectionBlock">
+    <div class="sectionHeader">
+      <h2 class="sectionTitle">Settings</h2>
+    </div>
+    <div class="settingsCard">
+      <div class="settingRow">
+        <div class="settingInfo">
+          <span class="settingName">Show Dates</span>
+          <span class="settingDesc">Display watch dates on movie posters</span>
+        </div>
+        <button class="toggle" id="dateToggle"></button>
+      </div>
+      <div class="settingRow">
+        <div class="settingInfo">
+          <span class="settingName">Grid Columns</span>
+          <span class="settingDesc">Number of poster columns in library</span>
+        </div>
+        <div class="settingSlider">
+          <input type="range" id="gridSlider" min="3" max="10" value="5">
+          <span class="sliderValue" id="gridValue">5</span>
+        </div>
+      </div>
+      <div class="settingRow">
+        <div class="settingInfo">
+          <span class="settingName">Auto Sync</span>
+          <span class="settingDesc">Automatically sync changes to cloud</span>
+        </div>
+        <button class="toggle" id="autoSyncToggleProfile"></button>
+      </div>
+      <div class="settingRow">
+        <div class="settingInfo">
+          <span class="settingName">Compact Mode</span>
+          <span class="settingDesc">Smaller poster grid for more content</span>
+        </div>
+        <button class="toggle" id="compactToggle"></button>
+      </div>
+    </div>
+  </div>
+
   <!-- Recent Films -->
   <div class="sectionBlock">
     <div class="sectionHeader">
