@@ -129,7 +129,11 @@ Logit.ProfilePage = {
       if (statusText) {
         if (status === 'offline') statusText.textContent = 'Offline';
         else if (status === 'syncing') statusText.textContent = 'Syncing...';
-        else statusText.textContent = 'Synced';
+        else if (localStorage.getItem('logit_cloud_existed') === 'true') {
+          statusText.textContent = 'Cloud data loaded';
+        } else {
+          statusText.textContent = 'Synced';
+        }
       }
       const lastSyncEl = document.getElementById('lastSyncedTime');
       if (lastSyncEl) lastSyncEl.textContent = lastSync ? this.formatTime(lastSync) : 'Never';

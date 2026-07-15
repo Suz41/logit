@@ -360,7 +360,7 @@ Logit.Sync = {
 
   /**
    * Upload existing local movies to cloud
-   * Called on first login
+   * Called on first login — skips if cloud already has data (prevents duplicates)
    * @returns {Promise<Object>}
    */
   async uploadExistingMovies() {
@@ -371,6 +371,18 @@ Logit.Sync = {
     if (!client || !userId) return { success: false };
 
     try {
+      // Check if user already has movies in cloud
+      const { data: existing } = await client
+        .from('movies')
+        .select('id')
+        .eq('user_id', userId)
+        .limit(1);
+
+      // Cloud already has data — don't auto-upload local movies
+      if (existing && existing.length > 0) {
+        return { success: true, count: 0, skipped: true };
+      }
+
       const localMovies = Logit.Storage.loadMovies();
       if (localMovies.length === 0) return { success: true, count: 0 };
 

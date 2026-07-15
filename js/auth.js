@@ -210,7 +210,11 @@ Logit.Auth = {
         created_at: new Date().toISOString()
       }, { onConflict: 'id' });
       localStorage.setItem('logit_user_id', this._currentUser.id);
-      await Logit.Sync.uploadExistingMovies();
+      const result = await Logit.Sync.uploadExistingMovies();
+      // Cloud already had data — log it so profile can show status
+      if (result && result.skipped) {
+        localStorage.setItem('logit_cloud_existed', 'true');
+      }
     } catch (e) {
       console.error('Cloud init error:', e);
     }

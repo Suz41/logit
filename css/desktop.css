@@ -643,13 +643,13 @@
   }
 
   .favPoster {
-    width: 110px;
-    height: 165px;
+    width: 150px;
+    height: 255px;
   }
 
   .favPosterPlaceholder {
-    width: 110px;
-    height: 165px;
+    width: 150px;
+    height: 255px;
   }
   .about-page .wrap {
     max-width: none !important;
