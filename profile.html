@@ -83,7 +83,6 @@
   <!-- Tab Navigation -->
   <div class="profileTabs">
     <button class="profileTab active" data-tab="profile">Profile</button>
-    <button class="profileTab" data-tab="films">Films</button>
     <button class="profileTab" data-tab="stats">Stats</button>
     <button class="profileTab" data-tab="settings">Settings</button>
   </div>
@@ -96,12 +95,13 @@
       <div class="twoColumn">
         <div class="colLeft">
           <div class="contentBlock">
-            <h3 class="blockTitle">FAVORITE FILMS</h3>
-            <div class="filmGrid" id="recentFilmsGrid"></div>
-          </div>
-          <div class="contentBlock">
-            <h3 class="blockTitle">TOP GENRES</h3>
-            <div class="genreList" id="genreList"></div>
+            <div class="blockTitleRow">
+              <h3 class="blockTitle">FAVORITE FILMS</h3>
+              <button class="addFavBtn" id="addFavBtn" title="Add favorite">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+            </div>
+            <div class="favGrid" id="favFilmsGrid"></div>
           </div>
         </div>
         <div class="colRight">
@@ -126,14 +126,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Films Tab -->
-    <div class="tabPanel" id="panel-films">
-      <div class="contentBlock">
-        <h3 class="blockTitle">ALL FILMS</h3>
-        <div class="filmGrid large" id="allFilmsGrid"></div>
       </div>
     </div>
 
@@ -270,6 +262,26 @@
       <button class="exportTypeBtn txt" id="exportTxtBtn">Text</button>
       <button class="exportTypeBtn cancel" id="exportCancelBtn">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- Add Favorite Modal -->
+<div class="favModal" id="favModal">
+  <div class="favSheet">
+    <div class="modalHeader">
+      <h3>Add Favorite Film</h3>
+      <button class="modalClose" id="favModalClose">&times;</button>
+    </div>
+    <input type="text" class="favSearchInput" id="favSearchInput" placeholder="Search movie title...">
+    <div class="favSearchResults" id="favSearchResults"></div>
+    <div class="favSelected" id="favSelected" style="display:none;">
+      <img id="favSelectedPoster" src="" alt="">
+      <div class="favSelectedInfo">
+        <span id="favSelectedTitle"></span>
+        <button class="favRemoveBtn" id="favRemoveSelect">Remove</button>
+      </div>
+    </div>
+    <button class="favAddBtn" id="favConfirmBtn" disabled>Add to Favorites</button>
   </div>
 </div>
 

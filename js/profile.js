@@ -14,9 +14,7 @@ Logit.ProfilePage = {
       this.updateStorageInfo();
       this.updateSyncCounts();
       this.loadStats();
-      this.loadRecentFilms();
-      this.loadTopGenres();
-      this.loadAllFilms();
+      this.loadFavorites();
     } catch (e) { console.error('Profile init error:', e); }
   },
 
@@ -215,43 +213,129 @@ Logit.ProfilePage = {
     } catch (e) {}
   },
 
-  loadRecentFilms() {
+  loadFavorites() {
     try {
-      const movies = Logit.Storage.loadMovies();
-      const grid = document.getElementById('recentFilmsGrid');
+      const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
+      const grid = document.getElementById('favFilmsGrid');
       if (!grid) return;
 
-      // Sort by date, most recent first
-      const sorted = [...movies]
-        .filter(m => m.d)
-        .sort((a, b) => new Date(b.d) - new Date(a.d))
-        .slice(0, 10);
-
-      if (sorted.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted);font-size:13px;">No films logged yet</div>';
-        return;
+      let html = '';
+      for (let i = 0; i < 4; i++) {
+        if (favs[i]) {
+          html += `<div class="favPoster" title="${favs[i].t}">
+            <img src="${favs[i].poster}" alt="${favs[i].t}">
+            <button class="favRemove" data-index="${i}">&times;</button>
+          </div>`;
+        } else {
+          html += `<div class="favPosterPlaceholder" data-slot="${i}">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>`;
+        }
       }
+      grid.innerHTML = html;
 
-      grid.innerHTML = sorted.map(m => {
-        const poster = m.sp
-          ? `<img src="https://image.tmdb.org/t/p/w342${m.sp}" alt="${m.t}" loading="lazy">`
-          : `<div class="filmPosterPlaceholder">${m.t ? m.t.substring(0, 20) : '?'}</div>`;
-        const rating = m.r ? `<div class="filmRating">${m.r}★</div>` : '';
-        return `<div class="filmPoster" title="${m.t}">${poster}${rating}</div>`;
-      }).join('');
+      // Click handlers for remove
+      grid.querySelectorAll('.favRemove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = parseInt(btn.dataset.index);
+          this.removeFavorite(idx);
+        });
+      });
+
+      // Click handlers for empty slots
+      grid.querySelectorAll('.favPosterPlaceholder').forEach(slot => {
+        slot.addEventListener('click', () => {
+          this.openFavModal();
+        });
+      });
     } catch (e) {}
   },
 
-  loadTopGenres() {
-    try {
-      const movies = Logit.Storage.loadMovies();
-      const stats = Logit.StatUtils.aggregate(movies);
-      const list = document.getElementById('genreList');
-      if (!list) return;
+  openFavModal() {
+    const modal = document.getElementById('favModal');
+    if (modal) {
+      modal.classList.add('active');
+      const input = document.getElementById('favSearchInput');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      this._selectedFav = null;
+      const selected = document.getElementById('favSelected');
+      if (selected) selected.style.display = 'none';
+      const results = document.getElementById('favSearchResults');
+      if (results) results.innerHTML = '';
+      const confirmBtn = document.getElementById('favConfirmBtn');
+      if (confirmBtn) confirmBtn.disabled = true;
+    }
+  },
 
-      const genres = Object.entries(stats.genreCount)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8);
+  closeFavModal() {
+    const modal = document.getElementById('favModal');
+    if (modal) modal.classList.remove('active');
+  },
+
+  async searchFavMovies(query) {
+    const API = Logit.Config.getApiKey();
+    const results = document.getElementById('favSearchResults');
+    if (!results || !API || !query) {
+      if (results) results.innerHTML = '';
+      return;
+    }
+
+    try {
+      const data = await Logit.Search.tmdb('https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query));
+      if (!data || !data.results) return;
+
+      results.innerHTML = data.results.slice(0, 6).map(m => {
+        const poster = m.poster_path
+          ? `<img src="https://image.tmdb.org/t/p/w185${m.poster_path}" alt="${m.title}">`
+          : '';
+        return `<div class="favSearchItem" data-id="${m.id}" data-title="${m.title}" data-poster="${m.poster_path || ''}">
+          ${poster}
+          <span>${m.title} (${(m.release_date || '').slice(0, 4)})</span>
+        </div>`;
+      }).join('');
+
+      results.querySelectorAll('.favSearchItem').forEach(item => {
+        item.addEventListener('click', () => {
+          this._selectedFav = {
+            id: item.dataset.id,
+            t: item.dataset.title,
+            poster: item.dataset.poster ? 'https://image.tmdb.org/t/p/w342' + item.dataset.poster : ''
+          };
+          const selected = document.getElementById('favSelected');
+          const posterImg = document.getElementById('favSelectedPoster');
+          const titleEl = document.getElementById('favSelectedTitle');
+          if (selected) selected.style.display = 'flex';
+          if (posterImg) posterImg.src = this._selectedFav.poster;
+          if (titleEl) titleEl.textContent = this._selectedFav.t;
+          const confirmBtn = document.getElementById('favConfirmBtn');
+          if (confirmBtn) confirmBtn.disabled = false;
+          results.innerHTML = '';
+        });
+      });
+    } catch (e) {}
+  },
+
+  addFavorite() {
+    if (!this._selectedFav) return;
+    const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
+    if (favs.length >= 4) return;
+    favs.push(this._selectedFav);
+    localStorage.setItem('logit_favorites', JSON.stringify(favs));
+    this.closeFavModal();
+    this.loadFavorites();
+  },
+
+  removeFavorite(index) {
+    const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
+    favs.splice(index, 1);
+    localStorage.setItem('logit_favorites', JSON.stringify(favs));
+    this.loadFavorites();
+  },
 
       if (genres.length === 0) {
         list.innerHTML = '<div style="color:var(--muted);font-size:13px;">No genre data yet</div>';
@@ -485,6 +569,22 @@ Logit.ProfilePage = {
     if (autoSyncToggle) {
       autoSyncToggle.classList.add('active');
     }
+
+    // Favorite movies
+    if ($('addFavBtn')) $('addFavBtn').addEventListener('click', () => this.openFavModal());
+    if ($('favModalClose')) $('favModalClose').addEventListener('click', () => this.closeFavModal());
+    if ($('favSearchInput')) $('favSearchInput').addEventListener('input', (e) => {
+      clearTimeout(this._favSearchTimeout);
+      this._favSearchTimeout = setTimeout(() => this.searchFavMovies(e.target.value), 300);
+    });
+    if ($('favConfirmBtn')) $('favConfirmBtn').addEventListener('click', () => this.addFavorite());
+    if ($('favRemoveSelect')) $('favRemoveSelect').addEventListener('click', () => {
+      this._selectedFav = null;
+      const selected = $('favSelected');
+      if (selected) selected.style.display = 'none';
+      const confirmBtn = $('favConfirmBtn');
+      if (confirmBtn) confirmBtn.disabled = true;
+    });
 
   },
 

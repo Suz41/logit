@@ -602,10 +602,6 @@
     gap: 8px;
   }
 
-  .filmGrid.large {
-    grid-template-columns: repeat(10, 1fr);
-  }
-
   .filmPoster {
     border-radius: 4px;
   }
@@ -642,8 +638,17 @@
     font-size: 14px;
   }
 
-  .importSheet, .exportSheet {
+  .importSheet, .exportSheet, .favSheet {
     max-width: 480px;
+  }
+
+  .favGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .favPoster {
+    border-radius: 8px;
   }
   .about-page .wrap {
     max-width: none !important;
