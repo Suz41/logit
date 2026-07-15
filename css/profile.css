@@ -931,25 +931,25 @@
 /* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
   .profileBanner {
-    height: 160px;
+    height: 140px;
   }
 
   .profileHeader {
     padding: 0 16px;
-    margin-top: -40px;
+    margin-top: -50px;
   }
 
   .profileHeaderInner {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
+    gap: 8px;
   }
 
   .avatar {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
   }
 
   .profileInfoSection {
@@ -966,7 +966,7 @@
 
   .profileStatsRow {
     justify-content: center;
-    gap: 20px;
+    gap: 16px;
   }
 
   .headerStatNum {
@@ -998,16 +998,17 @@
 
   .favGrid {
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   .favPoster {
-    width: 80px;
-    height: 120px;
+    width: 75px;
+    height: 112px;
   }
 
   .favPosterPlaceholder {
-    width: 80px;
-    height: 120px;
+    width: 75px;
+    height: 112px;
   }
 
   .filmGrid {
