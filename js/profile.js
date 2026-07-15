@@ -7,14 +7,17 @@ Logit.ProfilePage = {
     try {
       if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
       await this.checkAuth();
+    } catch (e) { console.error('Auth init error:', e); }
+
+    try {
       this.setupListeners();
       this.setupTabs();
       this.loadProfile();
+      this.loadStats();
+      this.loadFavorites();
       this.updateSyncStatus();
       this.updateStorageInfo();
       this.updateSyncCounts();
-      this.loadStats();
-      this.loadFavorites();
     } catch (e) { console.error('Profile init error:', e); }
   },
 
@@ -136,6 +139,7 @@ Logit.ProfilePage = {
   loadStats() {
     try {
       const movies = Logit.Storage.loadMovies();
+      console.log('Movies loaded:', movies.length);
       const stats = Logit.StatUtils.aggregate(movies);
 
       // Films count
@@ -217,7 +221,10 @@ Logit.ProfilePage = {
     try {
       const favs = JSON.parse(localStorage.getItem('logit_favorites') || '[]');
       const grid = document.getElementById('favFilmsGrid');
-      if (!grid) return;
+      if (!grid) {
+        console.log('Fav grid not found');
+        return;
+      }
 
       let html = '';
       for (let i = 0; i < 4; i++) {
@@ -234,6 +241,7 @@ Logit.ProfilePage = {
         }
       }
       grid.innerHTML = html;
+      console.log('Fav grid loaded:', html.length > 0);
 
       // Click handlers for remove
       grid.querySelectorAll('.favRemove').forEach(btn => {
@@ -250,7 +258,9 @@ Logit.ProfilePage = {
           this.openFavModal();
         });
       });
-    } catch (e) {}
+    } catch (e) {
+      console.error('loadFavorites error:', e);
+    }
   },
 
   openFavModal() {
