@@ -472,7 +472,9 @@ Logit.LibraryPage = {
     $('changePoster').onclick = function() {
       Logit.PosterPicker.open(state.current, API, function(newPoster) {
         state.current.sp = newPoster;
+        state.current.updated_at = new Date().toISOString();
         Logit.Storage.saveMovies(state.movies);
+        Logit.Sync.pushToCloud();
         renderMovies();
         $('mPoster').src = esc(img(newPoster));
       });
