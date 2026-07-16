@@ -1023,25 +1023,26 @@
 /* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
   .profileBanner {
-    height: 140px;
+    height: 120px;
   }
 
   .profileHeader {
     padding: 0 16px;
-    margin-top: -50px;
+    margin-top: -45px;
   }
 
   .profileHeaderInner {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .avatar {
-    width: 90px;
-    height: 90px;
-    font-size: 36px;
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+    border-width: 3px;
   }
 
   .profileInfoSection {
@@ -1050,15 +1051,23 @@
 
   .profileNameRow {
     justify-content: center;
+    gap: 6px;
   }
 
   .profileName {
-    font-size: 22px;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .profileEmail {
+    font-size: 12px;
+    margin: 2px 0 0 0;
   }
 
   .profileStatsRow {
     justify-content: center;
-    gap: 16px;
+    gap: 20px;
+    margin-top: 4px;
   }
 
   .headerStatNum {
@@ -1084,32 +1093,58 @@
   }
 
   .twoColumn {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  .twoColumn .colRight {
-    order: -1;
+  .contentBlock {
+    margin-bottom: 0;
+  }
+
+  .blockTitle {
+    font-size: 11px;
+    margin-bottom: 10px;
   }
 
   .favGrid {
-    gap: 10px;
+    display: flex;
+    gap: 8px;
     flex-wrap: wrap;
-    justify-content: flex-start;
   }
 
   .favPoster {
-    width: calc(25% - 8px);
-    min-width: 70px;
+    width: calc(25% - 6px);
     aspect-ratio: 2/3;
-    height: auto;
+    border-radius: 4px;
   }
 
   .favPosterPlaceholder {
-    width: calc(25% - 8px);
-    min-width: 70px;
+    width: calc(25% - 6px);
     aspect-ratio: 2/3;
-    height: auto;
+    border-radius: 4px;
+  }
+
+  .bioText {
+    font-size: 13px;
+  }
+
+  .miniSyncCard {
+    gap: 8px;
+  }
+
+  .syncBadge {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .syncMeta {
+    font-size: 11px;
+  }
+
+  .miniBtn {
+    padding: 7px 10px;
+    font-size: 11px;
   }
 
   .filmGrid {
