@@ -1113,6 +1113,14 @@
     gap: 20px;
   }
 
+  .twoColumn .colLeft {
+    order: 1;
+  }
+
+  .twoColumn .colRight {
+    order: 2;
+  }
+
   .colRight .contentBlock:first-child {
     display: none;
   }
