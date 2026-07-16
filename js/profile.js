@@ -351,7 +351,6 @@ Logit.ProfilePage = {
 
       // Filter to directors only
       const directors = data.results.filter(p => p.known_for_department === 'Directing' && p.profile_path);
-      const self = this;
       results.innerHTML = directors.slice(0, 8).map(p => {
         const imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
         return '<div class="directorItem" data-img="' + imgUrl + '">'
@@ -362,16 +361,6 @@ Logit.ProfilePage = {
           + '</div>'
           + '</div>';
       }).join('');
-
-      // Attach click handlers after DOM update
-      setTimeout(() => {
-        results.querySelectorAll('.directorItem').forEach(item => {
-          item.onclick = function() {
-            const url = this.getAttribute('data-img');
-            self.setDirectorAvatar(url);
-          };
-        });
-      }, 0);
 
       if (directors.length === 0) {
         results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">No directors found</div>';
@@ -849,6 +838,17 @@ Logit.ProfilePage = {
       clearTimeout(this._directorSearchTimeout);
       this._directorSearchTimeout = setTimeout(() => this.searchDirectors(e.target.value), 300);
     });
+    // Delegated click handler for director items
+    const directorResults = $('directorResults');
+    if (directorResults) {
+      directorResults.addEventListener('click', (e) => {
+        const item = e.target.closest('.directorItem');
+        if (item) {
+          const url = item.getAttribute('data-img');
+          if (url) this.setDirectorAvatar(url);
+        }
+      });
+    }
 
   },
 
