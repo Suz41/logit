@@ -1085,7 +1085,7 @@
 
   .twoColumn {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
   }
 
   .twoColumn .colRight {
@@ -1093,18 +1093,23 @@
   }
 
   .favGrid {
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .favPoster {
-    width: 75px;
-    height: 112px;
+    width: calc(25% - 8px);
+    min-width: 70px;
+    aspect-ratio: 2/3;
+    height: auto;
   }
 
   .favPosterPlaceholder {
-    width: 75px;
-    height: 112px;
+    width: calc(25% - 8px);
+    min-width: 70px;
+    aspect-ratio: 2/3;
+    height: auto;
   }
 
   .filmGrid {
