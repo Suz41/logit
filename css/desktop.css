@@ -542,12 +542,12 @@
   }
 
   .profileBanner {
-    height: 400px;
+    height: 350px;
   }
 
   .profileHeader {
     padding: 0 40px;
-    margin-top: -70px;
+    margin-top: -100px;
   }
 
   .avatar {
