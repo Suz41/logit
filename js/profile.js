@@ -351,16 +351,18 @@ Logit.ProfilePage = {
 
       // Filter to directors only
       const directors = data.results.filter(p => p.known_for_department === 'Directing' && p.profile_path);
-      results.innerHTML = directors.slice(0, 8).map(p => {
+      let html = '';
+      for (let i = 0; i < Math.min(directors.length, 8); i++) {
+        const p = directors[i];
         const imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
-        return '<div class="directorItem" data-img="' + imgUrl + '">'
-          + '<img src="' + imgUrl + '" alt="' + Logit.Utils.esc(p.name) + '">'
-          + '<div class="directorItemInfo">'
-          + '<div class="directorItemName">' + Logit.Utils.esc(p.name) + '</div>'
-          + '<div class="directorItemKnown">Director</div>'
-          + '</div>'
-          + '</div>';
-      }).join('');
+        html += '<div class="directorItem" data-url="' + imgUrl + '">';
+        html += '<img src="' + imgUrl + '" alt="' + Logit.Utils.esc(p.name) + '">';
+        html += '<div class="directorItemInfo">';
+        html += '<div class="directorItemName">' + Logit.Utils.esc(p.name) + '</div>';
+        html += '<div class="directorItemKnown">Director</div>';
+        html += '</div></div>';
+      }
+      results.innerHTML = html;
 
       if (directors.length === 0) {
         results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">No directors found</div>';
@@ -842,9 +844,12 @@ Logit.ProfilePage = {
     const directorResults = $('directorResults');
     if (directorResults) {
       directorResults.addEventListener('click', (e) => {
+        console.log('Director click:', e.target);
         const item = e.target.closest('.directorItem');
+        console.log('Found item:', item);
         if (item) {
-          const url = item.getAttribute('data-img');
+          const url = item.getAttribute('data-url');
+          console.log('Director URL:', url);
           if (url) this.setDirectorAvatar(url);
         }
       });
