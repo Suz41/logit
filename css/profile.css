@@ -1050,8 +1050,15 @@
   }
 
   .profileNameRow {
+    display: flex;
+    align-items: center;
     justify-content: center;
     gap: 6px;
+  }
+
+  .editNameBtn {
+    position: absolute;
+    right: -20px;
   }
 
   .profileName {
@@ -1065,10 +1072,11 @@
   }
 
   .profileBio {
-    display: block;
+    display: block !important;
     font-size: 13px;
     color: var(--muted);
     margin: 6px 0 0 0;
+    text-align: center;
   }
 
   .profileStatsRow {
