@@ -570,20 +570,19 @@ Logit.ProfilePage = {
     try {
       const data = await Logit.Search.tmdb('https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query));
       if (!data || !data.results) return;
-      const movies = data.results.filter(m => m.backdrop_path).slice(0, 4);
+      const movies = data.results.filter(m => m.backdrop_path).slice(0, 3);
       let html = '';
       for (const m of movies) {
-        // Fetch backdrops for each movie
         const images = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + m.id + '/images?api_key=' + API);
-        if (images && images.backdrops) {
-          const backdrops = images.backdrops.slice(0, 3);
-          html += '<div style="margin-bottom:12px;">';
-          html += '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;padding-left:4px;">' + Logit.Utils.esc(m.title) + ' (' + (m.release_date || '').slice(0, 4) + ')</div>';
-          html += '<div style="display:flex;gap:8px;overflow-x:auto;">';
-          for (const b of backdrops) {
-            const imgUrl = 'https://image.tmdb.org/t/p/w780' + b.file_path;
-            html += '<div class="bannerSearchItem" data-img="' + imgUrl + '" style="flex-shrink:0;">';
-            html += '<img src="https://image.tmdb.org/t/p/w300' + b.file_path + '" style="width:160px;height:90px;border-radius:6px;object-fit:cover;">';
+        if (images && images.backdrops && images.backdrops.length > 0) {
+          html += '<div style="margin-bottom:16px;">';
+          html += '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;padding-left:4px;">' + Logit.Utils.esc(m.title) + ' (' + (m.release_date || '').slice(0, 4) + ')</div>';
+          html += '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;">';
+          for (const b of images.backdrops) {
+            const imgUrl = 'https://image.tmdb.org/t/p/w1280' + b.file_path;
+            const thumbUrl = 'https://image.tmdb.org/t/p/w300' + b.file_path;
+            html += '<div class="bannerSearchItem" data-img="' + imgUrl + '" style="flex-shrink:0;cursor:pointer;opacity:0.8;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">';
+            html += '<img src="' + thumbUrl + '" style="width:200px;height:112px;border-radius:6px;object-fit:cover;display:block;">';
             html += '</div>';
           }
           html += '</div></div>';
