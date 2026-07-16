@@ -74,6 +74,88 @@
   object-fit: cover;
 }
 
+/* ========= BANNER MODAL ========= */
+.bannerModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.bannerModal.active {
+  display: flex;
+  pointer-events: auto;
+}
+
+.bannerSheet {
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+.bannerSearchInput {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.bannerSearchInput::placeholder {
+  color: var(--muted);
+}
+
+.bannerResults {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.bannerSearchItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bannerSearchItem:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.bannerSearchItem img {
+  width: 80px;
+  height: 45px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--surface2);
+}
+
+.bannerSearchItemTitle {
+  font-size: 13px;
+  color: var(--text);
+}
+
 /* ========= PROFILE HEADER ========= */
 .profileHeader {
   position: relative;

@@ -544,6 +544,71 @@ Logit.ProfilePage = {
     }
   },
 
+  openBannerModal() {
+    const modal = document.getElementById('bannerModal');
+    if (modal) {
+      modal.classList.add('active');
+      const input = document.getElementById('bannerSearchInput');
+      if (input) { input.value = ''; input.focus(); }
+      const results = document.getElementById('bannerResults');
+      if (results) results.innerHTML = '';
+    }
+  },
+
+  closeBannerModal() {
+    const modal = document.getElementById('bannerModal');
+    if (modal) modal.classList.remove('active');
+  },
+
+  async searchBannerMovies(query) {
+    const API = Logit.Config.getApiKey();
+    const results = document.getElementById('bannerResults');
+    if (!results || !API || !query || query.length < 2) {
+      if (results) results.innerHTML = '';
+      return;
+    }
+    try {
+      const data = await Logit.Search.tmdb('https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query));
+      if (!data || !data.results) return;
+      const movies = data.results.filter(m => m.backdrop_path);
+      results.innerHTML = movies.slice(0, 6).map(m => {
+        const imgUrl = 'https://image.tmdb.org/t/p/w780' + m.backdrop_path;
+        return '<div class="bannerSearchItem" data-img="' + imgUrl + '">'
+          + '<img src="https://image.tmdb.org/t/p/w185' + m.backdrop_path + '" alt="' + Logit.Utils.esc(m.title) + '">'
+          + '<span class="bannerSearchItemTitle">' + Logit.Utils.esc(m.title) + ' (' + (m.release_date || '').slice(0, 4) + ')</span>'
+          + '</div>';
+      }).join('');
+      if (movies.length === 0) {
+        results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">No backdrops found</div>';
+      }
+      const self = this;
+      results.querySelectorAll('.bannerSearchItem').forEach(item => {
+        item.addEventListener('click', () => {
+          const url = item.getAttribute('data-img');
+          self.setBannerImage(url);
+        });
+      });
+    } catch (e) {
+      console.error('Banner search failed:', e);
+    }
+  },
+
+  setBannerImage(imgUrl) {
+    localStorage.setItem('logit_banner', imgUrl);
+    this.syncBannerToCloud(imgUrl);
+    const banner = document.getElementById('profileBanner');
+    if (banner) {
+      banner.style.background = 'none';
+      let bannerImg = banner.querySelector('img');
+      if (!bannerImg) {
+        bannerImg = document.createElement('img');
+        banner.appendChild(bannerImg);
+      }
+      bannerImg.src = imgUrl;
+    }
+    this.closeBannerModal();
+  },
+
   async syncBannerToCloud(bannerData) {
     const client = Logit.Supabase.getClient();
     const userId = localStorage.getItem('logit_user_id');
@@ -650,8 +715,8 @@ Logit.ProfilePage = {
       reader.readAsDataURL(file);
     });
 
-    // Edit banner
-    if ($('editBannerBtn')) $('editBannerBtn').addEventListener('click', () => $('bannerInput')?.click());
+    // Edit banner - search TMDB for movie backdrop
+    if ($('editBannerBtn')) $('editBannerBtn').addEventListener('click', () => this.openBannerModal());
     if ($('clearBannerBtn')) $('clearBannerBtn').addEventListener('click', () => {
       if (!confirm('Remove cover image?')) return;
       localStorage.removeItem('logit_banner');
@@ -663,41 +728,10 @@ Logit.ProfilePage = {
         if (img) img.remove();
       }
     });
-    if ($('bannerInput')) $('bannerInput').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxW = 1200;
-          const maxH = 400;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxW) { h = h * maxW / w; w = maxW; }
-          if (h > maxH) { w = w * maxH / h; h = maxH; }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', 0.7);
-          localStorage.setItem('logit_banner', compressed);
-          this.syncBannerToCloud(compressed);
-          const banner = $('profileBanner');
-          if (banner) {
-            banner.style.background = 'none';
-            let bannerImg = banner.querySelector('img');
-            if (!bannerImg) {
-              bannerImg = document.createElement('img');
-              banner.appendChild(bannerImg);
-            }
-            bannerImg.src = compressed;
-          }
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
+    if ($('bannerModalClose')) $('bannerModalClose').addEventListener('click', () => this.closeBannerModal());
+    if ($('bannerSearchInput')) $('bannerSearchInput').addEventListener('input', (e) => {
+      clearTimeout(this._bannerSearchTimeout);
+      this._bannerSearchTimeout = setTimeout(() => this.searchBannerMovies(e.target.value), 300);
     });
 
     // Edit username
