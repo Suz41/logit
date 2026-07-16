@@ -542,9 +542,7 @@
   }
 
   .profileBanner {
-    max-width: 900px;
-    aspect-ratio: 4/3;
-    height: auto;
+    height: 400px;
   }
 
   .profileHeader {
