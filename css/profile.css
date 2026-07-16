@@ -1064,6 +1064,13 @@
     margin: 2px 0 0 0;
   }
 
+  .profileBio {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 6px 0 0 0;
+  }
+
   .profileStatsRow {
     justify-content: center;
     gap: 20px;
@@ -1095,7 +1102,11 @@
   .twoColumn {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
+  }
+
+  .colRight .contentBlock:first-child {
+    display: none;
   }
 
   .contentBlock {
@@ -1125,10 +1136,6 @@
     border-radius: 4px;
   }
 
-  .bioText {
-    font-size: 13px;
-  }
-
   .miniSyncCard {
     gap: 8px;
   }
@@ -1154,4 +1161,9 @@
   .filmGrid.large {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* Hide mobile bio on desktop */
+.profileBio {
+  display: none;
 }
