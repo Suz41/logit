@@ -3,19 +3,25 @@ window.Logit = window.Logit || {};
 Logit.Search = {
   cache: {},
 
-  /** @param {string} url @returns {Promise<Object|null>} */
-  async tmdb(url) {
+  /** @param {string} url @param {number} retries @returns {Promise<Object|null>} */
+  async tmdb(url, retries = 2) {
     if (this.cache[url]) return this.cache[url];
-    try {
-      const r = await fetch(url);
-      if (!r.ok) return null;
-      const data = await r.json();
-      this.cache[url] = data;
-      return data;
-    } catch (e) {
-      console.error('TMDB fetch failed:', e);
-      return null;
+    for (let i = 0; i <= retries; i++) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        const r = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!r.ok) return null;
+        const data = await r.json();
+        this.cache[url] = data;
+        return data;
+      } catch (e) {
+        console.error('TMDB fetch attempt ' + (i + 1) + ' failed:', e);
+        if (i < retries) await new Promise(resolve => setTimeout(resolve, 1000));
+      }
     }
+    return null;
   },
 
   /** @param {Array} moviesList @param {string} query @returns {Array|null} */
