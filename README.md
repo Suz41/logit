@@ -57,6 +57,7 @@ A clean, offline-first movie logger with cloud sync. Built with vanilla HTML, CS
 | [Tutorial](docs/TUTORIAL.md) | Step-by-step usage guide |
 | [Signup](docs/SIGNUP.md) | Account creation & login guide |
 | [Setup](docs/SETUP.md) | Installation & configuration |
+| [Rules](docs/RULES.md) | Project rules & constraints |
 | [Design](docs/DESIGN.md) | Design system & tokens |
 | [Flowchart](docs/FLOWCHART.md) | App flow & architecture |
 | [Changelog](docs/CHANGELOG.md) | Version history |
