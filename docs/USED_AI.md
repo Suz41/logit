@@ -2,36 +2,16 @@
 
 This project was built with the assistance of AI tools.
 
-## Development
+## AI Assistants
 
 | Tool | Usage |
 |------|-------|
-| **Claude** (Anthropic) | Code generation, debugging, architecture decisions |
-| **GitHub Copilot** | Code completion, inline suggestions |
-
-## Design
-
-| Tool | Usage |
-|------|-------|
-| **Midjourney** | UI concept exploration |
-| **Figma AI** | Layout suggestions |
-
-## Content
-
-| Tool | Usage |
-|------|-------|
-| **ChatGPT** | Documentation drafting, README writing |
-| **Claude** | Tutorial and guide writing |
-
-## Deployment
-
-| Tool | Usage |
-|------|-------|
-| **GitHub Actions** | CI/CD automation |
-| **GitHub Pages** | Free hosting |
+| **ChatGPT** (OpenAI) | Code generation, debugging, problem solving |
+| **Antigravity** | Code assistance, feature development |
+| **MiMoCode** (Xiaomi MiMo) | Code editing, repo management, documentation |
 
 ---
 
 ## Note
 
-AI tools assisted with code generation, documentation, and design exploration. All code was reviewed, tested, and modified by the developer. The project architecture, feature decisions, and final implementation are human-driven.
+AI tools assisted with code generation, debugging, and documentation. All code was reviewed and tested by the developer. The project architecture, feature decisions, and final implementation are human-driven.
