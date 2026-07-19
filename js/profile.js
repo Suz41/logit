@@ -12,10 +12,9 @@ Logit.ProfilePage = {
     try {
       this.setupListeners();
       this.setupTabs();
-      // Load avatar and banner from cloud first
+      // Load avatar from cloud first
       if (!Logit.Auth.isOfflineMode()) {
         try { await this.loadAvatarFromCloud(); } catch (e) {}
-        try { await this.loadBannerFromCloud(); } catch (e) {}
       }
       this.loadProfile();
       // Pull movies from cloud first for accurate stats
@@ -52,7 +51,6 @@ Logit.ProfilePage = {
     const nameEl = document.getElementById('profileName');
     const emailEl = document.getElementById('profileEmail');
     const avatarEl = document.getElementById('profileAvatar');
-    const banner = document.getElementById('profileBanner');
 
     if (user) {
       const username = user.user_metadata?.username || user.email?.split('@')[0] || 'User';
@@ -64,17 +62,6 @@ Logit.ProfilePage = {
         avatarEl.innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       } else if (avatarEl) {
         avatarEl.textContent = username[0].toUpperCase();
-      }
-      // Load saved banner
-      const savedBanner = localStorage.getItem('logit_banner');
-      if (savedBanner && banner) {
-        banner.style.background = 'none';
-        let bannerImg = banner.querySelector('img');
-        if (!bannerImg) {
-          bannerImg = document.createElement('img');
-          banner.appendChild(bannerImg);
-        }
-        bannerImg.src = savedBanner;
       }
     } else {
       if (nameEl) nameEl.textContent = 'Offline Mode';
@@ -544,125 +531,6 @@ Logit.ProfilePage = {
     }
   },
 
-  openBannerModal() {
-    const modal = document.getElementById('bannerModal');
-    if (modal) {
-      modal.classList.add('active');
-      const input = document.getElementById('bannerSearchInput');
-      if (input) { input.value = ''; input.focus(); }
-      const results = document.getElementById('bannerResults');
-      if (results) results.innerHTML = '';
-    }
-  },
-
-  closeBannerModal() {
-    const modal = document.getElementById('bannerModal');
-    if (modal) modal.classList.remove('active');
-  },
-
-  async searchBannerMovies(query) {
-    const API = Logit.Config.getApiKey();
-    const results = document.getElementById('bannerResults');
-    if (!results || !API || !query || query.length < 2) {
-      if (results) results.innerHTML = '';
-      return;
-    }
-    try {
-      const data = await Logit.Search.tmdb('https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query));
-      if (!data || !data.results) return;
-      const movies = data.results.filter(m => m.backdrop_path).slice(0, 3);
-      let html = '';
-      for (const m of movies) {
-        const images = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + m.id + '/images?api_key=' + API);
-        if (images && images.backdrops && images.backdrops.length > 0) {
-          html += '<div style="margin-bottom:16px;">';
-          html += '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;padding-left:4px;">' + Logit.Utils.esc(m.title) + ' (' + (m.release_date || '').slice(0, 4) + ')</div>';
-          html += '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;">';
-          for (const b of images.backdrops) {
-            const imgUrl = 'https://image.tmdb.org/t/p/w1280' + b.file_path;
-            const thumbUrl = 'https://image.tmdb.org/t/p/w300' + b.file_path;
-            html += '<div class="bannerSearchItem" data-img="' + imgUrl + '" style="flex-shrink:0;cursor:pointer;opacity:0.8;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">';
-            html += '<img src="' + thumbUrl + '" style="width:200px;height:112px;border-radius:6px;object-fit:cover;display:block;">';
-            html += '</div>';
-          }
-          html += '</div></div>';
-        }
-      }
-      results.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted);">No backdrops found</div>';
-      const self = this;
-      results.querySelectorAll('.bannerSearchItem').forEach(item => {
-        item.addEventListener('click', () => {
-          const url = item.getAttribute('data-img');
-          self.setBannerImage(url);
-        });
-      });
-    } catch (e) {
-      console.error('Banner search failed:', e);
-    }
-  },
-
-  setBannerImage(imgUrl) {
-    // Use higher quality image
-    const hqUrl = imgUrl.replace('/w780/', '/w1280/');
-    localStorage.setItem('logit_banner', hqUrl);
-    this.syncBannerToCloud(hqUrl);
-    const banner = document.getElementById('profileBanner');
-    if (banner) {
-      banner.style.background = 'none';
-      let bannerImg = banner.querySelector('img');
-      if (!bannerImg) {
-        bannerImg = document.createElement('img');
-        banner.appendChild(bannerImg);
-      }
-      bannerImg.src = hqUrl;
-    }
-    this.closeBannerModal();
-  },
-
-  async syncBannerToCloud(bannerData) {
-    const client = Logit.Supabase.getClient();
-    const userId = localStorage.getItem('logit_user_id');
-    if (!client || !userId) return;
-    try {
-      await client.from('settings').upsert({
-        user_id: userId,
-        banner: bannerData,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' });
-    } catch (e) {
-      console.error('Failed to sync banner:', e);
-    }
-  },
-
-  async clearBannerFromCloud() {
-    const client = Logit.Supabase.getClient();
-    const userId = localStorage.getItem('logit_user_id');
-    if (!client || !userId) return;
-    try {
-      await client.from('settings').upsert({
-        user_id: userId,
-        banner: null,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' });
-    } catch (e) {
-      console.error('Failed to clear banner:', e);
-    }
-  },
-
-  async loadBannerFromCloud() {
-    const client = Logit.Supabase.getClient();
-    const userId = localStorage.getItem('logit_user_id');
-    if (!client || !userId) return;
-    try {
-      const { data } = await client.from('settings').select('banner').eq('user_id', userId).single();
-      if (data && data.banner) {
-        localStorage.setItem('logit_banner', data.banner);
-      }
-    } catch (e) {
-      console.error('Failed to load banner from cloud:', e);
-    }
-  },
-
   async loadAvatarFromCloud() {
     const client = Logit.Supabase.getClient();
     const userId = localStorage.getItem('logit_user_id');
@@ -723,25 +591,6 @@ Logit.ProfilePage = {
         img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
-    });
-
-    // Edit banner - search TMDB for movie backdrop
-    if ($('editBannerBtn')) $('editBannerBtn').addEventListener('click', () => this.openBannerModal());
-    if ($('clearBannerBtn')) $('clearBannerBtn').addEventListener('click', () => {
-      if (!confirm('Remove cover image?')) return;
-      localStorage.removeItem('logit_banner');
-      this.clearBannerFromCloud();
-      const banner = $('profileBanner');
-      if (banner) {
-        banner.style.background = '';
-        const img = banner.querySelector('img');
-        if (img) img.remove();
-      }
-    });
-    if ($('bannerModalClose')) $('bannerModalClose').addEventListener('click', () => this.closeBannerModal());
-    if ($('bannerSearchInput')) $('bannerSearchInput').addEventListener('input', (e) => {
-      clearTimeout(this._bannerSearchTimeout);
-      this._bannerSearchTimeout = setTimeout(() => this.searchBannerMovies(e.target.value), 300);
     });
 
     // Edit username
