@@ -57,7 +57,7 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit) or open `index.html
 - Paste JSON or text, or upload a file
 
 ### Cloud Sync (Optional)
-1. Sign up / Sign in from the welcome page
+1. [Sign up](SIGNUP.md) from the welcome page
 2. Movies auto-sync to Supabase
 3. Push/Pull buttons for manual sync
 
