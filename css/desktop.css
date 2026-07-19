@@ -541,35 +541,30 @@
     padding: 0;
   }
 
-  .profileBanner {
-    height: 350px;
-  }
-
   .profileHeader {
-    padding: 0 40px;
-    margin-top: -100px;
+    padding: 40px 40px 0;
   }
 
   .avatar {
-    width: 140px;
-    height: 140px;
-    font-size: 56px;
-    border-width: 5px;
+    width: 120px;
+    height: 120px;
+    font-size: 48px;
+    border-width: 3px;
   }
 
   .profileName {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .profileEmail {
     font-size: 14px;
   }
 
-  .headerStatNum {
+  .profileStatNum {
     font-size: 24px;
   }
 
-  .headerStatLabel {
+  .profileStatLabel {
     font-size: 11px;
   }
 
