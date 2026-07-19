@@ -92,5 +92,6 @@ logit/
 
 <p align="center">
   Built with vanilla HTML, CSS & JS<br>
-  No frameworks. No build tools. No dependencies.
+  No frameworks. No build tools. No dependencies.<br><br>
+  Created by <a href="https://github.com/Suz41">Suz41</a>
 </p>
