@@ -29,6 +29,14 @@ A clean, offline-first movie logger with cloud sync. Search via TMDB, rate films
 
 Or download the ZIP from GitHub, extract, and open `index.html` in your browser.
 
+## Note for Indian Users
+
+TMDB API is blocked in India. Use a VPN to:
+- Search and add movies
+- Change movie posters
+
+Once added, movies work offline without VPN.
+
 ## License
 
 MIT

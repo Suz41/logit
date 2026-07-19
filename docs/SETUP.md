@@ -18,6 +18,16 @@ No build tools, no installation required.
 
 ---
 
+## Note for Indian Users
+
+TMDB API is blocked in India. Use a VPN to:
+- Search and add movies
+- Change movie posters
+
+Once added, movies work offline without VPN.
+
+---
+
 ## TMDB API Key (Required for Movie Search)
 
 1. Go to [themoviedb.org](https://www.themoviedb.org/)
