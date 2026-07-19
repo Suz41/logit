@@ -29,68 +29,9 @@ No build tools, no installation required.
 
 ---
 
-## Cloud Sync (Optional)
+## Cloud Sync
 
-Log!t uses Supabase for optional cloud sync. The default staging database is pre-configured — no setup needed.
-
-### To use your own Supabase:
-
-1. Create a project at [supabase.com](https://supabase.com)
-2. Go to **Project Settings → API**
-3. Copy the **Project URL** and **anon/public key**
-4. Open `js/config.js` and update:
-   ```javascript
-   SUPABASE_URL: 'your-project-url',
-   SUPABASE_KEY: 'your-anon-key'
-   ```
-
-### Database Schema
-
-Create these tables in your Supabase SQL editor:
-
-```sql
--- Movies table
-CREATE TABLE movies (
-  id TEXT PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id),
-  t TEXT,
-  r NUMERIC,
-  sp TEXT,
-  g TEXT,
-  yr TEXT,
-  rt NUMERIC,
-  d TEXT,
-  w TEXT,
-  dr TEXT,
-  c TEXT,
-  lg TEXT,
-  ct TEXT,
-  tmdb_id TEXT,
-  imdb_id TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Settings table
-CREATE TABLE settings (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id),
-  avatar TEXT,
-  favorites JSONB,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE movies ENABLE ROW LEVEL SECURITY;
-ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
-
--- Policies
-CREATE POLICY "Users can manage own movies"
-  ON movies FOR ALL
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can manage own settings"
-  ON settings FOR ALL
-  USING (auth.uid() = user_id);
-```
+Cloud sync is built-in and pre-configured. Sign up from the welcome page to enable it. Movies sync automatically in the background.
 
 ---
 
