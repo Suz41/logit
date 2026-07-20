@@ -106,17 +106,15 @@
             <p class="bioText" id="profileBio">Movie enthusiast. Tracking every watch.</p>
           </div>
           <div class="contentBlock">
-            <h3 class="blockTitle">CLOUD SYNC</h3>
-            <div class="miniSyncCard">
-              <div class="syncBadge" id="syncStatusBadge">
-                <span class="syncDot"></span>
-                <span id="syncStatusText">Synced</span>
+            <h3 class="blockTitle">STORAGE</h3>
+            <div class="storageInfo">
+              <div class="storageRow">
+                <span class="storageLabel">Movies</span>
+                <span class="storageValue" id="moviesCount">0</span>
               </div>
-              <div class="syncMeta">
-                <span>Last sync: <span id="lastSyncedTime">-</span></span>
-              </div>
-              <div class="syncActions">
-
+              <div class="storageRow">
+                <span class="storageLabel">Cloud Usage</span>
+                <span class="storageValue" id="cloudStorageUsage">0 B / 500 MB</span>
               </div>
             </div>
           </div>
@@ -162,7 +160,7 @@
             </button>
             <button class="settingsItem danger" id="clearDataBtn">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              <span>Clear All Local Data</span>
+              <span>Clear All Data</span>
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
