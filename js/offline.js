@@ -137,10 +137,19 @@ Logit.Offline = {
   },
 
   /**
-   * Mark item as synced
+   * Mark item as synced (public — blocked when sync lock held)
    * @param {string} queueItemId
    */
   markSynced(queueItemId) {
+    if (this.isSyncLocked()) return;
+    this._markSyncedInternal(queueItemId);
+  },
+
+  /**
+   * Mark item as synced (internal — used by sync engine which holds the lock)
+   * @param {string} queueItemId
+   */
+  _markSyncedInternal(queueItemId) {
     const queue = this.getQueue();
     const item = queue.find(q => q.id === queueItemId);
     if (item) {
@@ -151,11 +160,21 @@ Logit.Offline = {
   },
 
   /**
-   * Mark item with error
+   * Mark item with error (public — blocked when sync lock held)
    * @param {string} queueItemId
    * @param {string} error
    */
   markError(queueItemId, error) {
+    if (this.isSyncLocked()) return;
+    this._markErrorInternal(queueItemId, error);
+  },
+
+  /**
+   * Mark item with error (internal — used by sync engine which holds the lock)
+   * @param {string} queueItemId
+   * @param {string} error
+   */
+  _markErrorInternal(queueItemId, error) {
     const queue = this.getQueue();
     const item = queue.find(q => q.id === queueItemId);
     if (item) {
@@ -181,18 +200,27 @@ Logit.Offline = {
   },
 
   /**
-   * Clear synced items
+   * Clear synced items (public — blocked when sync lock held)
    */
   clearSynced() {
+    if (this.isSyncLocked()) return;
+    this._clearSyncedInternal();
+  },
+
+  /**
+   * Clear synced items (internal — used by sync engine which holds the lock)
+   */
+  _clearSyncedInternal() {
     const queue = this.getQueue();
     const pending = queue.filter(q => !q.synced);
     this.saveQueue(pending);
   },
 
   /**
-   * Clear all queue
+   * Clear all queue (public — blocked when sync lock held)
    */
   clearAll() {
+    if (this.isSyncLocked()) return;
     localStorage.removeItem(this._QUEUE_KEY);
   },
 

@@ -90,7 +90,7 @@ Logit.Sync = {
       await this.downloadRemoteChanges();
 
       // Clear synced items
-      Logit.Offline.clearSynced();
+      Logit.Offline._clearSyncedInternal();
 
       this._lastSyncTime = Date.now();
       localStorage.setItem('logit_last_sync', this._lastSyncTime.toString());
@@ -134,9 +134,9 @@ Logit.Sync = {
         await this.syncSettings(item, client, userId);
       }
 
-      Logit.Offline.markSynced(item.id);
+      Logit.Offline._markSyncedInternal(item.id);
     } catch (e) {
-      Logit.Offline.markError(item.id, e.message);
+      Logit.Offline._markErrorInternal(item.id, e.message);
       console.error(`Failed to sync ${item.entity}:`, e);
     }
   },
