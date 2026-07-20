@@ -152,7 +152,7 @@ Logit.Sync = {
     const movieData = {
       ...item.data,
       user_id: userId,
-      updated_at: new Date().toISOString()
+      updated_at: item.data.updated_at || new Date().toISOString()
     };
 
     if (item.action === 'create') {
@@ -225,14 +225,22 @@ Logit.Sync = {
     const client = Logit.Supabase.getClient();
     const userId = localStorage.getItem('logit_user_id');
 
-    // Preserve user's local preferences if they're different
+    // Compare timestamps before deciding what to merge
+    const remoteTime = new Date(remote.updated_at || 0).getTime();
+    const localTime = new Date(local.updated_at || 0).getTime();
+
+    // If local is newer or equal, keep local data (don't overwrite with remote)
+    if (localTime >= remoteTime) {
+      return;
+    }
+
+    // Remote is newer - merge with local preference for user-specific fields
     const merged = {
       ...remote,
-      // Local user always has precedence over rating, watch type, and watch date
       r: local.r !== remote.r ? local.r : remote.r,
       w: local.w !== remote.w ? local.w : remote.w,
       d: local.d !== remote.d ? local.d : remote.d,
-      updated_at: new Date().toISOString()
+      updated_at: remote.updated_at
     };
 
     const { error } = await client
