@@ -5,20 +5,17 @@ Logit.StatsPage = {
     if (typeof Logit.Supabase !== 'undefined') {
       Logit.Supabase.init();
       try {
-        await Logit.Supabase.getSession();
-        await Logit.Supabase.getUser();
-      } catch (e) {
-        console.error('Stats page auth restore error:', e);
-      }
+        var session = await Logit.Supabase.getSession();
+        if (!session) { window.location.href = 'welcome.html'; return; }
+      } catch (e) { window.location.href = 'welcome.html'; return; }
     }
-    if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
 
-    const API = Logit.Config.getApiKey();
-    const esc = Logit.Utils.esc;
-    const $ = Logit.Utils.byId;
+    var API = Logit.Config.getApiKey();
+    var esc = Logit.Utils.esc;
+    var $ = Logit.Utils.byId;
 
-    const movies = Logit.Storage.loadMovies();
-    const stats = Logit.StatUtils.aggregate(movies);
+    var movies = await Logit.Storage.loadMovies();
+    var stats = Logit.StatUtils.aggregate(movies);
 
     // ========= HERO BOX =========
     $('movieCount').innerText = movies.length;
@@ -281,15 +278,12 @@ Logit.StatsPage = {
                   movies.unshift(newMovie);
                   imported++;
                   if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-                    Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
                   }
                 } catch (e) { console.error('JSON slim import item error:', e); failed++; }
               }
 
-              Logit.Storage.saveMovies(movies);
               statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
               importStartBtn.disabled = false;
-              try { await Logit.Sync.sync(); } catch (e) {}
               setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
               return;
             }
@@ -304,12 +298,9 @@ Logit.StatsPage = {
               movies.unshift(m);
               count++;
               if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-                Logit.Offline.enqueue('create', 'movie', m.id, m);
               }
             });
-            Logit.Storage.saveMovies(movies);
             $('importStatus').textContent = count + ' imported from JSON';
-            try { await Logit.Sync.sync(); } catch (e) {}
             setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
             return;
           } catch (e) {
@@ -393,15 +384,12 @@ Logit.StatsPage = {
 
             imported++;
             if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-              Logit.Offline.enqueue('create', 'movie', newMovie.id, newMovie);
             }
           } catch (e) { console.error('Text import item error:', e); failed++; }
         }
 
-        Logit.Storage.saveMovies(movies);
         statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
         importStartBtn.disabled = false;
-        try { await Logit.Sync.sync(); } catch (e) {}
         setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
       };
     }

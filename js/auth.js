@@ -11,76 +11,70 @@ Logit.Auth = {
 
   async checkExistingSession() {
     try {
-      const session = await Logit.Supabase.getSession();
-      const user = await Logit.Supabase.getUser();
+      var session = await Logit.Supabase.getSession();
+      var user = await Logit.Supabase.getUser();
       if (session && user) {
         this._currentUser = user;
-        localStorage.setItem('logit_offline_mode', 'false');
+        localStorage.removeItem('logit_offline_mode');
+        this.redirectToLibrary();
         return;
       }
-      if (localStorage.getItem('logit_offline_mode') !== 'false') {
-        localStorage.setItem('logit_offline_mode', 'true');
-      }
-    } catch (e) {
-      if (localStorage.getItem('logit_offline_mode') !== 'false') {
-        localStorage.setItem('logit_offline_mode', 'true');
-      }
-    }
+    } catch (e) { /* silent */ }
   },
 
   setupButtons() {
-    const signInBtn = document.getElementById('signInBtn');
-    const createBtn = document.getElementById('createAccountBtn');
-    const offlineBtn = document.getElementById('continueOfflineBtn');
-    const toggleBtn = document.getElementById('togglePassword');
-    const forgotBtn = document.getElementById('forgotPasswordBtn');
+    var self = this;
+    var signInBtn = document.getElementById('signInBtn');
+    var createBtn = document.getElementById('createAccountBtn');
+    var offlineBtn = document.getElementById('continueOfflineBtn');
+    var toggleBtn = document.getElementById('togglePassword');
+    var forgotBtn = document.getElementById('forgotPasswordBtn');
 
-    if (signInBtn) signInBtn.addEventListener('click', () => this.handleSignIn());
-    if (createBtn) createBtn.addEventListener('click', () => {
-      if (this._mode === 'signin') this.toggleMode();
-      else this.handleCreateAccount();
+    if (signInBtn) signInBtn.addEventListener('click', function() { self.handleSignIn(); });
+    if (createBtn) createBtn.addEventListener('click', function() {
+      if (self._mode === 'signin') self.toggleMode();
+      else self.handleCreateAccount();
     });
-    if (offlineBtn) offlineBtn.addEventListener('click', () => this.continueOffline());
-    if (toggleBtn) toggleBtn.addEventListener('click', () => this.togglePassword());
-    if (forgotBtn) forgotBtn.addEventListener('click', () => this.handleForgotPassword());
+    if (offlineBtn) offlineBtn.style.display = 'none';
+    if (toggleBtn) toggleBtn.addEventListener('click', function() { self.togglePassword(); });
+    if (forgotBtn) forgotBtn.addEventListener('click', function() { self.handleForgotPassword(); });
 
-    // Enter key on password field
-    const passwordInput = document.getElementById('authPassword');
+    var passwordInput = document.getElementById('authPassword');
     if (passwordInput) {
-      passwordInput.addEventListener('keydown', (e) => {
+      passwordInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-          if (this._mode === 'signin') this.handleSignIn();
-          else this.handleCreateAccount();
+          if (self._mode === 'signin') self.handleSignIn();
+          else self.handleCreateAccount();
         }
       });
     }
   },
 
   toggleMode() {
-    const usernameField = document.getElementById('authUsername');
-    const signInBtn = document.getElementById('signInBtn');
-    const createBtn = document.getElementById('createAccountBtn');
-    const forgotBtn = document.getElementById('forgotPasswordBtn');
+    var usernameField = document.getElementById('authUsername');
+    var signInBtn = document.getElementById('signInBtn');
+    var createBtn = document.getElementById('createAccountBtn');
+    var forgotBtn = document.getElementById('forgotPasswordBtn');
 
     if (this._mode === 'signin') {
       this._mode = 'signup';
       if (usernameField) usernameField.style.display = 'block';
       if (signInBtn) signInBtn.style.display = 'none';
-      if (createBtn) { createBtn.textContent = 'Create Account'; }
+      if (createBtn) createBtn.textContent = 'Create Account';
       if (forgotBtn) forgotBtn.style.display = 'none';
     } else {
       this._mode = 'signin';
       if (usernameField) usernameField.style.display = 'none';
       if (signInBtn) signInBtn.style.display = 'block';
-      if (createBtn) { createBtn.textContent = 'Create Account'; }
+      if (createBtn) createBtn.textContent = 'Create Account';
       if (forgotBtn) forgotBtn.style.display = 'block';
     }
     this.setMessage('');
   },
 
   togglePassword() {
-    const input = document.getElementById('authPassword');
-    const btn = document.getElementById('togglePassword');
+    var input = document.getElementById('authPassword');
+    var btn = document.getElementById('togglePassword');
     if (!input || !btn) return;
     if (input.type === 'password') {
       input.type = 'text';
@@ -92,33 +86,33 @@ Logit.Auth = {
   },
 
   setMessage(msg) {
-    const el = document.getElementById('authMessage');
+    var el = document.getElementById('authMessage');
     if (el) el.textContent = msg;
   },
 
   async handleSignIn() {
-    const email = document.getElementById('authEmail')?.value.trim();
-    const password = document.getElementById('authPassword')?.value.trim();
+    var email = (document.getElementById('authEmail') || {}).value;
+    var password = (document.getElementById('authPassword') || {}).value;
     if (!email || !password) { this.setMessage('Enter email and password'); return; }
-    await this.signInWithEmail(email, password);
+    await this.signInWithEmail(email.trim(), password.trim());
   },
 
   async handleCreateAccount() {
-    const username = document.getElementById('authUsername')?.value.trim();
-    const email = document.getElementById('authEmail')?.value.trim();
-    const password = document.getElementById('authPassword')?.value.trim();
+    var username = (document.getElementById('authUsername') || {}).value;
+    var email = (document.getElementById('authEmail') || {}).value;
+    var password = (document.getElementById('authPassword') || {}).value;
     if (!username || !email || !password) { this.setMessage('Fill all fields'); return; }
     if (password.length < 6) { this.setMessage('Password must be 6+ characters'); return; }
-    await this.signUpWithEmail(email, password, username);
+    await this.signUpWithEmail(email.trim(), password.trim(), username.trim());
   },
 
   async handleForgotPassword() {
-    const email = document.getElementById('authEmail')?.value.trim();
+    var email = (document.getElementById('authEmail') || {}).value;
     if (!email) { this.setMessage('Enter your email first'); return; }
-    const client = Logit.Supabase.getClient();
+    var client = Logit.Supabase.getClient();
     if (!client) { this.setMessage('Cloud not configured'); return; }
     try {
-      var { error } = await client.auth.resetPasswordForEmail(email, {
+      var { error } = await client.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: window.location.origin + '/reset.html'
       });
       if (error) { this.setMessage(error.message); return; }
@@ -128,19 +122,15 @@ Logit.Auth = {
     }
   },
 
-  continueOffline() {
-    localStorage.setItem('logit_offline_mode', 'true');
-    this.redirectToLibrary();
-  },
-
   async signInWithEmail(email, password) {
-    const client = Logit.Supabase.getClient();
+    var client = Logit.Supabase.getClient();
     if (!client) { this.setMessage('Cloud not configured'); return; }
     try {
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      var { data, error } = await client.auth.signInWithPassword({ email: email, password: password });
       if (error) { this.setMessage(error.message); return; }
       this._currentUser = data.user;
-      localStorage.setItem('logit_offline_mode', 'false');
+      localStorage.removeItem('logit_offline_mode');
+      localStorage.setItem('logit_user_id', data.user.id);
       await this.initializeCloudUser();
       this.redirectToLibrary();
     } catch (e) {
@@ -149,12 +139,11 @@ Logit.Auth = {
   },
 
   async signUpWithEmail(email, password, username) {
-    const client = Logit.Supabase.getClient();
+    var client = Logit.Supabase.getClient();
     if (!client) { this.setMessage('Cloud not configured'); return; }
 
-    // Check if username is taken
     try {
-      const { data: existing } = await client
+      var { data: existing } = await client
         .from('users')
         .select('id')
         .eq('username', username)
@@ -163,15 +152,15 @@ Logit.Auth = {
         this.setMessage('Username already taken');
         return;
       }
-    } catch (e) { /* table might not exist yet, continue */ }
+    } catch (e) { /* table might not exist yet */ }
 
     try {
-      const { data, error } = await client.auth.signUp({
-        email,
-        password,
+      var { data, error } = await client.auth.signUp({
+        email: email,
+        password: password,
         options: {
           emailRedirectTo: window.location.origin + '/index.html',
-          data: { username }
+          data: { username: username }
         }
       });
       if (error) {
@@ -189,9 +178,8 @@ Logit.Auth = {
   },
 
   async signOut() {
-    const client = Logit.Supabase.getClient();
+    var client = Logit.Supabase.getClient();
     if (client) await client.auth.signOut();
-    localStorage.removeItem('logit_auth_token');
     localStorage.removeItem('logit_user_id');
     localStorage.removeItem('logit_offline_mode');
     location.href = 'welcome.html';
@@ -199,10 +187,10 @@ Logit.Auth = {
 
   async initializeCloudUser() {
     if (!this._currentUser) return;
-    const client = Logit.Supabase.getClient();
+    var client = Logit.Supabase.getClient();
     if (!client) return;
     try {
-      const username = this._currentUser.user_metadata?.username || this._currentUser.email?.split('@')[0] || 'User';
+      var username = this._currentUser.user_metadata && this._currentUser.user_metadata.username || (this._currentUser.email || '').split('@')[0] || 'User';
       await client.from('users').upsert({
         id: this._currentUser.id,
         email: this._currentUser.email,
@@ -210,21 +198,14 @@ Logit.Auth = {
         created_at: new Date().toISOString()
       }, { onConflict: 'id' });
       localStorage.setItem('logit_user_id', this._currentUser.id);
-      const result = await Logit.Sync.uploadExistingMovies();
-      // Cloud already had data — log it so profile can show status
-      if (result && result.skipped) {
-        localStorage.setItem('logit_cloud_existed', 'true');
-      }
-    } catch (e) {
-      console.error('Cloud init error:', e);
-    }
+    } catch (e) { /* silent */ }
   },
 
   getCurrentUser() { return this._currentUser; },
   isAuthenticated() { return !!this._currentUser; },
-  isOfflineMode() { return localStorage.getItem('logit_offline_mode') === 'true'; },
+  isOfflineMode() { return false; },
 
   redirectToLibrary() {
-    setTimeout(() => { window.location.href = 'index.html'; }, 300);
+    setTimeout(function() { window.location.href = 'index.html'; }, 300);
   }
 };

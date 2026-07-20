@@ -174,51 +174,25 @@
 <script src="js/ui.js?v=10"></script>
 <script src="js/supabase.js?v=10"></script>
 <script src="js/auth.js?v=10"></script>
-<script src="js/offline.js?v=10"></script>
-<script src="js/sync.js?v=10"></script>
 <script src="js/library.js?v=10"></script>
 <script src="js/app.js?v=10"></script>
 <script>
-  // First-time user redirect
-  if (!localStorage.getItem('logit_initialized')) {
-    localStorage.setItem('logit_initialized', 'true');
-    // Check if user has any movies - if not, show welcome screen
-    try {
-      const movies = localStorage.getItem('movies');
-      if (!movies || JSON.parse(movies).length === 0) {
-        const hasAuth = localStorage.getItem('logit_offline_mode') !== null;
-        if (!hasAuth) {
-          // First time - redirect to welcome
-          window.location.href = 'welcome.html';
-        }
-      }
-    } catch (e) {
-      // Error reading movies - might be first time
-      if (localStorage.getItem('logit_offline_mode') === null) {
-        window.location.href = 'welcome.html';
-      }
-    }
-  }
-
-  // Initialize sync engine and setup auth UI
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Supabase.init();
-    Logit.Sync.init();
 
-    // Heartbeat ping — keeps Supabase project active
-    try {
-      const client = Logit.Supabase.getClient();
-      if (client) {
-        const userId = localStorage.getItem('logit_user_id');
-        if (userId) {
-          client.from('movies').select('id').eq('user_id', userId).limit(1);
-        }
+    // Check auth — redirect to welcome if not logged in
+    Logit.Supabase.getSession().then(function(session) {
+      if (!session) {
+        window.location.href = 'welcome.html';
+        return;
       }
-    } catch (e) {}
+      var userId = session.user && session.user.id;
+      if (userId) localStorage.setItem('logit_user_id', userId);
+    });
 
-    const profileBtn = document.getElementById('profileBtn');
+    var profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
-      profileBtn.addEventListener('click', () => {
+      profileBtn.addEventListener('click', function() {
         window.location.href = 'profile.html';
       });
     }

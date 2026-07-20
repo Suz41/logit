@@ -1,82 +1,10 @@
 window.Logit = window.Logit || {};
 
+/**
+ * Storage layer — Supabase only. No localStorage.
+ * All reads/writes go to the cloud. Requires authentication.
+ */
 Logit.Storage = {
-  _SCHEMA_VERSION: 2,
-  _MOVIES_KEY: 'movies',
-  _SCHEMA_KEY: 'logit_schema_version',
-
-  /** @returns {Array} Array of movie objects from localStorage */
-  loadMovies() {
-    try {
-      var raw = localStorage.getItem(this._MOVIES_KEY);
-      if (!raw) return [];
-      var parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed;
-    } catch (e) {
-      console.warn('Corrupted localStorage movies data, resetting:', e);
-      localStorage.removeItem(this._MOVIES_KEY);
-      return [];
-    }
-  },
-
-  /** Run any pending schema migrations */
-  migrate() {
-    var currentVersion = parseInt(localStorage.getItem(this._SCHEMA_KEY)) || 1;
-    if (currentVersion >= this._SCHEMA_VERSION) return;
-
-    var list = this.loadMovies();
-    var changed = false;
-
-    // V1 -> V2: strip legacy poster arrays
-    if (currentVersion < 2) {
-      list.forEach(function(m) {
-        if (m.p) { delete m.p; changed = true; }
-      });
-    }
-
-    if (changed) this.saveMoviesRaw(list);
-    localStorage.setItem(this._SCHEMA_KEY, this._SCHEMA_VERSION);
-  },
-
-  /**
-   * Save movies array directly to localStorage (no side effects).
-   * Use this for bulk writes like sync/merge. Does NOT set updated_at or trigger sync.
-   */
-  saveMoviesRaw(movies) {
-    try {
-      localStorage.setItem(this._MOVIES_KEY, JSON.stringify(movies));
-    } catch (e) {
-      console.error('Failed to save movies to localStorage:', e);
-    }
-  },
-
-  /**
-   * Save movies array to localStorage and queue for sync if authenticated.
-   * Does NOT stamp updated_at on every movie — only the caller knows what changed.
-   */
-  saveMovies(movies) {
-    this.saveMoviesRaw(movies);
-
-    if (!Logit.Auth.isOfflineMode() && Logit.Sync && Logit.Sync.sync) {
-      Logit.Sync.sync().catch(function() {});
-    }
-  },
-
-  /** @returns {{ total: number, keys: Array<{key: string, size: number}> }} */
-  getStorageSize() {
-    var total = 0;
-    var keys = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var key = localStorage.key(i);
-      var val = localStorage.getItem(key);
-      var size = (key.length + val.length) * 2;
-      total += size;
-      keys.push({ key: key, size: size });
-    }
-    return { total: total, keys: keys };
-  },
-
   /** @param {number} bytes @returns {{ val: string, unit: string }} */
   formatBytes(bytes) {
     if (bytes < 1024) return { val: bytes, unit: 'B' };
@@ -85,42 +13,114 @@ Logit.Storage = {
   },
 
   /**
-   * Save a single movie and queue for sync.
-   * Only stamps updated_at on the specific movie being saved.
+   * Load all movies from Supabase for the current user.
+   * @returns {Promise<Array>}
    */
-  saveMovie(movie, action) {
-    action = action || 'create';
-    var movies = this.loadMovies();
-    var existingIndex = movies.findIndex(function(m) { return m.id === movie.id; });
+  async loadMovies() {
+    var client = Logit.Supabase.getClient();
+    var userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return [];
 
-    if (action === 'create' && existingIndex === -1) {
-      if (!movie.id) movie.id = 'movie_' + Date.now();
-      if (!movie.created_at) movie.created_at = new Date().toISOString();
-      movie.updated_at = new Date().toISOString();
-      movies.unshift(movie);
-    } else if (action === 'update' && existingIndex !== -1) {
-      movie.updated_at = new Date().toISOString();
-      movies[existingIndex] = movie;
+    try {
+      var { data, error } = await client
+        .from('movies')
+        .select('*')
+        .eq('user_id', userId)
+        .order('d', { ascending: false });
+
+      if (error) throw new Error(error.message);
+      return data || [];
+    } catch (e) {
+      console.error('Failed to load movies:', e);
+      return [];
     }
-
-    this.saveMovies(movies);
-
-    if (!Logit.Auth.isOfflineMode() && Logit.Offline) {
-      Logit.Offline.enqueue(action, 'movie', movie.id, movie);
-    }
-
-    return movie;
   },
 
   /**
-   * Delete movie locally and queue for sync.
+   * Save a single movie (create or update).
+   * @param {Object} movie
+   * @param {string} action - 'create' or 'update'
+   * @returns {Promise<Object>} the saved movie
    */
-  deleteMovie(movieId) {
-    var movies = this.loadMovies();
-    this.saveMovies(movies.filter(function(m) { return m.id !== movieId; }));
-    if (!Logit.Auth.isOfflineMode() && Logit.Offline) {
-      Logit.Offline.enqueue('delete', 'movie', movieId, { id: movieId });
+  async saveMovie(movie, action) {
+    action = action || 'create';
+    var client = Logit.Supabase.getClient();
+    var userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) throw new Error('Not authenticated');
+
+    var now = new Date().toISOString();
+    var record = Object.assign({}, movie, {
+      user_id: userId,
+      updated_at: now
+    });
+
+    if (action === 'create') {
+      if (!record.id) record.id = Logit.MovieFactory.generateUUID();
+      if (!record.created_at) record.created_at = now;
+      var { error } = await client.from('movies').insert([record]);
+      if (error) throw new Error(error.message);
+    } else {
+      var { error: updErr } = await client.from('movies').update(record)
+        .eq('id', movie.id).eq('user_id', userId);
+      if (updErr) throw new Error(updErr.message);
+    }
+
+    return record;
+  },
+
+  /**
+   * Save multiple movies (bulk upsert).
+   * @param {Array} movies
+   * @returns {Promise<void>}
+   */
+  async saveMovies(movies) {
+    var client = Logit.Supabase.getClient();
+    var userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) throw new Error('Not authenticated');
+
+    var now = new Date().toISOString();
+    var records = movies.map(function(m) {
+      return Object.assign({}, m, { user_id: userId, updated_at: now });
+    });
+
+    var { error } = await client.from('movies').upsert(records, { onConflict: 'id' });
+    if (error) throw new Error(error.message);
+  },
+
+  /**
+   * Delete a movie from Supabase.
+   * @param {string} movieId
+   * @returns {Promise<void>}
+   */
+  async deleteMovie(movieId) {
+    var client = Logit.Supabase.getClient();
+    var userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) throw new Error('Not authenticated');
+
+    var { error } = await client.from('movies').delete()
+      .eq('id', movieId).eq('user_id', userId);
+    if (error) throw new Error(error.message);
+  },
+
+  /**
+   * Get cloud storage usage for the current user.
+   * @returns {Promise<{ count: number, bytes: number, formatted: string }>}
+   */
+  async getCloudStorageUsage() {
+    var client = Logit.Supabase.getClient();
+    var userId = localStorage.getItem('logit_user_id');
+    if (!client || !userId) return { count: 0, bytes: 0, formatted: '0 B' };
+
+    try {
+      var { data } = await client.from('movies')
+        .select('id, t, sp, g, c, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id')
+        .eq('user_id', userId);
+      if (!data) return { count: 0, bytes: 0, formatted: '0 B' };
+      var bytes = new TextEncoder().encode(JSON.stringify(data)).length;
+      var fmt = this.formatBytes(bytes);
+      return { count: data.length, bytes: bytes, formatted: fmt.val + ' ' + fmt.unit };
+    } catch (e) {
+      return { count: 0, bytes: 0, formatted: '0 B' };
     }
   }
 };
-

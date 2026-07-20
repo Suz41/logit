@@ -8,7 +8,6 @@ Logit.Modals = {
     e.target.src = Logit.Modals._posterFallback;
   },
 
-  /** @param {Object} movie @param {string} apiKey @param {Function} onAdd */
   openRating(movie, apiKey, onAdd) {
     var old = document.querySelector('.ratingSheet');
     if (old) old.remove();
@@ -52,15 +51,10 @@ Logit.Modals = {
     });
 
     sheet.querySelector('.sheetBg').onclick = function() { Logit.Overlays.closeTop(); };
-
-    // Escape key closes
-    sheet.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') Logit.Overlays.closeTop();
-    });
+    sheet.addEventListener('keydown', function(e) { if (e.key === 'Escape') Logit.Overlays.closeTop(); });
 
     addBtn.onclick = async function() {
       if (!rating) return;
-
       addBtn.textContent = 'Adding...';
       addBtn.disabled = true;
 
@@ -68,14 +62,12 @@ Logit.Modals = {
         var d = await Logit.Search.tmdb(
           'https://api.themoviedb.org/3/movie/' + movie.id + '?api_key=' + apiKey + '&append_to_response=credits,images'
         );
-
         if (!d) {
           alert('Failed to fetch movie details from TMDB. Please check your connection.');
           addBtn.textContent = 'Add Movie';
           addBtn.disabled = false;
           return;
         }
-
         var isRewatch = sheet.querySelector('#rewatchToggle').checked;
         onAdd(d, rating, isRewatch);
       } catch (e) {
@@ -86,11 +78,9 @@ Logit.Modals = {
       }
     };
 
-    // Focus trap
     addBtn.focus();
   },
 
-  /** @param {Object} movie */
   openMeta(movie) {
     var $ = Logit.Utils.byId;
     var metaModal = $('metaModal');
@@ -134,7 +124,6 @@ Logit.Modals = {
     }
   },
 
-  /** @param {HTMLElement} modalElement @param {HTMLInputElement} queryInput */
   openAdd(modalElement, queryInput) {
     modalElement.classList.add('active');
     modalElement.setAttribute('aria-hidden', 'false');
@@ -143,7 +132,6 @@ Logit.Modals = {
     Logit.Overlays.push(function() { Logit.Modals.closeAdd(modalElement, queryInput); });
   },
 
-  /** @param {HTMLElement} modalElement @param {HTMLInputElement} queryInput */
   closeAdd(modalElement, queryInput) {
     modalElement.classList.remove('active');
     modalElement.setAttribute('aria-hidden', 'true');
