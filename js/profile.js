@@ -13,8 +13,8 @@ Logit.ProfilePage = {
     try {
       this.setupListeners();
       this.setupTabs();
-      await this.loadAvatarFromCloud();
       this.loadProfile();
+      await this.loadAvatarFromCloud();
       await this.loadMoviesFromCloud();
       this.loadStats();
       await this.loadFavoritesFromCloud();
@@ -48,7 +48,10 @@ Logit.ProfilePage = {
       var username = user.user_metadata && user.user_metadata.username || (user.email || '').split('@')[0] || 'User';
       if (nameEl) nameEl.textContent = username;
       if (emailEl) emailEl.textContent = user.email || '';
-      if (avatarEl) avatarEl.textContent = username[0].toUpperCase();
+      // Only set initial letter if no avatar loaded yet
+      if (avatarEl && !avatarEl.querySelector('img')) {
+        avatarEl.textContent = username[0].toUpperCase();
+      }
     }
   },
 
