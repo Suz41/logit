@@ -118,8 +118,8 @@ Logit.Auth = {
     const client = Logit.Supabase.getClient();
     if (!client) { this.setMessage('Cloud not configured'); return; }
     try {
-      const { error } = await client.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://suz41.github.io/log5/reset.html'
+      var { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset.html'
       });
       if (error) { this.setMessage(error.message); return; }
       this.setMessage('Reset link sent! Check your email.');
@@ -170,7 +170,7 @@ Logit.Auth = {
         email,
         password,
         options: {
-          emailRedirectTo: 'https://suz41.github.io/log5/index.html',
+          emailRedirectTo: window.location.origin + '/index.html',
           data: { username }
         }
       });

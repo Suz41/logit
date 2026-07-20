@@ -2,10 +2,10 @@ window.Logit = window.Logit || {};
 
 Logit.LibraryPage = {
   init() {
-    const API = Logit.Config.getApiKey();
-    const esc = Logit.Utils.esc;
-    const img = Logit.Utils.img;
-    const $ = Logit.Utils.byId;
+    var API = Logit.Config.getApiKey();
+    var esc = Logit.Utils.esc;
+    var img = Logit.Utils.img;
+    var $ = Logit.Utils.byId;
 
     if (!API) {
       document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:20px;background:#0d0d0d;color:#fff;font-family:Inter,sans-serif;text-align:center;">'
@@ -16,37 +16,46 @@ Logit.LibraryPage = {
         + '</div>';
 
       $('keySave').onclick = function() {
-        const v = $('keyInput').value.trim();
+        var v = $('keyInput').value.trim();
         Logit.Config.setApiKey(v);
         location.reload();
       };
       return;
     }
 
-    const state = {
+    var state = {
       movies: [],
       current: null,
-      openMonths: new Set()
+      openMonths: new Set(),
+      _addDebounce: false
     };
 
-    const library = $('library');
-    const modal = $('modal');
-    const results = $('results');
-    const metaModal = $('metaModal');
-    const queryInput = $('query');
-    const yearInput = $('year');
-    const watchDate = $('watchDate');
+    var library = $('library');
+    var modal = $('modal');
+    var results = $('results');
+    var metaModal = $('metaModal');
+    var queryInput = $('query');
+    var yearInput = $('year');
+    var watchDate = $('watchDate');
 
     watchDate.valueAsDate = new Date();
     Logit.Overlays.setupListeners();
 
+    // === Image fallback handler ===
+    function handleImgError(e) {
+      var el = e.target;
+      el.onerror = null;
+      el.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="%231a1a1a"><rect width="200" height="300"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="sans-serif" font-size="14">No Poster</text></svg>');
+    }
+
     function buildMovieCard(movie, withDataId) {
-      const date = new Date(movie.d);
-      const formatted = Logit.Utils.formatDateShort(date);
-      const rewatchBadge = Logit.Utils.isRewatch(movie) ? ' <span class="rewatch">R</span>' : '';
-      const dataIdAttr = withDataId ? ' data-id="' + esc(movie.id) + '"' : '';
+      var date = new Date(movie.d);
+      var formatted = Logit.Utils.formatDateShort(date);
+      var rewatchBadge = Logit.Utils.isRewatch(movie) ? ' <span class="rewatch">R</span>' : '';
+      var dataIdAttr = withDataId ? ' data-id="' + esc(movie.id) + '"' : '';
+      var posterSrc = esc(img(movie.sp));
       return '<div class="movie"' + dataIdAttr + '>'
-        + '<img src="' + esc(img(movie.sp)) + '" loading="lazy" decoding="async">'
+        + '<img src="' + posterSrc + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="%231a1a1a"><rect width="200" height="300"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="sans-serif" font-size="14">No Poster</text></svg>') + '\'">'
         + '<div class="movieDate"><span class="day">' + formatted.day + '</span> ' + formatted.month + rewatchBadge + '</div>'
         + '</div>';
     }
@@ -55,68 +64,106 @@ Logit.LibraryPage = {
       library.innerHTML = '';
 
       if (state.movies.length === 0) {
-        library.innerHTML = '<div class="empty"><div class="emptyIcon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M8 2v20M16 2v20M2 8h20M2 16h20"/></svg></div><div class="emptyTitle">No movies yet</div><div class="emptyHint">Tap + to log your first film</div></div>';
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+        var emptyIcon = document.createElement('div');
+        emptyIcon.className = 'emptyIcon';
+        emptyIcon.innerHTML = '<svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M8 2v20M16 2v20M2 8h20M2 16h20"/></svg>';
+        var emptyTitle = document.createElement('div');
+        emptyTitle.className = 'emptyTitle';
+        emptyTitle.textContent = 'No movies yet';
+        var emptyHint = document.createElement('div');
+        emptyHint.className = 'emptyHint';
+        emptyHint.textContent = 'Tap + to log your first film';
+        emptyDiv.append(emptyIcon, emptyTitle, emptyHint);
+        library.append(emptyDiv);
         return;
       }
 
-      const sorted = state.movies.slice().sort(function(a, b) {
+      var sorted = state.movies.slice().sort(function(a, b) {
         return new Date(b.d) - new Date(a.d);
       });
 
-      const grouped = {};
+      var grouped = {};
       sorted.forEach(function(movie) {
-        const date = new Date(movie.d);
-        const monthKey = date.getFullYear() + '-' + date.getMonth();
+        var date = new Date(movie.d);
+        var monthKey = date.getFullYear() + '-' + date.getMonth();
         if (!grouped[monthKey]) {
-          grouped[monthKey] = {
-            label: date.toLocaleString('default', { month: 'long' }),
-            movies: []
-          };
+          grouped[monthKey] = { label: date.toLocaleString('default', { month: 'long' }), movies: [] };
         }
         grouped[monthKey].movies.push(movie);
       });
 
-      const keys = Object.keys(grouped).sort(function(a, b) {
+      var keys = Object.keys(grouped).sort(function(a, b) {
         return new Date(b) - new Date(a);
       });
 
-      // Default to last month open if no months saved
       if (state.openMonths.size === 0 && keys.length > 0) {
         state.openMonths.add(keys[0]);
       }
 
-      const fragment = document.createDocumentFragment();
+      var fragment = document.createDocumentFragment();
 
       keys.forEach(function(key) {
-        const group = grouped[key];
-        const section = document.createElement('div');
-        const isOpen = state.openMonths.has(key);
+        var group = grouped[key];
+        var section = document.createElement('div');
+        var isOpen = state.openMonths.has(key);
         section.className = 'monthSection' + (isOpen ? ' active' : '');
 
-        const moviesHtml = group.movies.map(function(movie) {
-          return buildMovieCard(movie, true);
-        }).join('');
+        // Build month section header
+        var head = document.createElement('div');
+        head.className = 'monthHead';
+        var left = document.createElement('div');
+        left.className = 'monthLeft';
+        var arrow = document.createElement('div');
+        arrow.className = 'monthArrow';
+        arrow.textContent = '\u203A';
+        var h2 = document.createElement('h2');
+        h2.textContent = group.label;
+        left.append(arrow, h2);
+        var count = document.createElement('span');
+        count.className = 'count';
+        count.textContent = group.movies.length;
+        head.append(left, count);
 
-        section.innerHTML = '<div class="monthHead">'
-          + '<div class="monthLeft"><div class="monthArrow">&rsaquo;</div>'
-          + '<h2>' + esc(group.label) + '</h2></div>'
-          + '<span class="count">' + group.movies.length + '</span></div>'
-          + '<div class="monthMovies"><div class="moviesGridWrap"><div class="moviesGrid">' + moviesHtml + '</div></div></div>';
+        // Build movies grid
+        var moviesWrap = document.createElement('div');
+        moviesWrap.className = 'monthMovies';
+        var moviesGridWrap = document.createElement('div');
+        moviesGridWrap.className = 'moviesGridWrap';
+        var moviesGrid = document.createElement('div');
+        moviesGrid.className = 'moviesGrid';
 
-        section.querySelectorAll('.movie').forEach(function(card) {
-          card.onclick = function() {
-            const movie = state.movies.find(function(m) { return m.id === card.dataset.id; });
-            if (movie) {
-              state.current = movie;
-              Logit.Modals.openMeta(movie);
-            }
-          };
+        group.movies.forEach(function(movie) {
+          var card = document.createElement('div');
+          card.className = 'movie';
+          card.dataset.id = movie.id;
+          var dateFormatted = Logit.Utils.formatDateShort(new Date(movie.d));
+          var rewatchBadge = Logit.Utils.isRewatch(movie) ? ' <span class="rewatch">R</span>' : '';
+          card.innerHTML = '<img src="' + esc(img(movie.sp)) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="%231a1a1a"><rect width="200" height="300"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="sans-serif" font-size="14">No Poster</text></svg>') + '\'">'
+            + '<div class="movieDate"><span class="day">' + dateFormatted.day + '</span> ' + dateFormatted.month + rewatchBadge + '</div>';
+          moviesGrid.append(card);
         });
 
-        section.querySelector('.monthHead').onclick = function(e) {
+        moviesGridWrap.append(moviesGrid);
+        moviesWrap.append(moviesGridWrap);
+        section.append(head, moviesWrap);
+
+        // Event delegation for movie clicks
+        moviesGrid.addEventListener('click', function(e) {
+          var card = e.target.closest('.movie');
+          if (!card) return;
+          var movie = state.movies.find(function(m) { return m.id === card.dataset.id; });
+          if (movie) {
+            state.current = movie;
+            Logit.Modals.openMeta(movie);
+          }
+        });
+
+        head.addEventListener('click', function(e) {
           if (e.target.closest('.movie')) return;
           section.classList.toggle('active');
-        };
+        });
 
         fragment.append(section);
       });
@@ -124,10 +171,10 @@ Logit.LibraryPage = {
       library.append(fragment);
     }
 
-    // Load movies — pull from cloud first if logged in
+    // Load movies
     async function loadAndRender() {
       if (!Logit.Auth.isOfflineMode()) {
-        try { await Logit.Sync.pullFromCloud(); } catch (e) { console.error('Cloud pull failed:', e); }
+        try { await Logit.Sync.sync(); } catch (e) { console.error('Sync failed:', e); }
       }
       state.movies = Logit.Storage.loadMovies();
       renderMovies();
@@ -135,12 +182,12 @@ Logit.LibraryPage = {
     loadAndRender();
 
     // ========= SETTINGS PANEL =========
-    const settingsBtn = $('settingsBtn');
-    const settingsPanel = $('settingsPanel');
+    var settingsBtn = $('settingsBtn');
+    var settingsPanel = $('settingsPanel');
 
     settingsBtn.onclick = function(e) {
       e.stopPropagation();
-      const isOpen = settingsPanel.classList.toggle('open');
+      var isOpen = settingsPanel.classList.toggle('open');
       settingsBtn.classList.toggle('active', isOpen);
     };
 
@@ -152,22 +199,18 @@ Logit.LibraryPage = {
     });
 
     // ========= GRID COLS =========
-    const isPC = window.innerWidth >= 1024;
-    const gridMin = isPC ? 10 : 4;
-    const gridMax = isPC ? 20 : 10;
-    const gridDefault = isPC ? 10 : 4;
-    let gridCount = parseInt(localStorage.getItem('logit_grid_count')) || gridDefault;
+    var isPC = window.innerWidth >= 1024;
+    var gridMin = isPC ? 10 : 4;
+    var gridMax = isPC ? 20 : 10;
+    var gridDefault = isPC ? 10 : 4;
+    var gridCount = parseInt(localStorage.getItem('logit_grid_count')) || gridDefault;
 
-    const gridSlider = $('gridSlider');
-    const sidebarGridSlider = $('sidebarGridSlider');
-    const gridValue = $('gridValue');
-    const sidebarGridValue = $('sidebarGridValue');
+    var gridSlider = $('gridSlider');
+    var sidebarGridSlider = $('sidebarGridSlider');
+    var gridValue = $('gridValue');
+    var sidebarGridValue = $('sidebarGridValue');
 
-    if (gridSlider) {
-      gridSlider.min = gridMin;
-      gridSlider.max = gridMax;
-      gridSlider.value = gridCount;
-    }
+    if (gridSlider) { gridSlider.min = gridMin; gridSlider.max = gridMax; gridSlider.value = gridCount; }
 
     function setGridValue(val) {
       gridCount = Math.round(Number(val));
@@ -179,18 +222,14 @@ Logit.LibraryPage = {
       localStorage.setItem('logit_grid_count', gridCount);
     }
 
-    if (gridSlider) {
-      gridSlider.oninput = function() { setGridValue(this.value); };
-    }
-    if (sidebarGridSlider) {
-      sidebarGridSlider.oninput = function() { setGridValue(this.value); };
-    }
+    if (gridSlider) gridSlider.oninput = function() { setGridValue(this.value); };
+    if (sidebarGridSlider) sidebarGridSlider.oninput = function() { setGridValue(this.value); };
     setGridValue(gridCount);
 
     // ========= DATE TOGGLE =========
-    let showDates = localStorage.getItem('logit_show_dates') !== 'false';
-    const dateToggle = $('dateToggle');
-    const sidebarDateToggle = $('sidebarDateToggle');
+    var showDates = localStorage.getItem('logit_show_dates') !== 'false';
+    var dateToggle = $('dateToggle');
+    var sidebarDateToggle = $('sidebarDateToggle');
 
     function updateDateBtn() {
       document.body.classList.toggle('hide-dates', !showDates);
@@ -209,22 +248,20 @@ Logit.LibraryPage = {
     updateDateBtn();
 
     // ========= SEARCH =========
-    const libSearchInput = $('libSearch');
-    const pcLibSearchInput = $('pcLibSearch');
-    const clearSearchBtn = $('clearSearch');
-    const pcClearSearchBtn = $('pcClearSearch');
+    var libSearchInput = $('libSearch');
+    var pcLibSearchInput = $('pcLibSearch');
+    var clearSearchBtn = $('clearSearch');
+    var pcClearSearchBtn = $('pcClearSearch');
 
     function handleSearchInput(val) {
       if (libSearchInput) libSearchInput.value = val;
       if (pcLibSearchInput) pcLibSearchInput.value = val;
-
       if (clearSearchBtn) clearSearchBtn.classList.toggle('visible', val.length > 0);
       if (pcClearSearchBtn) pcClearSearchBtn.classList.toggle('visible', val.length > 0);
-
       filterLibrary();
     }
 
-    const debouncedFilter = Logit.Utils.debounce(handleSearchInput, 150);
+    var debouncedFilter = Logit.Utils.debounce(handleSearchInput, 150);
 
     function handleSearchClear() {
       if (libSearchInput) libSearchInput.value = '';
@@ -234,86 +271,67 @@ Logit.LibraryPage = {
       renderMovies();
     }
 
-    if (libSearchInput) {
-      libSearchInput.addEventListener('input', function() { debouncedFilter(this.value); });
-    }
-    if (pcLibSearchInput) {
-      pcLibSearchInput.addEventListener('input', function() { debouncedFilter(this.value); });
-    }
+    if (libSearchInput) libSearchInput.addEventListener('input', function() { debouncedFilter(this.value); });
+    if (pcLibSearchInput) pcLibSearchInput.addEventListener('input', function() { debouncedFilter(this.value); });
     if (clearSearchBtn) clearSearchBtn.onclick = handleSearchClear;
     if (pcClearSearchBtn) pcClearSearchBtn.onclick = handleSearchClear;
 
     function filterLibrary() {
-      const q = (pcLibSearchInput && pcLibSearchInput.offsetParent !== null ? pcLibSearchInput.value : libSearchInput.value).trim().toLowerCase();
-      const matches = Logit.Search.filterLibrary(state.movies, q);
+      var q = (pcLibSearchInput && pcLibSearchInput.offsetParent !== null ? pcLibSearchInput.value : libSearchInput.value).trim().toLowerCase();
+      var matches = Logit.Search.filterLibrary(state.movies, q);
 
-      if (matches === null) {
-        renderMovies();
-        return;
-      }
+      if (matches === null) { renderMovies(); return; }
 
       library.innerHTML = '';
 
       if (matches.length === 0) {
-        library.innerHTML = '<div class="noResults">No movies found</div>';
+        var noResults = document.createElement('div');
+        noResults.className = 'noResults';
+        noResults.textContent = 'No movies found';
+        library.append(noResults);
         return;
       }
 
-      const grid = document.createElement('div');
+      var grid = document.createElement('div');
       grid.className = 'searchResults';
 
-      const fragment = document.createDocumentFragment();
-
       matches.forEach(function(movie) {
-        const card = document.createElement('div');
+        var card = document.createElement('div');
         card.className = 'movie';
-        card.innerHTML = buildMovieCard(movie, false);
+        card.dataset.id = movie.id;
+        var dateFormatted = Logit.Utils.formatDateShort(new Date(movie.d));
+        var rewatchBadge = Logit.Utils.isRewatch(movie) ? ' <span class="rewatch">R</span>' : '';
+        card.innerHTML = '<img src="' + esc(img(movie.sp)) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="%231a1a1a"><rect width="200" height="300"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="sans-serif" font-size="14">No Poster</text></svg>') + '\'">'
+          + '<div class="movieDate"><span class="day">' + dateFormatted.day + '</span> ' + dateFormatted.month + rewatchBadge + '</div>';
         card.onclick = function() {
           state.current = movie;
           Logit.Modals.openMeta(movie);
         };
-        fragment.append(card);
+        grid.append(card);
       });
 
-      grid.append(fragment);
       library.append(grid);
     }
 
     // ========= ADD MODAL TRIGGER =========
-    $('navAdd').onclick = function() {
-      Logit.Modals.openAdd(modal, queryInput);
-    };
+    $('navAdd').onclick = function() { Logit.Modals.openAdd(modal, queryInput); };
 
-    const pcAddBtn = $('pcAddMovieBtn');
-    if (pcAddBtn) {
-      pcAddBtn.onclick = function() {
-        Logit.Modals.openAdd(modal, queryInput);
-      };
-    }
+    var pcAddBtn = $('pcAddMovieBtn');
+    if (pcAddBtn) pcAddBtn.onclick = function() { Logit.Modals.openAdd(modal, queryInput); };
 
     if (new URLSearchParams(window.location.search).get('add') === 'true') {
       Logit.Modals.openAdd(modal, queryInput);
       history.replaceState(null, '', window.location.pathname);
     }
 
-    $('closeBtn').onclick = function() {
-      Logit.Overlays.closeTop();
-    };
-
-    metaModal.onclick = function(e) {
-      if (e.target === metaModal) Logit.Overlays.closeTop();
-    };
-
-    modal.onclick = function(e) {
-      if (e.target === modal) Logit.Overlays.closeTop();
-    };
+    $('closeBtn').onclick = function() { Logit.Overlays.closeTop(); };
+    metaModal.onclick = function(e) { if (e.target === metaModal) Logit.Overlays.closeTop(); };
+    modal.onclick = function(e) { if (e.target === modal) Logit.Overlays.closeTop(); };
 
     // ========= ADD SEARCH TMDB =========
-    const clearQuery = $('clearQuery');
+    var clearQuery = $('clearQuery');
 
-    const debouncedSearch = Logit.Utils.debounce(function() {
-      searchMovies();
-    }, 180);
+    var debouncedSearch = Logit.Utils.debounce(function() { searchMovies(); }, 180);
 
     queryInput.addEventListener('input', function() {
       clearQuery.classList.toggle('visible', queryInput.value.length > 0);
@@ -328,20 +346,16 @@ Logit.LibraryPage = {
     };
 
     async function searchMovies() {
-      const q = queryInput.value.trim();
-      if (q.length < 2) {
-        results.innerHTML = '';
-        return;
-      }
+      var q = queryInput.value.trim();
+      if (q.length < 2) { results.innerHTML = ''; return; }
 
       Logit.UI.showLoading(results);
 
-      const imdbMatch = q.match(/(tt\d{7,})/i);
+      var imdbMatch = q.match(/(tt\d{7,})/i);
       if (imdbMatch) {
-        const findData = await Logit.Search.tmdb('https://api.themoviedb.org/3/find/' + imdbMatch[1] + '?api_key=' + API + '&external_source=imdb_id');
+        var findData = await Logit.Search.tmdb('https://api.themoviedb.org/3/find/' + imdbMatch[1] + '?api_key=' + API + '&external_source=imdb_id');
         if (findData && findData.movie_results && findData.movie_results.length > 0) {
-          const movie = findData.movie_results[0];
-          Logit.Modals.openRating(movie, API, addMovieToDB);
+          Logit.Modals.openRating(findData.movie_results[0], API, addMovieToDB);
           results.innerHTML = '';
           return;
         } else {
@@ -350,38 +364,40 @@ Logit.LibraryPage = {
         }
       }
 
-      let url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(q);
+      var url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(q);
       if (yearInput.value) url += '&year=' + yearInput.value;
 
-      const data = await Logit.Search.tmdb(url);
+      var data = await Logit.Search.tmdb(url);
 
       if (!data) {
         Logit.UI.showError(results, 'Could not reach TMDB. Check your connection.', esc);
         return;
       }
 
-      const items = (data.results || []).filter(function(m) { return m.poster_path; }).slice(0, 20);
+      var items = (data.results || []).filter(function(m) { return m.poster_path; }).slice(0, 20);
 
       if (items.length === 0) {
-        results.innerHTML = '<div class="errorMsg" style="grid-column:1/-1;color:#777;">No results found</div>';
+        var errorMsg = document.createElement('div');
+        errorMsg.className = 'errorMsg';
+        errorMsg.style.gridColumn = '1/-1';
+        errorMsg.style.color = '#777';
+        errorMsg.textContent = 'No results found';
+        results.append(errorMsg);
         return;
       }
 
       results.innerHTML = '';
-      const fragment = document.createDocumentFragment();
+      var fragment = document.createDocumentFragment();
 
       items.forEach(function(movie) {
-        const card = document.createElement('div');
+        var card = document.createElement('div');
         card.className = 'result';
-
-        const image = document.createElement('img');
+        var image = document.createElement('img');
         image.src = esc(img(movie.poster_path, 'w342'));
         image.loading = 'lazy';
+        image.onerror = handleImgError;
         card.append(image);
-
-        card.onclick = function() {
-          Logit.Modals.openRating(movie, API, addMovieToDB);
-        };
+        card.onclick = function() { Logit.Modals.openRating(movie, API, addMovieToDB); };
         fragment.append(card);
       });
 
@@ -389,20 +405,33 @@ Logit.LibraryPage = {
     }
 
     async function addMovieToDB(d, rating, isRewatch) {
-      let watch;
+      if (state._addDebounce) return;
+      state._addDebounce = true;
+      setTimeout(function() { state._addDebounce = false; }, 2000);
+
+      // Check for duplicates
+      var movieId = 'movie_' + (d.id || Date.now());
+      var existing = state.movies.find(function(m) { return m.tmdb_id === String(d.id); });
+      if (existing && !isRewatch) {
+        alert('This movie is already in your library.');
+        state._addDebounce = false;
+        return;
+      }
+
+      var watch;
       if (isRewatch) {
-        const prevCount = state.movies.filter(function(m) { return m.t === (d.title || ''); }).length;
-        watch = 'Rewatch · ' + (prevCount + 1) + 'x';
+        var prevCount = state.movies.filter(function(m) { return m.t === (d.title || ''); }).length;
+        watch = 'Rewatch \u00B7 ' + (prevCount + 1) + 'x';
       } else {
         watch = Logit.Movies.watchType(state.movies, d.title || '');
       }
 
-      state.movies.unshift(Logit.MovieFactory.fromTMDB(d, rating, watch, watchDate.value));
-
+      var movie = Logit.MovieFactory.fromTMDB(d, rating, watch, watchDate.value);
+      state.movies.unshift(movie);
       Logit.Storage.saveMovies(state.movies);
       renderMovies();
 
-      const ratingSheet = document.querySelector('.ratingSheet');
+      var ratingSheet = document.querySelector('.ratingSheet');
       if (ratingSheet) ratingSheet.remove();
 
       Logit.Modals.closeAdd(modal, queryInput);
@@ -412,10 +441,10 @@ Logit.LibraryPage = {
 
     // ========= EDIT & META ACTIONS =========
     function buildRatingEdit(currentRating) {
-      const container = $('eRating');
+      var container = $('eRating');
       container.innerHTML = '';
       [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].forEach(function(v) {
-        const btn = document.createElement('button');
+        var btn = document.createElement('button');
         btn.textContent = v;
         if (String(v) === String(currentRating)) btn.classList.add('active');
         btn.onclick = function() {
@@ -432,31 +461,33 @@ Logit.LibraryPage = {
     };
 
     $('saveBtn').onclick = function() {
-      const m = state.current;
-      const activeRating = $('eRating').querySelector('button.active');
+      var m = state.current;
+      var activeRating = $('eRating').querySelector('button.active');
       if (activeRating) m.r = activeRating.textContent;
       m.dr = $('eDirector').value;
       m.lg = $('eLang').value;
       m.ct = $('eCountry').value;
       if ($('eWatch').checked) {
-        const prevCount = state.movies.filter(function(x) { return x.t === m.t && x.id !== m.id; }).length;
-        m.w = 'Rewatch · ' + (prevCount + 1) + 'x';
+        var prevCount = state.movies.filter(function(x) { return x.t === m.t && x.id !== m.id; }).length;
+        m.w = 'Rewatch \u00B7 ' + (prevCount + 1) + 'x';
       } else {
         m.w = '1st Watch';
       }
       m.d = $('eLogged').value;
       m.c = $('eCast').value;
+      m.updated_at = new Date().toISOString();
 
       Logit.Storage.saveMovies(state.movies);
+      Logit.Offline.enqueue('update', 'movie', m.id, m);
       renderMovies();
       Logit.Modals.openMeta(m);
     };
 
     $('deleteBtn').onclick = function() {
       if (!confirm('Delete "' + state.current.t + '" ?')) return;
-      const delId = state.current.id;
+      var delId = state.current.id;
       state.movies = state.movies.filter(function(m) { return m.id !== delId; });
-      localStorage.setItem('movies', JSON.stringify(state.movies));
+      Logit.Storage.saveMovies(state.movies);
       Logit.Sync.deleteFromCloud(delId).catch(function(e) { console.error('Cloud delete:', e); });
       state.current = null;
       Logit.Overlays.closeTop();
@@ -468,7 +499,7 @@ Logit.LibraryPage = {
         state.current.sp = newPoster;
         state.current.updated_at = new Date().toISOString();
         Logit.Storage.saveMovies(state.movies);
-        Logit.Sync.pushToCloud();
+        Logit.Offline.enqueue('update', 'movie', state.current.id, state.current);
         renderMovies();
         $('mPoster').src = esc(img(newPoster));
       });
@@ -476,19 +507,12 @@ Logit.LibraryPage = {
 
     // ========= SCROLL HUD NAV =========
     Logit.UI.setupAutoHideNav(document.querySelector('.bottomNav'));
-    $('navLibrary').onclick = function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    $('navStats').onclick = function() {
-      window.location.href = 'PS.html';
-    };
+    $('navLibrary').onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    $('navStats').onclick = function() { window.location.href = 'PS.html'; };
 
-    // Sidebar collapses
-    const sidebarToggle = $('sidebarToggle');
+    var sidebarToggle = $('sidebarToggle');
     if (sidebarToggle) {
-      sidebarToggle.onclick = function() {
-        document.body.classList.toggle('collapsed');
-      };
+      sidebarToggle.onclick = function() { document.body.classList.toggle('collapsed'); };
     }
   }
 };

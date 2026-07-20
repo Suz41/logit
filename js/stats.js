@@ -26,14 +26,15 @@ Logit.StatsPage = {
 
     const totalRuntime = movies.reduce((a, b) => a + (Number(b.rt) || 0), 0);
     const timeData = Logit.StatUtils.formatTime(totalRuntime);
-    $('timeCount').innerHTML = `
-      <div style="font-size:22px;font-weight:700;line-height:1;color:#fff;">
-        ${timeData.main}
-      </div>
-      <div class="timeSub">
-        ${timeData.sub}
-      </div>
-    `;
+    var timeEl = $('timeCount');
+    timeEl.textContent = '';
+    var timeMain = document.createElement('div');
+    timeMain.style.cssText = 'font-size:22px;font-weight:700;line-height:1;color:#fff;';
+    timeMain.textContent = timeData.main;
+    var timeSub = document.createElement('div');
+    timeSub.className = 'timeSub';
+    timeSub.textContent = timeData.sub;
+    timeEl.append(timeMain, timeSub);
 
     // ========= PEOPLE =========
     const topDirectors = Object.entries(stats.directorCount)
@@ -56,47 +57,55 @@ Logit.StatsPage = {
     }
 
     async function renderPeople() {
-      const dList = $('directorList');
-      const aList = $('actorList');
+      var dList = $('directorList');
+      var aList = $('actorList');
 
-      const directorImagePromises = topDirectors.map(([director, data]) =>
-        data.img ? Promise.resolve(data.img) : fetchPersonImage(director)
-      );
-      const actorImagePromises = topActors.map(([actor, data]) =>
-        data.img ? Promise.resolve(data.img) : fetchPersonImage(actor)
-      );
+      var directorImagePromises = topDirectors.map(function(entry) {
+        return entry[1].img ? Promise.resolve(entry[1].img) : fetchPersonImage(entry[0]);
+      });
+      var actorImagePromises = topActors.map(function(entry) {
+        return entry[1].img ? Promise.resolve(entry[1].img) : fetchPersonImage(entry[0]);
+      });
 
-      const [directorImages, actorImages] = await Promise.all([
+      var results = await Promise.all([
         Promise.all(directorImagePromises),
         Promise.all(actorImagePromises)
       ]);
+      var directorImages = results[0];
+      var actorImages = results[1];
 
-      dList.innerHTML = topDirectors.map(([director, data], index) => {
-        const moviesHtml = Logit.Utils.renderMovieChips([...data.movies]);
-        return Logit.Utils.renderPersonCard(director, directorImages[index], data.movies.size, moviesHtml);
-      }).join('');
+      dList.textContent = '';
+      topDirectors.forEach(function(entry, index) {
+        var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
+        dList.append(Logit.Utils.createPersonCard(entry[0], directorImages[index], entry[1].movies.size, moviesHtml));
+      });
 
-      aList.innerHTML = topActors.map(([actor, data], index) => {
-        const moviesHtml = Logit.Utils.renderMovieChips([...data.movies]);
-        return Logit.Utils.renderPersonCard(actor, actorImages[index], data.movies.size, moviesHtml);
-      }).join('');
+      aList.textContent = '';
+      topActors.forEach(function(entry, index) {
+        var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
+        aList.append(Logit.Utils.createPersonCard(entry[0], actorImages[index], entry[1].movies.size, moviesHtml));
+      });
     }
 
     renderPeople();
 
     // ========= META SECTIONS =========
     function renderMetaSection(wrapEl, totalEl, entries, moviesMap, labelFn) {
-      totalEl.innerText = entries.length;
+      totalEl.textContent = entries.length;
+      wrapEl.textContent = '';
       if (entries.length === 0) {
-        wrapEl.innerHTML = '<div class="empty">No data yet</div>';
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+        emptyDiv.textContent = 'No data yet';
+        wrapEl.append(emptyDiv);
         return;
       }
-      wrapEl.innerHTML = entries.map(function(entry) {
-        const name = labelFn(entry);
-        const count = entry[1];
-        const moviesHtml = Logit.Utils.renderMetaMovies(moviesMap[entry[0]] || []);
-        return Logit.Utils.renderMetaItem(name, count, moviesHtml);
-      }).join('');
+      entries.forEach(function(entry) {
+        var name = labelFn(entry);
+        var count = entry[1];
+        var moviesHtml = Logit.Utils.renderMetaMovies(moviesMap[entry[0]] || []);
+        wrapEl.append(Logit.Utils.createMetaItem(name, count, moviesHtml));
+      });
     }
 
     // Genres
@@ -119,15 +128,19 @@ Logit.StatsPage = {
       .sort(function(a, b) { return b[1].count - a[1].count; })
       .slice(0, 10);
 
-    $('rewatchTotal').innerText = rewatched.length;
-    const rewatchWrap = $('rewatchWrap');
+    $('rewatchTotal').textContent = rewatched.length;
+    var rewatchWrap = $('rewatchWrap');
+    rewatchWrap.textContent = '';
     if (rewatched.length === 0) {
-      rewatchWrap.innerHTML = '<div class="empty">No rewatches yet</div>';
+      var emptyDiv = document.createElement('div');
+      emptyDiv.className = 'empty';
+      emptyDiv.textContent = 'No rewatches yet';
+      rewatchWrap.append(emptyDiv);
     } else {
-      rewatchWrap.innerHTML = rewatched.map(function(entry) {
-        const moviesHtml = Logit.Utils.renderMetaMovies(entry[1].dates || []);
-        return Logit.Utils.renderMetaItem(entry[0], entry[1].count + 'x', moviesHtml);
-      }).join('');
+      rewatched.forEach(function(entry) {
+        var moviesHtml = Logit.Utils.renderMetaMovies(entry[1].dates || []);
+        rewatchWrap.append(Logit.Utils.createMetaItem(entry[0], entry[1].count + 'x', moviesHtml));
+      });
     }
 
     // Decades
@@ -276,12 +289,12 @@ Logit.StatsPage = {
               Logit.Storage.saveMovies(movies);
               statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
               importStartBtn.disabled = false;
-              try { await Logit.Sync.pushToCloud(); } catch (e) {}
+              try { await Logit.Sync.sync(); } catch (e) {}
               setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
               return;
             }
 
-            let count = 0;
+            var count = 0;
             const existingIds = new Set(movies.map(function(m) { return m.id; }));
             const existingTmdbFull = new Set(movies.map(function(m) { return m.tmdb_id || ''; }));
             parsed.forEach(function(m) {
@@ -296,7 +309,7 @@ Logit.StatsPage = {
             });
             Logit.Storage.saveMovies(movies);
             $('importStatus').textContent = count + ' imported from JSON';
-            try { await Logit.Sync.pushToCloud(); } catch (e) {}
+            try { await Logit.Sync.sync(); } catch (e) {}
             setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
             return;
           } catch (e) {
@@ -388,8 +401,7 @@ Logit.StatsPage = {
         Logit.Storage.saveMovies(movies);
         statusEl.textContent = imported + ' imported' + (failed > 0 ? ', ' + failed + ' failed' : '');
         importStartBtn.disabled = false;
-        // Push to cloud before reloading
-        try { await Logit.Sync.pushToCloud(); } catch (e) {}
+        try { await Logit.Sync.sync(); } catch (e) {}
         setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
       };
     }

@@ -1,56 +1,80 @@
 window.Logit = window.Logit || {};
 
 Logit.Storage = {
+  _SCHEMA_VERSION: 2,
+  _MOVIES_KEY: 'movies',
+  _SCHEMA_KEY: 'logit_schema_version',
+
   /** @returns {Array} Array of movie objects from localStorage */
   loadMovies() {
     try {
-      const cached = localStorage.getItem('movies');
-      return cached ? JSON.parse(cached) : [];
+      var raw = localStorage.getItem(this._MOVIES_KEY);
+      if (!raw) return [];
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed;
     } catch (e) {
+      console.warn('Corrupted localStorage movies data, resetting:', e);
+      localStorage.removeItem(this._MOVIES_KEY);
       return [];
     }
   },
 
-  /** Strip legacy poster arrays from saved data */
+  /** Run any pending schema migrations */
   migrate() {
-    const list = this.loadMovies();
-    let stripped = false;
-    list.forEach(function(m) {
-      if (m.p) {
-        delete m.p;
-        stripped = true;
-      }
-    });
-    if (stripped) this.saveMovies(list);
+    var currentVersion = parseInt(localStorage.getItem(this._SCHEMA_KEY)) || 1;
+    if (currentVersion >= this._SCHEMA_VERSION) return;
+
+    var list = this.loadMovies();
+    var changed = false;
+
+    // V1 -> V2: strip legacy poster arrays
+    if (currentVersion < 2) {
+      list.forEach(function(m) {
+        if (m.p) { delete m.p; changed = true; }
+      });
+    }
+
+    if (changed) this.saveMoviesRaw(list);
+    localStorage.setItem(this._SCHEMA_KEY, this._SCHEMA_VERSION);
   },
 
-  /** @param {Array} movies */
-  saveMovies(movies) {
+  /**
+   * Save movies array directly to localStorage (no side effects).
+   * Use this for bulk writes like sync/merge. Does NOT set updated_at or trigger sync.
+   */
+  saveMoviesRaw(movies) {
     try {
-      const now = new Date().toISOString();
-      movies.forEach(function(m) { m.updated_at = now; });
-      localStorage.setItem('movies', JSON.stringify(movies));
-      // Auto-push to cloud if logged in
-      if (!Logit.Auth.isOfflineMode() && Logit.Sync && Logit.Sync.pushToCloud) {
-        Logit.Sync.pushToCloud().catch(function() {});
-      }
+      localStorage.setItem(this._MOVIES_KEY, JSON.stringify(movies));
     } catch (e) {
       console.error('Failed to save movies to localStorage:', e);
     }
   },
 
+  /**
+   * Save movies array to localStorage and queue for sync if authenticated.
+   * Does NOT stamp updated_at on every movie — only the caller knows what changed.
+   */
+  saveMovies(movies) {
+    this.saveMoviesRaw(movies);
+
+    if (!Logit.Auth.isOfflineMode() && Logit.Sync && Logit.Sync.sync) {
+      Logit.Sync.sync().catch(function() {});
+    }
+  },
+
   /** @returns {{ total: number, keys: Array<{key: string, size: number}> }} */
   getStorageSize() {
-    let total = 0;
-    const keys = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      const val = localStorage.getItem(key);
-      const size = (key.length + val.length) * 2;
+    var total = 0;
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      var val = localStorage.getItem(key);
+      var size = (key.length + val.length) * 2;
       total += size;
-      keys.push({ key, size });
+      keys.push({ key: key, size: size });
     }
-    return { total, keys };
+    return { total: total, keys: keys };
   },
 
   /** @param {number} bytes @returns {{ val: string, unit: string }} */
@@ -61,19 +85,19 @@ Logit.Storage = {
   },
 
   /**
-   * Save movie and queue for sync if authenticated
-   * @param {Object} movie
-   * @param {string} action - 'create' or 'update'
+   * Save a single movie and queue for sync.
+   * Only stamps updated_at on the specific movie being saved.
    */
-  saveMovie(movie, action = 'create') {
-    const movies = this.loadMovies();
-    const existingIndex = movies.findIndex(m => m.id === movie.id);
+  saveMovie(movie, action) {
+    action = action || 'create';
+    var movies = this.loadMovies();
+    var existingIndex = movies.findIndex(function(m) { return m.id === movie.id; });
 
     if (action === 'create' && existingIndex === -1) {
       if (!movie.id) movie.id = 'movie_' + Date.now();
       if (!movie.created_at) movie.created_at = new Date().toISOString();
-      if (!movie.updated_at) movie.updated_at = new Date().toISOString();
-      movies.push(movie);
+      movie.updated_at = new Date().toISOString();
+      movies.unshift(movie);
     } else if (action === 'update' && existingIndex !== -1) {
       movie.updated_at = new Date().toISOString();
       movies[existingIndex] = movie;
@@ -81,8 +105,7 @@ Logit.Storage = {
 
     this.saveMovies(movies);
 
-    // Queue for sync if authenticated
-    if (!Logit.Auth.isOfflineMode()) {
+    if (!Logit.Auth.isOfflineMode() && Logit.Offline) {
       Logit.Offline.enqueue(action, 'movie', movie.id, movie);
     }
 
@@ -90,12 +113,14 @@ Logit.Storage = {
   },
 
   /**
-   * Delete movie locally
-   * @param {string} movieId
+   * Delete movie locally and queue for sync.
    */
   deleteMovie(movieId) {
-    const movies = this.loadMovies();
-    this.saveMovies(movies.filter(m => m.id !== movieId));
+    var movies = this.loadMovies();
+    this.saveMovies(movies.filter(function(m) { return m.id !== movieId; }));
+    if (!Logit.Auth.isOfflineMode() && Logit.Offline) {
+      Logit.Offline.enqueue('delete', 'movie', movieId, { id: movieId });
+    }
   }
 };
 

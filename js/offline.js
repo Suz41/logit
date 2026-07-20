@@ -2,99 +2,26 @@ window.Logit = window.Logit || {};
 
 /**
  * Offline Queue Manager
- * Queues changes when offline and syncs when online
- * 
- * Queue format:
- * {
- *   id: uuid,
- *   action: 'create' | 'update' | 'delete',
- *   entity: 'movie' | 'settings',
- *   entityId: movie.id,
- *   data: { ...entity data },
- *   timestamp: ISO string,
- *   synced: false,
- *   error: null
- * }
+ * Queues changes when offline and syncs when online.
+ * Handles deduplication, compaction, and retry limits.
  */
 Logit.Offline = {
   _QUEUE_KEY: 'logit_sync_queue',
-  _syncLockHolder: null,
-  _syncLockTimeoutId: null,
-  _DEFAULT_LOCK_TIMEOUT_MS: 30000,
+  _MAX_RETRIES: 5,
 
-  /**
-   * Acquire the sync lock (mutex).
-   * Returns true if lock acquired, false if already held.
-   * @param {Object} [opts]
-   * @param {number} [opts.timeout] - Auto-release after this many ms (default 30s)
-   * @param {string} [opts.holder] - Identifier for who holds the lock
-   * @returns {boolean}
-   */
-  acquireSyncLock(opts) {
-    if (this._syncLockHolder !== null) {
-      return false;
-    }
-    const timeout = (opts && opts.timeout) || this._DEFAULT_LOCK_TIMEOUT_MS;
-    const holder = (opts && opts.holder) || 'sync';
-    this._syncLockHolder = holder;
-
-    if (this._syncLockTimeoutId !== null) {
-      clearTimeout(this._syncLockTimeoutId);
-      this._syncLockTimeoutId = null;
-    }
-
-    this._syncLockTimeoutId = setTimeout(() => {
-      this.releaseSyncLock();
-    }, timeout);
-
-    return true;
-  },
-
-  /**
-   * Release the sync lock.
-   */
-  releaseSyncLock() {
-    this._syncLockHolder = null;
-    if (this._syncLockTimeoutId !== null) {
-      clearTimeout(this._syncLockTimeoutId);
-      this._syncLockTimeoutId = null;
-    }
-  },
-
-  /**
-   * Check if sync lock is currently held.
-   * @returns {boolean}
-   */
-  isSyncLocked() {
-    return this._syncLockHolder !== null;
-  },
-
-  /**
-   * Get the identifier of the current lock holder.
-   * @returns {string|null}
-   */
-  getLockHolder() {
-    return this._syncLockHolder;
-  },
-
-  /**
-   * Get sync queue from localStorage
-   * @returns {Array}
-   */
   getQueue() {
     try {
-      const cached = localStorage.getItem(this._QUEUE_KEY);
-      return cached ? JSON.parse(cached) : [];
+      var raw = localStorage.getItem(this._QUEUE_KEY);
+      if (!raw) return [];
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      console.error('Failed to load sync queue:', e);
+      console.warn('Corrupted sync queue, resetting');
+      localStorage.removeItem(this._QUEUE_KEY);
       return [];
     }
   },
 
-  /**
-   * Save queue to localStorage
-   * @param {Array} queue
-   */
   saveQueue(queue) {
     try {
       localStorage.setItem(this._QUEUE_KEY, JSON.stringify(queue));
@@ -104,54 +31,38 @@ Logit.Offline = {
   },
 
   /**
-   * Add item to queue
-   * @param {string} action - 'create', 'update', or 'delete'
-   * @param {string} entity - 'movie', 'settings', etc.
-   * @param {string} entityId - ID of the entity
-   * @param {Object} data - Entity data
-   * @returns {Object} Queue item
+   * Add item to queue. Deduplicates: if an update for the same entity
+   * is already pending, replaces it with the newer data.
    */
   enqueue(action, entity, entityId, data) {
-    if (this.isSyncLocked()) {
-      return null;
-    }
-
-    const queue = this.getQueue();
-    
-    const item = {
-      id: this.generateId(),
+    var queue = this.getQueue();
+    var item = {
+      id: this._generateId(),
       action: action,
       entity: entity,
       entityId: entityId,
       data: data,
       timestamp: new Date().toISOString(),
       synced: false,
-      error: null
+      error: null,
+      retries: 0
     };
+
+    // Deduplicate: remove older pending items for the same entity
+    if (action === 'update' || action === 'delete') {
+      queue = queue.filter(function(q) {
+        return !(q.entity === entity && q.entityId === entityId && !q.synced);
+      });
+    }
 
     queue.push(item);
     this.saveQueue(queue);
-
-    console.log(`Queued ${action} for ${entity} #${entityId}`);
     return item;
   },
 
-  /**
-   * Mark item as synced (public — blocked when sync lock held)
-   * @param {string} queueItemId
-   */
   markSynced(queueItemId) {
-    if (this.isSyncLocked()) return;
-    this._markSyncedInternal(queueItemId);
-  },
-
-  /**
-   * Mark item as synced (internal — used by sync engine which holds the lock)
-   * @param {string} queueItemId
-   */
-  _markSyncedInternal(queueItemId) {
-    const queue = this.getQueue();
-    const item = queue.find(q => q.id === queueItemId);
+    var queue = this.getQueue();
+    var item = queue.find(function(q) { return q.id === queueItemId; });
     if (item) {
       item.synced = true;
       item.error = null;
@@ -159,102 +70,89 @@ Logit.Offline = {
     }
   },
 
-  /**
-   * Mark item with error (public — blocked when sync lock held)
-   * @param {string} queueItemId
-   * @param {string} error
-   */
   markError(queueItemId, error) {
-    if (this.isSyncLocked()) return;
-    this._markErrorInternal(queueItemId, error);
-  },
-
-  /**
-   * Mark item with error (internal — used by sync engine which holds the lock)
-   * @param {string} queueItemId
-   * @param {string} error
-   */
-  _markErrorInternal(queueItemId, error) {
-    const queue = this.getQueue();
-    const item = queue.find(q => q.id === queueItemId);
+    var queue = this.getQueue();
+    var item = queue.find(function(q) { return q.id === queueItemId; });
     if (item) {
       item.error = error;
+      item.retries = (item.retries || 0) + 1;
       this.saveQueue(queue);
     }
   },
 
-  /**
-   * Get pending (unsynced) items
-   * @returns {Array}
-   */
   getPending() {
-    return this.getQueue().filter(q => !q.synced);
+    return this.getQueue().filter(function(q) {
+      return !q.synced && (q.retries || 0) < Logit.Offline._MAX_RETRIES;
+    });
   },
 
-  /**
-   * Get failed items (synced items with errors)
-   * @returns {Array}
-   */
   getFailed() {
-    return this.getQueue().filter(q => q.error !== null);
+    return this.getQueue().filter(function(q) {
+      return q.error !== null && (q.retries || 0) >= Logit.Offline._MAX_RETRIES;
+    });
   },
 
-  /**
-   * Clear synced items (public — blocked when sync lock held)
-   */
   clearSynced() {
-    if (this.isSyncLocked()) return;
-    this._clearSyncedInternal();
+    var queue = this.getQueue();
+    var remaining = queue.filter(function(q) {
+      // Keep unsynced items and items that haven't exceeded retry limit
+      return !q.synced;
+    });
+    this.saveQueue(remaining);
   },
 
-  /**
-   * Clear synced items (internal — used by sync engine which holds the lock)
-   */
-  _clearSyncedInternal() {
-    const queue = this.getQueue();
-    const pending = queue.filter(q => !q.synced);
-    this.saveQueue(pending);
-  },
-
-  /**
-   * Clear all queue (public — blocked when sync lock held)
-   */
   clearAll() {
-    if (this.isSyncLocked()) return;
     localStorage.removeItem(this._QUEUE_KEY);
   },
 
   /**
-   * Generate unique ID
-   * @returns {string}
+   * Compact the queue: remove permanently failed items and
+   * collapse multiple updates for the same entity into one.
    */
-  generateId() {
+  compact() {
+    var queue = this.getQueue();
+
+    // Remove permanently failed items (exceeded retry limit)
+    queue = queue.filter(function(q) {
+      return !q.error || (q.retries || 0) < Logit.Offline._MAX_RETRIES;
+    });
+
+    // Collapse: for each entity, keep only the latest pending item
+    var collapsed = {};
+    var result = [];
+    queue.forEach(function(item) {
+      var key = item.entity + ':' + item.entityId;
+      if (item.synced) {
+        result.push(item);
+      } else if (!collapsed[key]) {
+        collapsed[key] = item;
+        result.push(item);
+      } else {
+        // Replace older item with newer one
+        var idx = result.indexOf(collapsed[key]);
+        if (idx !== -1) {
+          result[idx] = item;
+          collapsed[key] = item;
+        }
+      }
+    });
+
+    this.saveQueue(result);
+    return result;
+  },
+
+  _generateId() {
     return 'sync_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   },
 
-  /**
-   * Get queue stats
-   * @returns {Object}
-   */
   getStats() {
-    const queue = this.getQueue();
-    return {
-      total: queue.length,
-      pending: queue.filter(q => !q.synced).length,
-      failed: queue.filter(q => q.error !== null).length,
-      synced: queue.filter(q => q.synced && !q.error).length
-    };
-  },
-
-  /**
-   * Format queue for display
-   * @returns {Array}
-   */
-  getFormattedQueue() {
-    return this.getQueue().map(item => ({
-      ...item,
-      statusLabel: item.synced ? (item.error ? 'Failed' : 'Synced') : 'Pending',
-      statusClass: item.synced ? (item.error ? 'error' : 'synced') : 'pending'
-    }));
+    var queue = this.getQueue();
+    var pending = 0, failed = 0, synced = 0;
+    queue.forEach(function(q) {
+      if (q.synced && !q.error) synced++;
+      else if (q.error && (q.retries || 0) >= Logit.Offline._MAX_RETRIES) failed++;
+      else pending++;
+    });
+    return { total: queue.length, pending: pending, failed: failed, synced: synced };
   }
 };

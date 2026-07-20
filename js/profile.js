@@ -7,19 +7,18 @@ Logit.ProfilePage = {
     try {
       if (typeof Logit.Sync !== 'undefined') Logit.Sync.init();
       await this.checkAuth();
-    } catch (e) { console.error('Auth init error:', e); }
+    } catch (e) { /* silent */ }
 
     try {
       this.setupListeners();
       this.setupTabs();
-      // Load avatar from cloud first
       if (!Logit.Auth.isOfflineMode()) {
         try { await this.loadAvatarFromCloud(); } catch (e) {}
       }
       this.loadProfile();
-      // Pull movies from cloud first for accurate stats
+      // Sync to pull remote changes before showing stats
       if (!Logit.Auth.isOfflineMode()) {
-        try { await Logit.Sync.pullFromCloud(); } catch (e) {}
+        try { await Logit.Sync.sync(); } catch (e) {}
       }
       this.loadStats();
       await this.loadFavoritesFromCloud();
@@ -27,7 +26,7 @@ Logit.ProfilePage = {
       this.updateSyncStatus();
       this.updateStorageInfo();
       this.updateSyncCounts();
-    } catch (e) { console.error('Profile init error:', e); }
+    } catch (e) { /* silent */ }
   },
 
   async checkAuth() {
@@ -382,12 +381,9 @@ Logit.ProfilePage = {
   },
 
   async searchFavMovies(query) {
-    console.log('Searching:', query);
-    const API = Logit.Config.getApiKey();
-    console.log('API key:', API ? 'exists' : 'missing');
-    const results = document.getElementById('favSearchResults');
+    var API = Logit.Config.getApiKey();
+    var results = document.getElementById('favSearchResults');
     if (!results || !API || !query) {
-      console.log('Search aborted:', { results: !!results, API: !!API, query });
       if (results) results.innerHTML = '';
       return;
     }
@@ -608,8 +604,7 @@ Logit.ProfilePage = {
     });
 
     // Sync
-    if ($('manualSyncBtn')) $('manualSyncBtn').addEventListener('click', () => this.manualSync());
-    if ($('pullCloudBtn')) $('pullCloudBtn').addEventListener('click', () => this.pullFromCloud());
+    if ($('manualSyncBtn')) $('manualSyncBtn').addEventListener('click', function() { Logit.ProfilePage.manualSync(); });
 
     // Import / Export
     if ($('exportBtn')) $('exportBtn').addEventListener('click', () => Logit.Utils.openModal($('exportModal')));
@@ -677,15 +672,15 @@ Logit.ProfilePage = {
             btn.disabled = false;
             if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
               if (statusEl) statusEl.textContent = 'Syncing...';
-              try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+              try { await Logit.Sync.sync(); } catch (e) {}
             }
-            setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
+            setTimeout(function() { Logit.Utils.closeModal($('importModal')); Logit.ProfilePage.updateStorageInfo(); Logit.ProfilePage.updateSyncCounts(); }, 1000);
             return;
           }
-          let count = 0;
-          const existingIds = new Set(movies.map(m => m.id));
-          const existingTmdbIds = new Set(movies.map(m => m.tmdb_id || ''));
-          arr.forEach(m => {
+          var count = 0;
+          var existingIds = new Set(movies.map(function(m) { return m.id; }));
+          var existingTmdbIds = new Set(movies.map(function(m) { return m.tmdb_id || ''; }));
+          arr.forEach(function(m) {
             if (!m.t && !m.id) return;
             if (existingIds.has(m.id)) return;
             if (m.tmdb_id && existingTmdbIds.has(m.tmdb_id)) return;
@@ -699,9 +694,9 @@ Logit.ProfilePage = {
           if (statusEl) statusEl.textContent = count + ' imported from JSON';
           if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
             if (statusEl) statusEl.textContent = 'Syncing...';
-            try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+            try { await Logit.Sync.sync(); } catch (e) {}
           }
-          setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
+          setTimeout(function() { Logit.Utils.closeModal($('importModal')); Logit.ProfilePage.updateStorageInfo(); Logit.ProfilePage.updateSyncCounts(); }, 1000);
           return;
         } catch (err) { if (statusEl) statusEl.textContent = 'Invalid JSON'; return; }
       }
@@ -748,9 +743,9 @@ Logit.ProfilePage = {
       btn.disabled = false;
       if (typeof Logit.Sync !== 'undefined' && typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
         if (statusEl) statusEl.textContent = 'Syncing...';
-        try { await Logit.Sync.pushToCloud(); } catch (e) { console.error('Cloud push failed:', e); }
+        try { await Logit.Sync.sync(); } catch (e) {}
       }
-      setTimeout(() => { Logit.Utils.closeModal($('importModal')); this.updateStorageInfo(); this.updateSyncCounts(); }, 1000);
+      setTimeout(function() { Logit.Utils.closeModal($('importModal')); Logit.ProfilePage.updateStorageInfo(); Logit.ProfilePage.updateSyncCounts(); }, 1000);
     };
 
     // Account
@@ -832,28 +827,20 @@ Logit.ProfilePage = {
   },
 
   async manualSync() {
-    const btn = document.getElementById('manualSyncBtn');
+    var btn = document.getElementById('manualSyncBtn');
     if (!btn) return;
-    btn.disabled = true; btn.textContent = 'Pushing...';
+    btn.disabled = true; btn.textContent = 'Syncing...';
     try {
-      await Logit.Sync.pushToCloud();
-      alert('Movies pushed to cloud!');
-    } catch (e) { alert('Push error: ' + e.message); }
-    btn.disabled = false; btn.textContent = 'Push';
+      await Logit.Sync.sync();
+      alert('Sync complete!');
+    } catch (e) { alert('Sync error: ' + e.message); }
+    btn.disabled = false; btn.textContent = 'Sync';
+    this.updateStorageInfo();
     this.updateSyncCounts();
   },
 
   async pullFromCloud() {
-    const btn = document.getElementById('pullCloudBtn');
-    if (!btn) return;
-    btn.disabled = true; btn.textContent = 'Pulling...';
-    try {
-      await Logit.Sync.pullFromCloud();
-      alert('Movies pulled from cloud!');
-    } catch (e) { alert('Pull error: ' + e.message); }
-    btn.disabled = false; btn.textContent = 'Pull';
-    this.updateStorageInfo();
-    this.updateSyncCounts();
+    await this.manualSync();
   },
 
   async deleteAccount() {
