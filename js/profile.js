@@ -324,25 +324,30 @@ Logit.ProfilePage = {
     var userId = localStorage.getItem('logit_user_id');
     if (!client || !userId) return;
     try {
-      var { data } = await client.from('settings').select('avatar').eq('user_id', userId).single();
+      var { data, error } = await client.from('settings').select('avatar').eq('user_id', userId).single();
+      if (error) { console.warn('Avatar load error:', error.message); return; }
       if (data && data.avatar) {
         var avatarEl = document.getElementById('profileAvatar');
-        if (avatarEl) avatarEl.innerHTML = '<img src="' + data.avatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        if (avatarEl) {
+          avatarEl.textContent = '';
+          avatarEl.innerHTML = '<img src="' + data.avatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        }
       }
-    } catch (e) {}
+    } catch (e) { console.warn('Avatar load failed:', e); }
   },
 
   async syncAvatarToCloud(avatarData) {
     var client = Logit.Supabase.getClient();
     var userId = localStorage.getItem('logit_user_id');
-    if (!client || !userId) return;
+    if (!client || !userId) { console.warn('Avatar sync: no client or userId'); return; }
     try {
-      await client.from('settings').upsert({
+      var { error } = await client.from('settings').upsert({
         user_id: userId,
         avatar: avatarData,
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id' });
-    } catch (e) {}
+      if (error) console.warn('Avatar sync error:', error.message);
+    } catch (e) { console.warn('Avatar sync failed:', e); }
   },
 
   async clearAvatarFromCloud() {
