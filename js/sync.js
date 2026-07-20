@@ -18,6 +18,21 @@ Logit.Sync = {
   _syncStatusCallbacks: [],
 
   /**
+   * Compare two timestamps and return which is newer.
+   * Missing/null/undefined timestamps default to epoch 0.
+   * @param {string|null} a - ISO timestamp
+   * @param {string|null} b - ISO timestamp
+   * @returns {number} -1 if a < b, 0 if equal, 1 if a > b
+   */
+  compareTimestamps(a, b) {
+    var timeA = a ? new Date(a).getTime() : 0;
+    var timeB = b ? new Date(b).getTime() : 0;
+    if (timeA < timeB) return -1;
+    if (timeA > timeB) return 1;
+    return 0;
+  },
+
+  /**
    * Initialize sync engine
    */
   init() {
@@ -170,8 +185,7 @@ Logit.Sync = {
         .single();
 
       // If remote exists and is newer, resolve conflict instead of blindly overwriting
-      if (remote && remote.updated_at && movieData.updated_at &&
-          new Date(remote.updated_at).getTime() > new Date(movieData.updated_at).getTime()) {
+      if (remote && this.compareTimestamps(remote.updated_at, movieData.updated_at) > 0) {
         // Remote is newer - resolve conflict (preserve local user fields if local has them)
         await this.resolveConflict(item.entityId, remote, movieData);
       } else {
@@ -228,12 +242,11 @@ Logit.Sync = {
     const client = Logit.Supabase.getClient();
     const userId = localStorage.getItem('logit_user_id');
 
-    // Compare timestamps before deciding what to merge
-    const remoteTime = new Date(remote.updated_at || 0).getTime();
-    const localTime = new Date(local.updated_at || 0).getTime();
+    // Compare timestamps using consistent helper
+    var cmp = this.compareTimestamps(remote.updated_at, local.updated_at);
 
     // If local is newer or equal, keep local data (don't overwrite with remote)
-    if (localTime >= remoteTime) {
+    if (cmp <= 0) {
       return;
     }
 
@@ -287,14 +300,14 @@ Logit.Sync = {
           // New movie from another device
           localMovies.push(sanitized);
         } else {
-          // Compare timestamps - remote always wins (last write wins)
-          const remoteTime = new Date(remoteMovie.updated_at || 0).getTime();
-          const localTime = new Date(localMovie.updated_at || 0).getTime();
+          // Compare timestamps using consistent helper
+          var cmp = this.compareTimestamps(remoteMovie.updated_at, localMovie.updated_at);
 
-          if (remoteTime > localTime) {
-            // Remote is newer - overwrite local
+          if (cmp > 0) {
+            // Remote is newer - overwrite local entirely (last write wins)
             Object.assign(localMovie, sanitized);
           }
+          // If cmp <= 0, keep local (local is newer or equal)
         }
       }
 
@@ -338,7 +351,7 @@ Logit.Sync = {
       const local = localMap.get(rm.id);
       if (!local) {
         localMovies.push(clean);
-      } else if (new Date(rm.updated_at || 0) > new Date(local.updated_at || 0)) {
+      } else if (this.compareTimestamps(rm.updated_at, local.updated_at) > 0) {
         Object.assign(local, clean);
       }
     }
