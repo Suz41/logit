@@ -162,24 +162,27 @@ Logit.Sync = {
 
       if (error) throw new Error(error.message);
     } else if (item.action === 'update') {
-      const { error } = await client
-        .from('movies')
-        .update(movieData)
-        .eq('id', item.entityId)
-        .eq('user_id', userId);
-
-      if (error) throw new Error(error.message);
-
-      // Check for conflicts (remote version is newer)
+      // Check remote version BEFORE updating to prevent overwriting newer data
       const { data: remote } = await client
         .from('movies')
         .select('*')
         .eq('id', item.entityId)
         .single();
 
-      if (remote && remote.updated_at > movieData.updated_at) {
-        // Remote is newer - merge with local preference for certain fields
+      // If remote exists and is newer, resolve conflict instead of blindly overwriting
+      if (remote && remote.updated_at && movieData.updated_at &&
+          new Date(remote.updated_at).getTime() > new Date(movieData.updated_at).getTime()) {
+        // Remote is newer - resolve conflict (preserve local user fields if local has them)
         await this.resolveConflict(item.entityId, remote, movieData);
+      } else {
+        // Local is newer or equal, or no remote version exists - safe to update
+        const { error } = await client
+          .from('movies')
+          .update(movieData)
+          .eq('id', item.entityId)
+          .eq('user_id', userId);
+
+        if (error) throw new Error(error.message);
       }
     } else if (item.action === 'delete') {
       const { error } = await client

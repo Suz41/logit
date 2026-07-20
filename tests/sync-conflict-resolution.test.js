@@ -395,6 +395,119 @@ async function runTests() {
     }
   }
 
+  // Test 9: syncMovie should NOT overwrite when remote is newer
+  console.log('\n9. syncMovie should skip update when remote is newer');
+  {
+    savedMoviesHistory = [];
+    var newerTime = new Date().toISOString();
+    var olderTime = new Date(Date.now() - 600000).toISOString();
+
+    // Remote movie that is newer than local
+    var remoteMovie = {
+      id: 'movie-skip',
+      t: 'Remote Newer Title',
+      r: 5,
+      updated_at: newerTime
+    };
+
+    var item = {
+      id: 'q9',
+      entity: 'movie',
+      entityId: 'movie-skip',
+      action: 'update',
+      data: {
+        id: 'movie-skip',
+        t: 'Local Older Title',
+        r: 8,
+        updated_at: olderTime
+      }
+    };
+
+    var client = createMockClient([remoteMovie]);
+    Logit.Supabase.getClient = function () { return client; };
+    localStorage.setItem('logit_user_id', 'user1');
+
+    await Logit.Sync.syncMovie(item, client, 'user1');
+
+    // When remote is newer, the update should either be skipped or resolved
+    // The key is: the final state should NOT be the local older version overwriting remote
+    var updateCalls = client._updateCalls.filter(function (c) { return c.data.id === 'movie-skip'; });
+    // If there was an update call, it should NOT contain the older local timestamp
+    var updateWithOlderTimestamp = updateCalls.find(function (c) {
+      return c.data.updated_at === olderTime;
+    });
+    assert(!updateWithOlderTimestamp,
+      'syncMovie should not overwrite remote with older local data');
+  }
+
+  // Test 10: downloadRemoteChanges handles equal timestamps (keep local)
+  console.log('\n10. downloadRemoteChanges preserves local when timestamps are equal');
+  {
+    savedMoviesHistory = [];
+    var sameTime = new Date().toISOString();
+
+    var localMovie = {
+      id: 'movie-eq',
+      t: 'Local Title',
+      r: 7,
+      updated_at: sameTime
+    };
+
+    var remoteMovie = {
+      id: 'movie-eq',
+      t: 'Remote Title',
+      r: 3,
+      updated_at: sameTime
+    };
+
+    Logit.Storage._movies = [localMovie];
+
+    var client = createMockClient([remoteMovie]);
+    Logit.Supabase.getClient = function () { return client; };
+    localStorage.setItem('logit_user_id', 'user1');
+
+    await Logit.Sync.downloadRemoteChanges();
+
+    var movies = Logit.Storage.loadMovies();
+    var movie = movies.find(function (m) { return m.id === 'movie-eq'; });
+    assertEqual(movie.t, 'Local Title',
+      'Local title preserved when timestamps are equal');
+    assertEqual(movie.r, 7,
+      'Local rating preserved when timestamps are equal');
+  }
+
+  // Test 11: syncMovie should handle missing timestamps gracefully
+  console.log('\n11. syncMovie handles missing updated_at on local');
+  {
+    savedMoviesHistory = [];
+    var threw = false;
+
+    var item = {
+      id: 'q11',
+      entity: 'movie',
+      entityId: 'movie-nots',
+      action: 'update',
+      data: {
+        id: 'movie-nots',
+        t: 'No Timestamp',
+        r: 5
+        // no updated_at field
+      }
+    };
+
+    var client = createMockClient([]);
+    Logit.Supabase.getClient = function () { return client; };
+    localStorage.setItem('logit_user_id', 'user1');
+
+    try {
+      await Logit.Sync.syncMovie(item, client, 'user1');
+    } catch (e) {
+      threw = true;
+    }
+
+    assert(!threw, 'syncMovie handles missing timestamp without throwing');
+  }
+
   // Summary
   console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
   return failed;
