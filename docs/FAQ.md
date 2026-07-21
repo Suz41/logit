@@ -86,7 +86,7 @@ Yes. Go to Profile → Settings → Export. Choose JSON (full data) or Text (one
 
 <details>
 <summary><strong>How does Google Drive backup work?</strong></summary>
-After your first manual backup, Log!t automatically saves your movies to a "Logit" folder on your Google Drive after every change.
+After your first manual backup, Log!t automatically saves your movies to a "Logit" folder on your Google Drive after every change. Backup files are named like `logit-146-movies-2026-07-20.json` showing the movie count and date.
 </details>
 
 ---

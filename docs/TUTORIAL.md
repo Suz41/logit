@@ -76,6 +76,7 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 - Go to Profile → Settings
 - Click **Backup to Drive** (first time requires Google sign-in)
 - Auto-backup runs after every movie change
+- Backup files are named like `logit-146-movies-2026-07-20.json`
 
 ---
 

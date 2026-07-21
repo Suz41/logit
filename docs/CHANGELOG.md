@@ -8,6 +8,7 @@ All notable changes to Log!t will be documented in this file.
 - Google Drive backup/restore integration
 - Auto-backup to Google Drive after every movie change
 - "Logit" folder created automatically on Google Drive
+- Dynamic backup filenames: `logit-{count}-movies-{date}.json`
 - Backup/restore buttons in profile settings
 - Red dot indicators for movies with missing metadata
 - Red border on incomplete movie cards
