@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#30d158"/>
+      <stop offset="100%" stop-color="#28a745"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5"/>
+  <!-- Clapperboard top -->
+  <path d="M16 20L48 20C50.2 20 52 21.8 52 24L52 44C52 46.2 50.2 48 48 48L16 48C13.8 48 12 46.2 12 44L12 24C12 21.8 13.8 20 16 20Z" fill="#1c1c1e" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2"/>
+  <path d="M12 27L52 27" stroke="url(#accentGrad)" stroke-width="2.5"/>
+  <path d="M19 20L24 27" stroke="url(#accentGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M29 20L34 27" stroke="url(#accentGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M39 20L44 27" stroke="url(#accentGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Play Icon inside clapperboard -->
+  <polygon points="28,32 40,37.5 28,43" fill="url(#accentGrad)"/>
+</svg>
