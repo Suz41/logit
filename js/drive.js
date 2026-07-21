@@ -1,293 +1,353 @@
 window.Logit = window.Logit || {};
 
 /**
- * Google Drive Integration
+ * Google Drive Integration Module for Logit
+ * Provides authentication, automated backup, and restore capabilities.
  */
 Logit.Drive = {
-  _tokenClient: null,
-  _accessToken: null,
+  _CLIENT_ID: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
+  _SCOPE: 'https://www.googleapis.com/auth/drive.file',
   _FOLDER_NAME: 'Logit',
   _FOLDER_KEY: 'logit_drive_folder_id',
   _TOKEN_KEY: 'logit_drive_token',
 
-  init() {
-    var saved = localStorage.getItem(this._TOKEN_KEY);
-    if (saved) this._accessToken = saved;
+  _tokenClient: null,
+  _accessToken: null,
+  _onAuthSuccess: null,
+  _onAuthError: null,
 
-    this._tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/drive.file',
-      callback: (response) => {
-        if (response.error) {
-          console.error('Auth error:', response);
-          return;
-        }
-        this._accessToken = response.access_token;
-        localStorage.setItem(this._TOKEN_KEY, response.access_token);
-        this._onAuthSuccess();
-      },
-    });
+  /**
+   * Initialize Google Auth Token Client & load stored credentials.
+   */
+  init() {
+    const savedToken = localStorage.getItem(this._TOKEN_KEY);
+    if (savedToken) {
+      this._accessToken = savedToken;
+    }
+
+    if (window.google && google.accounts && google.accounts.oauth2) {
+      this._tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: this._CLIENT_ID,
+        scope: this._SCOPE,
+        callback: (response) => {
+          if (response.error) {
+            console.error('[Drive] Auth error:', response);
+            if (this._onAuthError) this._onAuthError(response);
+            return;
+          }
+          this._accessToken = response.access_token;
+          localStorage.setItem(this._TOKEN_KEY, response.access_token);
+          console.log('[Drive] Authentication successful');
+          if (this._onAuthSuccess) this._onAuthSuccess(response);
+        },
+      });
+    } else {
+      console.warn('[Drive] Google Accounts OAuth2 library (gsi/client) is not loaded.');
+    }
   },
 
-  requestAuth(onSuccess) {
-    this._onAuthSuccess = onSuccess || function() {};
+  /**
+   * Request OAuth access token from user via Google popup.
+   * @param {Function} [onSuccess]
+   * @param {Function} [onError]
+   */
+  requestAuth(onSuccess, onError) {
+    this._onAuthSuccess = onSuccess || null;
+    this._onAuthError = onError || null;
+
+    if (!this._tokenClient) {
+      this.init();
+    }
+
+    if (!this._tokenClient) {
+      const err = new Error('Google Identity Services SDK not loaded.');
+      console.error('[Drive]', err.message);
+      if (onError) onError(err);
+      return;
+    }
+
+    this._tokenClient.requestAccessToken({ prompt: 'consent' });
+  },
+
+  /**
+   * Check if client currently holds an access token.
+   * @returns {boolean}
+   */
+  isAuthenticated() {
+    return Boolean(this._accessToken);
+  },
+
+  /**
+   * Clear access token and cached folder ID from local state & storage.
+   */
+  clearToken() {
     this._accessToken = null;
     localStorage.removeItem(this._TOKEN_KEY);
-    this._tokenClient.requestAccessToken();
+    localStorage.removeItem(this._FOLDER_KEY);
   },
 
+  /**
+   * Sign out and revoke Google token.
+   */
+  signOut() {
+    if (this._accessToken && window.google?.accounts?.oauth2) {
+      try {
+        google.accounts.oauth2.revoke(this._accessToken, () => {
+          console.log('[Drive] Access token revoked.');
+        });
+      } catch (e) {
+        console.warn('[Drive] Error revoking token:', e);
+      }
+    }
+    this.clearToken();
+  },
+
+  /**
+   * Perform backup to Google Drive.
+   * @returns {Promise<{success: boolean, message: string}>}
+   */
   async backup() {
     if (!this._accessToken) {
       return { success: false, message: 'Not authenticated with Google Drive' };
     }
 
     try {
-      var movies = await Logit.Storage.loadMovies();
-      var settings = await this._loadSettings();
-      var backupData = {
+      // 1. Gather local data
+      const movies = (await Logit.Storage.loadMovies()) || [];
+      const settings = await this._loadSettings();
+      const backupData = {
         version: 1,
         created: new Date().toISOString(),
+        moviesCount: movies.length,
         movies: movies,
         settings: settings
       };
 
-      var content = JSON.stringify(backupData, null, 2);
-      var blob = new Blob([content], { type: 'application/json' });
+      const content = JSON.stringify(backupData, null, 2);
+      const now = new Date();
+      const dateStr = now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0');
+      const fileName = `logit-${movies.length}-movies-${dateStr}.json`;
 
-      var now = new Date();
-      var dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-      var fileName = 'logit-' + movies.length + '-movies-' + dateStr + '.json';
+      // 2. Ensure destination folder exists
+      const folderId = await this._getOrCreateFolder();
 
-      var folderId = await this._getOrCreateFolder();
-      var existingFileId = await this._findFile(fileName, folderId);
+      // 3. Check for existing backup file with same name
+      const existingFileId = await this._findFileByName(fileName, folderId);
 
+      // 4. Save file
       if (existingFileId) {
-        await this._updateFile(existingFileId, blob);
+        await this._updateFileContent(existingFileId, content);
       } else {
-        await this._uploadFile(fileName, blob, folderId);
+        await this._createFile(fileName, content, folderId);
       }
 
-      return { success: true, message: 'Backup saved: ' + fileName };
-    } catch (e) {
-      console.error('Backup failed:', e);
-      return { success: false, message: 'Backup failed: ' + e.message };
+      return { success: true, message: `Backup saved: ${fileName}` };
+    } catch (err) {
+      console.error('[Drive] Backup failed:', err);
+      return { success: false, message: `Backup failed: ${err.message}` };
     }
   },
 
+  /**
+   * Restore movies and settings from latest Google Drive backup.
+   * @returns {Promise<{success: boolean, count?: number, message: string}>}
+   */
   async restore() {
     if (!this._accessToken) {
       return { success: false, message: 'Not authenticated with Google Drive' };
     }
 
     try {
-      var folderId = await this._getOrCreateFolder();
-      var files = await this._listFiles(folderId);
+      const folderId = await this._getOrCreateFolder();
+      const files = await this._listBackupFiles(folderId);
 
-      if (files.length === 0) {
-        return { success: false, message: 'No backup found in Logit folder' };
+      if (!files || files.length === 0) {
+        return { success: false, message: 'No backup files found in Logit folder' };
       }
 
-      // Sort by name (includes date) to get latest
-      files.sort(function(a, b) { return b.name.localeCompare(a.name); });
-      var latestFile = files[0];
+      // Sort files by modifiedTime descending or name descending
+      files.sort((a, b) => {
+        const timeA = a.createdTime || a.modifiedTime || a.name;
+        const timeB = b.createdTime || b.modifiedTime || b.name;
+        return timeB.localeCompare(timeA);
+      });
 
-      var content = await this._downloadFile(latestFile.id);
-      var backupData = JSON.parse(content);
+      const latestFile = files[0];
+      const rawContent = await this._downloadFileContent(latestFile.id);
+      const backupData = JSON.parse(rawContent);
 
-      if (!backupData.movies || !Array.isArray(backupData.movies)) {
+      if (!backupData || !Array.isArray(backupData.movies)) {
         return { success: false, message: 'Invalid backup file format' };
       }
 
-      var count = 0;
-      for (var i = 0; i < backupData.movies.length; i++) {
-        var movie = backupData.movies[i];
-        if (movie.id && movie.t) {
+      let restoredCount = 0;
+      for (const movie of backupData.movies) {
+        if (movie && (movie.id || movie.t)) {
           await Logit.Storage.saveMovie(movie, 'create');
-          count++;
+          restoredCount++;
         }
       }
 
-      return { success: true, count: count, message: count + ' movies restored from ' + latestFile.name };
-    } catch (e) {
-      console.error('Restore failed:', e);
-      return { success: false, message: 'Restore failed: ' + e.message };
+      return {
+        success: true,
+        count: restoredCount,
+        message: `${restoredCount} movies restored from ${latestFile.name}`
+      };
+    } catch (err) {
+      console.error('[Drive] Restore failed:', err);
+      return { success: false, message: `Restore failed: ${err.message}` };
     }
   },
 
+  // ==========================================
+  // Private Helper & API Methods
+  // ==========================================
+
+  /**
+   * Universal HTTP fetch helper for Google Drive API.
+   */
+  async _apiFetch(url, options = {}) {
+    if (!this._accessToken) {
+      throw new Error('Not authenticated with Google Drive');
+    }
+
+    const headers = options.headers || {};
+    headers['Authorization'] = `Bearer ${this._accessToken}`;
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401) {
+      this.clearToken();
+      throw new Error('Google Drive authorization expired. Please connect to Google Drive again.');
+    }
+
+    if (!response.ok) {
+      let errText = '';
+      try {
+        const errJson = await response.json();
+        errText = errJson.error?.message || response.statusText;
+      } catch (e) {
+        errText = (await response.text()) || response.statusText;
+      }
+      throw new Error(`Drive API Error (${response.status}): ${errText}`);
+    }
+
+    return response;
+  },
+
   async _loadSettings() {
-    var client = Logit.Supabase.getClient();
-    var userId = localStorage.getItem('logit_user_id');
+    if (!Logit.Supabase || !Logit.Supabase.getClient) return {};
+    const client = Logit.Supabase.getClient();
+    const userId = localStorage.getItem('logit_user_id');
     if (!client || !userId) return {};
     try {
-      var { data } = await client.from('settings').select('*').eq('user_id', userId).single();
+      const { data } = await client.from('settings').select('*').eq('user_id', userId).single();
       return data || {};
     } catch (e) {
       return {};
     }
   },
 
-  async _apiCall(method, url, body) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open(method, url, true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
-      if (body) xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onload = function() {
-        if (xhr.status === 401) {
-          Logit.Drive._accessToken = null;
-          localStorage.removeItem('logit_drive_token');
-          reject(new Error('Token expired. Click Backup to Drive again.'));
-          return;
-        }
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(xhr.responseText ? JSON.parse(xhr.responseText) : {});
-        } else {
-          reject(new Error('API error ' + xhr.status));
-        }
-      };
-      xhr.onerror = function() { reject(new Error('Network error')); };
-      xhr.send(body ? JSON.stringify(body) : null);
-    });
-  },
-
   async _getOrCreateFolder() {
-    var cached = localStorage.getItem(this._FOLDER_KEY);
-    if (cached) {
-      console.log('Using cached folder ID:', cached);
-      return cached;
-    }
-
-    console.log('Listing all files to find Logit folder...');
-    var data = await this._apiCall('GET', 'https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files(id,name,mimeType)');
-    console.log('All files:', data.files);
-
-    if (data.files) {
-      var folder = data.files.find(function(f) {
-        return f.name === 'Logit' && f.mimeType === 'application/vnd.google-apps.folder';
-      });
-      if (folder) {
-        console.log('Found existing Logit folder:', folder.id);
-        localStorage.setItem(this._FOLDER_KEY, folder.id);
-        return folder.id;
+    const cachedId = localStorage.getItem(this._FOLDER_KEY);
+    if (cachedId) {
+      try {
+        const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${cachedId}?fields=id,trashed`);
+        const folder = await res.json();
+        if (folder && !folder.trashed) {
+          return cachedId;
+        }
+      } catch (e) {
+        console.warn('[Drive] Cached folder invalid or deleted, searching again...');
+        localStorage.removeItem(this._FOLDER_KEY);
       }
     }
 
-    console.log('Creating new Logit folder...');
-    var newFolder = await this._apiCall('POST', 'https://www.googleapis.com/drive/v3/files', {
-      name: 'Logit',
-      mimeType: 'application/vnd.google-apps.folder'
-    });
-    console.log('Created folder:', newFolder);
+    const q = encodeURIComponent(`mimeType = 'application/vnd.google-apps.folder' and name = '${this._FOLDER_NAME}' and trashed = false`);
+    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    const data = await res.json();
 
+    if (data.files && data.files.length > 0) {
+      const folderId = data.files[0].id;
+      localStorage.setItem(this._FOLDER_KEY, folderId);
+      return folderId;
+    }
+
+    const createRes = await this._apiFetch('https://www.googleapis.com/drive/v3/files', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify({
+        name: this._FOLDER_NAME,
+        mimeType: 'application/vnd.google-apps.folder'
+      })
+    });
+    const newFolder = await createRes.json();
     localStorage.setItem(this._FOLDER_KEY, newFolder.id);
     return newFolder.id;
   },
 
-  async _findFile(name, folderId) {
-    var data = await this._apiCall('GET', 'https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files(id,name)');
-    if (!data.files) return null;
-
-    var file = data.files.find(function(f) {
-      return f.name === name;
-    });
-    return file ? file.id : null;
+  async _findFileByName(fileName, folderId) {
+    const q = encodeURIComponent(`'${folderId}' in parents and name = '${fileName}' and trashed = false`);
+    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    const data = await res.json();
+    return data.files && data.files.length > 0 ? data.files[0].id : null;
   },
 
-  async _listFiles(folderId) {
-    var data = await this._apiCall('GET', 'https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files(id,name)');
+  async _listBackupFiles(folderId) {
+    const q = encodeURIComponent(`'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`);
+    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,createdTime,modifiedTime)`);
+    const data = await res.json();
     if (!data.files) return [];
 
-    return data.files.filter(function(f) {
-      return f.name && f.name.indexOf('logit-') === 0 && f.name.indexOf('-movies-') > 0;
-    });
+    return data.files.filter(f => f.name && (f.name.startsWith('logit-') || f.name.endsWith('.json')));
   },
 
-  async _uploadFile(name, blob, folderId) {
-    return new Promise(function(resolve, reject) {
-      var metadata = { name: name, parents: [folderId] };
-      var boundary = '----FormBoundary' + Math.random().toString(36).substr(2);
+  async _createFile(fileName, contentText, folderId) {
+    const metadata = {
+      name: fileName,
+      parents: [folderId],
+      mimeType: 'application/json'
+    };
 
-      var body = '--' + boundary + '\r\n'
-        + 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
-        + JSON.stringify(metadata) + '\r\n'
-        + '--' + boundary + '\r\n'
-        + 'Content-Type: application/json\r\n\r\n'
-        + blob.text() + '\r\n'
-        + '--' + boundary + '--';
+    const boundary = 'logit_drive_boundary_' + Date.now().toString(36);
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelimiter = `\r\n--${boundary}--`;
 
-      blob.text().then(function(content) {
-        var fullBody = '--' + boundary + '\r\n'
-          + 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
-          + JSON.stringify(metadata) + '\r\n'
-          + '--' + boundary + '\r\n'
-          + 'Content-Type: application/json\r\n\r\n'
-          + content + '\r\n'
-          + '--' + boundary + '--';
+    const body = delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      JSON.stringify(metadata) +
+      delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      contentText +
+      closeDelimiter;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', true);
-        xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
-        xhr.setRequestHeader('Content-Type', 'multipart/related; boundary=' + boundary);
-        xhr.onload = function() {
-          if (xhr.status === 401) {
-            Logit.Drive._accessToken = null;
-            localStorage.removeItem('logit_drive_token');
-            reject(new Error('Token expired. Click Backup to Drive again.'));
-            return;
-          }
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(JSON.parse(xhr.responseText));
-          } else {
-            console.error('Upload error:', xhr.status, xhr.responseText);
-            reject(new Error('Upload failed: ' + xhr.status));
-          }
-        };
-        xhr.onerror = function() { reject(new Error('Network error')); };
-        xhr.send(fullBody);
-      });
+    const res = await this._apiFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': `multipart/related; boundary=${boundary}`
+      },
+      body: body
     });
+
+    return await res.json();
   },
 
-  async _updateFile(fileId, blob) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('PATCH', 'https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=media', true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(xhr.responseText ? JSON.parse(xhr.responseText) : {});
-        } else {
-          reject(new Error('Update failed: ' + xhr.status));
-        }
-      };
-      xhr.onerror = function() { reject(new Error('Network error')); };
-      xhr.send(blob);
+  async _updateFileContent(fileId, contentText) {
+    const res = await this._apiFetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: contentText
     });
+
+    return await res.json();
   },
 
-  async _downloadFile(fileId) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media', true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
-      xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(xhr.responseText);
-        } else {
-          reject(new Error('Download failed: ' + xhr.status));
-        }
-      };
-      xhr.onerror = function() { reject(new Error('Network error')); };
-      xhr.send();
-    });
-  },
-
-  signOut() {
-    if (this._accessToken) {
-      google.accounts.oauth2.revoke(this._accessToken);
-      this._accessToken = null;
-      localStorage.removeItem(this._TOKEN_KEY);
-    }
+  async _downloadFileContent(fileId) {
+    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+    return await res.text();
   }
 };
