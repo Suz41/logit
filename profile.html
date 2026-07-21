@@ -6,11 +6,11 @@
 <title>Profile - Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=15">
-<link rel="stylesheet" href="css/components.css?v=15">
-<link rel="stylesheet" href="css/profile.css?v=15">
-<link rel="stylesheet" href="css/modal.css?v=15">
-<link rel="stylesheet" href="css/desktop.css?v=15">
+<link rel="stylesheet" href="css/main.css?v=16">
+<link rel="stylesheet" href="css/components.css?v=16">
+<link rel="stylesheet" href="css/profile.css?v=16">
+<link rel="stylesheet" href="css/modal.css?v=16">
+<link rel="stylesheet" href="css/desktop.css?v=16">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -142,65 +142,40 @@
           </div>
         </div>
         <div class="contentBlock">
-          <h3 class="blockTitle">GOOGLE DRIVE CLOUD BACKUP</h3>
+          <h3 class="blockTitle">GOOGLE DRIVE BACKUP</h3>
           
-          <!-- Cloud Drive Card -->
-          <div class="driveCloudCard" id="driveAccountCard">
-            <div class="driveCloudHeader">
-              <div class="driveCloudHeaderTop">
-                <div class="driveCloudIcon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>
-                </div>
-                <div class="driveCloudTitleWrap">
-                  <div class="driveCloudTitleRow">
-                    <span class="driveCloudTitle" id="driveAccountName">Google Drive</span>
-                    <span class="driveStatusBadge disconnected" id="driveStatusBadge">
-                      <span class="statusDot"></span>
-                      <span id="driveStatusText">Not Connected</span>
-                    </span>
-                  </div>
-                  <div class="driveCloudEmail" id="driveAccountEmail">No Google account linked</div>
-                </div>
+          <!-- Minimal Cloud Drive Card -->
+          <div class="driveCloudCard minimal" id="driveAccountCard">
+            <div class="driveCloudHeaderTop">
+              <div class="driveCloudIcon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>
               </div>
-              <button type="button" class="driveConnectBtn" id="driveConnectBtn">Connect Account</button>
-            </div>
-
-            <div class="driveCloudStats">
-              <div class="driveStatItem">
-                <span class="driveStatLabel">Cloud Folder</span>
-                <span class="driveStatValue" id="driveFolderText">Logit /</span>
-              </div>
-              <div class="driveStatItem">
-                <span class="driveStatLabel">Sync Protocol</span>
-                <span class="driveStatValue">OAuth2 / JSON</span>
+              <div class="driveCloudTitleWrap">
+                <div class="driveCloudTitleRow">
+                  <span class="driveCloudTitle" id="driveAccountName">Google Drive</span>
+                  <span class="driveStatusBadge disconnected" id="driveStatusBadge">
+                    <span class="statusDot"></span>
+                    <span id="driveStatusText">Not Connected</span>
+                  </span>
+                </div>
+                <div class="driveCloudEmail" id="driveAccountEmail">No Google account linked</div>
               </div>
             </div>
+            <button type="button" class="driveConnectBtn" id="driveConnectBtn">Connect</button>
           </div>
 
-          <!-- Quick Action Buttons -->
-          <div class="driveActionGrid">
-            <button type="button" class="driveActionBtn" id="driveBackupBtn">
-              <div class="driveActionIcon">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
-              </div>
-              <div class="driveActionText">
-                <span class="driveActionTitle">Backup to Drive</span>
-                <span class="driveActionSub">Save movies & settings</span>
-              </div>
-            </button>
-            <button type="button" class="driveActionBtn" id="driveRestoreBtn">
-              <div class="driveActionIcon">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
-              </div>
-              <div class="driveActionText">
-                <span class="driveActionTitle">Restore from Drive</span>
-                <span class="driveActionSub">Load latest cloud backup</span>
-              </div>
-            </button>
-          </div>
-
-          <!-- Other Data Actions -->
+          <!-- Minimal Action List -->
           <div class="settingsList">
+            <button class="settingsItem" id="driveBackupBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+              <span>Backup to Drive</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="driveRestoreBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+              <span>Restore from Drive</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
             <button class="settingsItem" id="importBtn">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span>Import Movies (JSON/CSV)</span>
