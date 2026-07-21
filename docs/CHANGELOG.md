@@ -2,6 +2,34 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.1.0] - 2026-07-20
+
+### Fixed
+- ReferenceError crash from undeclared `sidebarGridSlider`
+- Month labels missing year (e.g., "January" for all years)
+- Broken month sort using invalid Date() on YYYY-M format
+- parseInt called without radix parameter
+- Avatar not loading on page reload
+- Runtime not editable in movie details
+
+### Changed
+- Added year to month group labels
+- Shared constants for ratings and poster fallback
+- Reduced code duplication (5x SVG fallback, 2x rating array, 3x avatar pattern)
+- Declared `_favorites` property explicitly
+- Removed dead sidebar/grid references from library.js
+- Updated all documentation for v3.0 cloud-only architecture
+
+### Removed
+- Unused `Supabase.configure()` method
+- Hardcoded `isOfflineMode()` function
+- Dead sidebar toggle references
+- Dead HTML element references (sidebarGridSlider, sidebarDateToggle, etc.)
+- Unused CSS classes (~30 classes across 6 files)
+- config.html (unused, defaults hardcoded)
+- Old sync test files and compose artifacts
+- Continue Offline button from welcome page
+
 ## [3.0.0] - 2026-07-20
 
 ### Added
