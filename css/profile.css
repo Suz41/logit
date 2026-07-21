@@ -886,17 +886,17 @@
     gap: 20px;
   }
 
-  .colRight .contentBlock:first-child {
-    display: none;
+  .contentBlock {
+    margin-bottom: 24px;
   }
 
-  .contentBlock {
+  .contentBlock:last-child {
     margin-bottom: 0;
   }
 
   .blockTitle {
     font-size: 11px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .favGrid {
