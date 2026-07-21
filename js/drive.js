@@ -14,7 +14,7 @@ Logit.Drive = {
    */
   init() {
     this._tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+      client_id: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
       scope: 'https://www.googleapis.com/auth/drive.file',
       callback: (response) => {
         this._accessToken = response.access_token;
