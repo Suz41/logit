@@ -69,25 +69,6 @@ Logit.Storage = {
   },
 
   /**
-   * Save multiple movies (bulk upsert).
-   * @param {Array} movies
-   * @returns {Promise<void>}
-   */
-  async saveMovies(movies) {
-    var client = Logit.Supabase.getClient();
-    var userId = localStorage.getItem('logit_user_id');
-    if (!client || !userId) throw new Error('Not authenticated');
-
-    var now = new Date().toISOString();
-    var records = movies.map(function(m) {
-      return Object.assign({}, m, { user_id: userId, updated_at: now });
-    });
-
-    var { error } = await client.from('movies').upsert(records, { onConflict: 'id' });
-    if (error) throw new Error(error.message);
-  },
-
-  /**
    * Delete a movie from Supabase.
    * @param {string} movieId
    * @returns {Promise<void>}

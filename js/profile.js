@@ -118,27 +118,6 @@ Logit.ProfilePage = {
     });
   },
 
-  async loadAllFilms() {
-    var movies = this._movies;
-    var grid = document.getElementById('allFilmsGrid');
-    if (!grid) return;
-
-    if (movies.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-size:13px;">No films logged yet</div>';
-      return;
-    }
-
-    var sorted = movies.slice().sort(function(a, b) { return (b.d || '').localeCompare(a.d || ''); });
-    var esc = Logit.Utils.esc;
-    grid.innerHTML = sorted.map(function(m) {
-      var poster = m.sp
-        ? '<img src="https://image.tmdb.org/t/p/w342' + esc(m.sp) + '" alt="' + esc(m.t) + '" loading="lazy">'
-        : '<div class="filmPosterPlaceholder">' + esc(m.t ? m.t.substring(0, 20) : '?') + '</div>';
-      var rating = m.r ? '<div class="filmRating">' + m.r + '\u2605</div>' : '';
-      return '<div class="filmPoster" title="' + esc(m.t) + '">' + poster + rating + '</div>';
-    }).join('');
-  },
-
   // ========= FAVORITES (stored in settings table) =========
   async loadFavoritesFromCloud() {
     var client = Logit.Supabase.getClient();

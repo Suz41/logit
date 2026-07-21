@@ -201,8 +201,6 @@ Logit.Auth = {
     } catch (e) { /* silent */ }
   },
 
-  getCurrentUser() { return this._currentUser; },
-  isAuthenticated() { return !!this._currentUser; },
   isOfflineMode() { return false; },
 
   redirectToLibrary() {

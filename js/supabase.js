@@ -64,33 +64,6 @@ Logit.Supabase = {
   },
 
   /**
-   * Check if Supabase is configured and accessible
-   * @returns {boolean}
-   */
-  isConfigured() {
-    const url = localStorage.getItem('supabase_url');
-    const key = localStorage.getItem('supabase_anon_key');
-    return !!(url && key);
-  },
-
-  /**
-   * Check internet connectivity
-   * @returns {Promise<boolean>}
-   */
-  async isOnline() {
-    try {
-      const response = await fetch('https://www.google.com', { 
-        method: 'HEAD', 
-        mode: 'no-cors',
-        cache: 'no-store'
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
-
-  /**
    * Get authenticated user
    * @returns {Promise<Object|null>}
    */

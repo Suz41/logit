@@ -11,7 +11,6 @@ Logit.StatsPage = {
     }
 
     var API = Logit.Config.getApiKey();
-    var esc = Logit.Utils.esc;
     var $ = Logit.Utils.byId;
 
     var movies = await Logit.Storage.loadMovies();
@@ -189,14 +188,6 @@ Logit.StatsPage = {
       Logit.Export.doExport(movies, format, closeExportModal);
     }
 
-    function setApiKey() {
-      const key = prompt('Enter your TMDB API Key:', Logit.Config.getApiKey());
-      if (key !== null) {
-        Logit.Config.setApiKey(key);
-        location.reload();
-      }
-    }
-
     // ========= EVENT LISTENERS =========
     const runtimeBox = $('runtimeBox');
     if (runtimeBox) runtimeBox.addEventListener('click', toggleRuntime);
@@ -277,8 +268,6 @@ Logit.StatsPage = {
                   const newMovie = Logit.MovieFactory.fromTMDB(detail, entry.r || 3, watch, entry.d || Logit.Import.normalizeDate(null));
                   movies.unshift(newMovie);
                   imported++;
-                  if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-                  }
                 } catch (e) { console.error('JSON slim import item error:', e); failed++; }
               }
 
@@ -297,8 +286,6 @@ Logit.StatsPage = {
               if (m.tmdb_id && existingTmdbFull.has(m.tmdb_id)) return;
               movies.unshift(m);
               count++;
-              if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-              }
             });
             $('importStatus').textContent = count + ' imported from JSON';
             setTimeout(function() { closeImportModal(); location.reload(); }, 1500);
@@ -383,8 +370,6 @@ Logit.StatsPage = {
             if (newImdbId) existingImdbIds.add(newImdbId);
 
             imported++;
-            if (typeof Logit.Auth !== 'undefined' && !Logit.Auth.isOfflineMode()) {
-            }
           } catch (e) { console.error('Text import item error:', e); failed++; }
         }
 
