@@ -16,7 +16,7 @@ Logit.Drive = {
 
     this._tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/drive',
+      scope: 'https://www.googleapis.com/auth/drive.file',
       callback: (response) => {
         if (response.error) {
           console.error('Auth error:', response);
@@ -205,30 +205,46 @@ Logit.Drive = {
   async _uploadFile(name, blob, folderId) {
     return new Promise(function(resolve, reject) {
       var metadata = { name: name, parents: [folderId] };
+      var boundary = '----FormBoundary' + Math.random().toString(36).substr(2);
 
-      var form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', blob);
+      var body = '--' + boundary + '\r\n'
+        + 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
+        + JSON.stringify(metadata) + '\r\n'
+        + '--' + boundary + '\r\n'
+        + 'Content-Type: application/json\r\n\r\n'
+        + blob.text() + '\r\n'
+        + '--' + boundary + '--';
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
-      xhr.onload = function() {
-        if (xhr.status === 401) {
-          Logit.Drive._accessToken = null;
-          localStorage.removeItem('logit_drive_token');
-          reject(new Error('Token expired. Click Backup to Drive again.'));
-          return;
-        }
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(JSON.parse(xhr.responseText));
-        } else {
-          console.error('Upload error:', xhr.status, xhr.responseText);
-          reject(new Error('Upload failed: ' + xhr.status));
-        }
-      };
-      xhr.onerror = function() { reject(new Error('Network error')); };
-      xhr.send(form);
+      blob.text().then(function(content) {
+        var fullBody = '--' + boundary + '\r\n'
+          + 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
+          + JSON.stringify(metadata) + '\r\n'
+          + '--' + boundary + '\r\n'
+          + 'Content-Type: application/json\r\n\r\n'
+          + content + '\r\n'
+          + '--' + boundary + '--';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + Logit.Drive._accessToken);
+        xhr.setRequestHeader('Content-Type', 'multipart/related; boundary=' + boundary);
+        xhr.onload = function() {
+          if (xhr.status === 401) {
+            Logit.Drive._accessToken = null;
+            localStorage.removeItem('logit_drive_token');
+            reject(new Error('Token expired. Click Backup to Drive again.'));
+            return;
+          }
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            console.error('Upload error:', xhr.status, xhr.responseText);
+            reject(new Error('Upload failed: ' + xhr.status));
+          }
+        };
+        xhr.onerror = function() { reject(new Error('Network error')); };
+        xhr.send(fullBody);
+      });
     });
   },
 
