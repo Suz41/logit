@@ -8,6 +8,8 @@ Logit.Drive = {
   _tokenClient: null,
   _accessToken: null,
   _FILE_NAME: 'logit-movies-backup.json',
+  _FOLDER_NAME: 'Logit',
+  _FOLDER_KEY: 'logit_drive_folder_id',
   _TOKEN_KEY: 'logit_drive_token',
 
   /**
@@ -63,18 +65,21 @@ Logit.Drive = {
       var content = JSON.stringify(backupData, null, 2);
       var blob = new Blob([content], { type: 'application/json' });
 
-      // Check if backup file already exists
-      var existingFileId = await this._findFile(this._FILE_NAME);
+      // Ensure Logit folder exists
+      var folderId = await this._getOrCreateFolder();
+
+      // Check if backup file already exists in folder
+      var existingFileId = await this._findFileInFolder(this._FILE_NAME, folderId);
 
       if (existingFileId) {
         // Update existing file
         await this._updateFile(existingFileId, blob);
       } else {
-        // Create new file
-        await this._createFile(this._FILE_NAME, blob);
+        // Create new file in Logit folder
+        await this._createFileInFolder(this._FILE_NAME, blob, folderId);
       }
 
-      return { success: true, message: 'Backup saved to Google Drive' };
+      return { success: true, message: 'Backup saved to Logit folder on Google Drive' };
     } catch (e) {
       console.error('Backup failed:', e);
       return { success: false, message: 'Backup failed: ' + e.message };
@@ -91,9 +96,10 @@ Logit.Drive = {
     }
 
     try {
-      var fileId = await this._findFile(this._FILE_NAME);
+      var folderId = await this._getOrCreateFolder();
+      var fileId = await this._findFileInFolder(this._FILE_NAME, folderId);
       if (!fileId) {
-        return { success: false, message: 'No backup found on Google Drive' };
+        return { success: false, message: 'No backup found in Logit folder on Google Drive' };
       }
 
       var content = await this._downloadFile(fileId);
@@ -137,12 +143,69 @@ Logit.Drive = {
   },
 
   /**
-   * Find file by name in Google Drive
+   * Get or create Logit folder in Google Drive
    */
-  async _findFile(name) {
+  async _getOrCreateFolder() {
+    // Check cache
+    var cached = localStorage.getItem(this._FOLDER_KEY);
+    if (cached) {
+      // Verify it still exists
+      var exists = await this._folderExists(cached);
+      if (exists) return cached;
+    }
+
+    // Search for existing folder
     var response = await fetch(
       'https://www.googleapis.com/drive/v3/files?q=' +
-      encodeURIComponent("name='" + name + "' and trashed=false") +
+      encodeURIComponent("name='" + this._FOLDER_NAME + "' and mimeType='application/vnd.google-apps.folder' and trashed=false") +
+      '&fields=files(id)',
+      {
+        headers: { Authorization: 'Bearer ' + this._accessToken }
+      }
+    );
+
+    var data = await response.json();
+    if (data.files && data.files.length > 0) {
+      localStorage.setItem(this._FOLDER_KEY, data.files[0].id);
+      return data.files[0].id;
+    }
+
+    // Create folder
+    var createResponse = await fetch('https://www.googleapis.com/drive/v3/files', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + this._accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: this._FOLDER_NAME,
+        mimeType: 'application/vnd.google-apps.folder'
+      })
+    });
+
+    var folder = await createResponse.json();
+    localStorage.setItem(this._FOLDER_KEY, folder.id);
+    return folder.id;
+  },
+
+  async _folderExists(folderId) {
+    try {
+      var response = await fetch(
+        'https://www.googleapis.com/drive/v3/files/' + folderId + '?fields=id',
+        {
+          headers: { Authorization: 'Bearer ' + this._accessToken }
+        }
+      );
+      return response.ok;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  async _findFileInFolder(name, folderId) {
+    var response = await fetch(
+      'https://www.googleapis.com/drive/v3/files?q=' +
+      encodeURIComponent("name='" + name + "' and '" + folderId + "' in parents and trashed=false") +
       '&fields=files(id)',
       {
         headers: { Authorization: 'Bearer ' + this._accessToken }
@@ -158,6 +221,25 @@ Logit.Drive = {
    */
   async _createFile(name, blob) {
     var metadata = { name: name, mimeType: 'application/json' };
+    var form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    form.append('file', blob);
+
+    var response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + this._accessToken },
+      body: form
+    });
+
+    if (!response.ok) throw new Error('Failed to create file');
+    return await response.json();
+  },
+
+  /**
+   * Create a new file in a specific folder
+   */
+  async _createFileInFolder(name, blob, folderId) {
+    var metadata = { name: name, parents: [folderId], mimeType: 'application/json' };
     var form = new FormData();
     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
     form.append('file', blob);
