@@ -2,6 +2,27 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.3.0] - 2026-07-21
+
+### Added
+- Google Drive account status display with live connection badge (`Connected` / `Not Connected`) and linked account email
+- Google UserInfo API integration (`/oauth2/v3/userinfo`) with fallback to Drive About API
+- Dedicated Account Connect / Disconnect button with instant OAuth token revocation
+- Pixel-perfect centered user profile header with absolute-positioned edit pencil icon next to username
+
+### Changed
+- Complete rewrite of `Logit.Drive` integration using modern `fetch()` API and async/await
+- Optimized Drive API queries with targeted filters (`q=mimeType = ... and name = ... and trashed = false`)
+- Proper RFC 2046 multipart body formatting for Google Drive file creation
+- Automatic handling and clearance of expired OAuth tokens (401 response handling)
+- Reorganized profile settings into 4 clean, distinct sections: Account, Google Drive, Backup & Data, and Danger Zone
+- Fixed mobile vertical spacing gaps and element alignment across settings content blocks
+
+### Fixed
+- Fixed OAuth token callback promise resolution timing before updating status UI
+- Fixed username text offset by removing inline element flex width skewing
+- Fixed mobile spacing collapse where `.contentBlock` margin was overridden to `0`
+
 ## [3.2.0] - 2026-07-20
 
 ### Added
