@@ -85,7 +85,7 @@ Logit.LibraryPage = {
         var month = date.getMonth();
         var monthKey = year + '-' + month;
         if (!grouped[monthKey]) {
-          grouped[monthKey] = { label: date.toLocaleString('default', { month: 'long' }) + ' ' + year, movies: [] };
+          grouped[monthKey] = { label: date.toLocaleString('default', { month: 'long' }), movies: [] };
         }
         grouped[monthKey].movies.push(movie);
       });

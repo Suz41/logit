@@ -68,7 +68,9 @@ Logit.ProfilePage = {
     try {
       var usage = await Logit.Storage.getCloudStorageUsage();
       var countEl = document.getElementById('moviesCount');
+      var usageEl = document.getElementById('cloudStorageUsage');
       if (countEl) countEl.textContent = usage.count;
+      if (usageEl) usageEl.textContent = usage.formatted + ' / 500 MB';
     } catch (e) {}
   },
 
