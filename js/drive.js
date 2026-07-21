@@ -59,10 +59,16 @@ Logit.Drive = {
         xhr.setRequestHeader('Content-Type', 'application/json');
       }
       xhr.onload = function() {
+        if (xhr.status === 401) {
+          // Token expired - clear it
+          localStorage.removeItem('logit_drive_token');
+          reject(new Error('Token expired. Please click Backup to Drive again.'));
+          return;
+        }
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve(JSON.parse(xhr.responseText || '{}'));
         } else {
-          reject(new Error('API error: ' + xhr.status + ' ' + xhr.responseText));
+          reject(new Error('API error: ' + xhr.status));
         }
       };
       xhr.onerror = function() {
@@ -91,10 +97,15 @@ Logit.Drive = {
       xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', true);
       xhr.setRequestHeader('Authorization', 'Bearer ' + this._accessToken);
       xhr.onload = function() {
+        if (xhr.status === 401) {
+          localStorage.removeItem('logit_drive_token');
+          reject(new Error('Token expired. Please click Backup to Drive again.'));
+          return;
+        }
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve(JSON.parse(xhr.responseText));
         } else {
-          reject(new Error('Upload failed: ' + xhr.status + ' ' + xhr.responseText));
+          reject(new Error('Upload failed: ' + xhr.status));
         }
       };
       xhr.onerror = function() {
