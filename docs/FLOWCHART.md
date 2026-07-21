@@ -8,12 +8,12 @@
 └──────┬──────┘
        │
        ▼
-┌─────────────┐     ┌─────────────┐
-│  Sign In /  │────▶│  Offline    │
-│  Sign Up    │     │  Mode       │
-└──────┬──────┘     └──────┬──────┘
-       │                   │
-       ▼                   ▼
+┌─────────────┐
+│  Sign In /  │
+│  Sign Up    │
+└──────┬──────┘
+       │
+       ▼
 ┌─────────────────────────────────┐
 │           Library (Home)        │
 │  ┌───────────────────────────┐  │
@@ -40,22 +40,7 @@
                                        ▼
 ┌──────────┐     ┌──────────┐     ┌──────────┐
 │  Saved!  │◀────│  Confirm │◀────│  Rate &  │
-│          │     │          │     │  Date    │
-└──────────┘     └──────────┘     └──────────┘
-```
-
-## Sync Flow
-
-```
-┌──────────┐     ┌──────────┐     ┌──────────┐
-│  Local   │────▶│  Queue   │────▶│  Push to │
-│  Change  │     │  Offline │     │  Cloud   │
-└──────────┘     └──────────┘     └──────────┘
-                                       │
-                                       ▼
-┌──────────┐     ┌──────────┐     ┌──────────┐
-│  Synced  │◀────│  Server  │◀────│  Upload  │
-│          │     │  Confirm │     │          │
+│  (Cloud) │     │          │     │  Date    │
 └──────────┘     └──────────┘     └──────────┘
 ```
 
@@ -63,19 +48,18 @@
 
 ```
 ┌─────────────────────────────────────────┐
-│              localStorage               │
+│              Supabase Cloud            │
 ├─────────────────────────────────────────┤
-│  movies        - Movie data array      │
-│  logit_user_id - Auth user ID          │
-│  logit_api_key - TMDB API key          │
-└─────────────────────────────────────────┘
-                      │
-                      ▼ (optional sync)
-┌─────────────────────────────────────────┐
-│              Supabase                   │
-├─────────────────────────────────────────┤
-│  movies      - Cloud movie backup      │
+│  movies      - All movie data          │
 │  settings    - Avatar, favorites, etc  │
 │  users       - Auth & profile          │
+└─────────────────────────────────────────┘
+
+localStorage (preferences only):
+┌─────────────────────────────────────────┐
+│  tmdb_key           - TMDB API key     │
+│  logit_user_id      - Auth user ID     │
+│  logit_grid_count   - Grid columns     │
+│  logit_show_dates   - Date toggle      │
 └─────────────────────────────────────────┘
 ```

@@ -4,20 +4,19 @@
 
 1. Go to [suz41.github.io/logit](https://suz41.github.io/logit)
 2. You'll see the welcome page
-3. Click **Sign Up**
-4. Enter your:
+3. Enter your:
    - **Username** (must be unique)
    - **Email**
    - **Password** (minimum 6 characters)
-5. Click **Create Account**
-6. You're in — movies will sync to the cloud automatically
+4. Click **Create Account**
+5. Check your email for confirmation
+6. Sign in — your movies will sync to the cloud automatically
 
 ## Logging In
 
 1. Go to the welcome page
-2. Click **Sign In**
-3. Enter your email and password
-4. Click **Login**
+2. Enter your email and password
+3. Click **Sign In**
 
 ## Forgot Password
 
@@ -35,13 +34,10 @@
 ## FAQ
 
 **Q: Do I need an account?**
-No. The app works offline without an account. Cloud sync is optional.
+Yes. An account is required to store your movies in the cloud.
 
 **Q: Can I use the same account on multiple devices?**
-Yes. Sign in on each device and your movies will sync.
-
-**Q: What if I lose internet?**
-Movies are saved locally first. They sync to the cloud when you're back online.
+Yes. Sign in on each device and your movies will sync automatically.
 
 **Q: How do I delete my account?**
 Go to Profile → Settings → Delete Account. Data is kept for 30 days for recovery.

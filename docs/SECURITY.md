@@ -11,14 +11,19 @@ If you discover a security vulnerability, please report it responsibly:
 
 ## Scope
 
-This project stores data in localStorage and optionally syncs to Supabase. Security concerns may include:
-- Data exposure
+This project stores all data in Supabase cloud database. Security concerns may include:
 - Authentication bypass
 - XSS vulnerabilities
+- RLS policy misconfigurations
+- Data exposure through API
+
+## Data Storage
+
+All movie data, user profiles, and settings are stored in Supabase with Row Level Security (RLS) enabled. Each user can only access their own data.
 
 ## Supported Versions
 
 | Version | Supported |
 |---------|-----------|
-| 2.0.x   | Yes       |
-| < 2.0   | No        |
+| 3.0.x   | Yes       |
+| < 3.0   | No        |
