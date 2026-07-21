@@ -18,11 +18,12 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 - Click the **+** button (bottom nav on mobile, header on desktop)
 - Search for a movie by title
 - Select the correct result
-- Rate it (1-5 stars)
+- Rate it (1-5 stars, supports half stars)
 - Click **Add**
 
 ### 5. View Your Library
 - All logged movies appear on the home page
+- Movies are grouped by month
 - Use the search bar to filter
 - Click any poster to view details
 
@@ -39,6 +40,7 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 - Set your avatar
 - Add favorite films
 - View storage usage
+- Backup to Google Drive
 
 ---
 
@@ -56,6 +58,11 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 - Click on any movie in your library
 - Click **Edit** to change rating, director, language, country, runtime, or watch date
 
+### Missing Metadata Indicators
+- Movies with missing data show a **red border** and **red dot**
+- Hover to see which fields are missing
+- Month headers show red dots if any movie in that month has missing data
+
 ### Import/Export
 **Export:**
 - Go to Profile → Settings → Export
@@ -64,6 +71,11 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 **Import:**
 - Go to Profile → Settings → Import
 - Paste JSON or text, or upload a file
+
+### Google Drive Backup
+- Go to Profile → Settings
+- Click **Backup to Drive** (first time requires Google sign-in)
+- Auto-backup runs after every movie change
 
 ---
 
@@ -85,3 +97,7 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 **Search not working?**
 - Verify TMDB API key is set
 - Check internet connection (and VPN if in India)
+
+**Backup not working?**
+- Re-authenticate with Google Drive
+- Check Google Cloud Console settings

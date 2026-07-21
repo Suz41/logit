@@ -65,18 +65,18 @@ Yes. Click on any movie in your library, then click the poster to choose an alte
 Yes. Click on a movie, then click Edit. You can change rating, director, language, country, runtime, and watch date.
 </details>
 
+<details>
+<summary><strong>What do the red dots mean?</strong></summary>
+Red dots indicate movies with missing metadata (runtime, director, genres, language, or country). Hover to see which fields are missing.
+</details>
+
 ---
 
 ## Data & Storage
 
 <details>
 <summary><strong>Where is my data stored?</strong></summary>
-All data is stored in Supabase cloud database. Access your movies from any device by signing in.
-</details>
-
-<details>
-<summary><strong>How much data can I store?</strong></summary>
-Supabase free tier offers 500MB of storage. This holds thousands of movies.
+All data is stored in Supabase cloud database. Your data is also auto-backed up to Google Drive.
 </details>
 
 <details>
@@ -85,8 +85,8 @@ Yes. Go to Profile → Settings → Export. Choose JSON (full data) or Text (one
 </details>
 
 <details>
-<summary><strong>Can I import from Letterboxd or IMDb?</strong></summary>
-Not directly. Export from Letterboxd as CSV, convert to Log!t's text format, then import.
+<summary><strong>How does Google Drive backup work?</strong></summary>
+After your first manual backup, Log!t automatically saves your movies to a "Logit" folder on your Google Drive after every change.
 </details>
 
 ---
@@ -104,11 +104,11 @@ Verify your TMDB API key is set in Settings. Check your internet connection (and
 </details>
 
 <details>
-<summary><strong>Page freezing on load?</strong></summary>
-Clear your browser cache. If the issue persists, sign out and sign back in.
+<summary><strong>Can't sign in?</strong></summary>
+Make sure you're using the correct email and password. Use the "Forgot Password" link to reset.
 </details>
 
 <details>
-<summary><strong>Can't sign in?</strong></summary>
-Make sure you're using the correct email and password. Use the "Forgot Password" link to reset.
+<summary><strong>Backup not working?</strong></summary>
+Re-authenticate with Google Drive by clicking "Backup to Drive" again. Check Google Cloud Console settings.
 </details>

@@ -31,6 +31,16 @@
 2. Scroll to **Settings** tab
 3. Click **Sign Out**
 
+## Account Features
+
+| Feature | Description |
+|---------|-------------|
+| Cloud Storage | All movies saved in Supabase |
+| Auto Backup | Google Drive backup after changes |
+| Avatar | Set a profile picture |
+| Favorites | Pin up to 4 favorite films |
+| Stats | View your watching statistics |
+
 ## FAQ
 
 **Q: Do I need an account?**

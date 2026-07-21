@@ -17,6 +17,23 @@ Thanks for your interest in contributing!
 - Test changes on mobile and desktop
 - Follow existing code style
 - One feature per PR
+- Update documentation if needed
+
+## Project Architecture
+
+```
+Frontend: HTML + CSS + Vanilla JS (no build tools)
+Backend: Supabase (cloud DB + auth)
+Backup: Google Drive API
+Movies: TMDB API
+```
+
+## Code Style
+
+- Use `var` for consistency with existing code
+- Keep functions small and focused
+- Add error handling for async operations
+- Use descriptive variable names
 
 ## Reporting Issues
 
@@ -24,3 +41,4 @@ Open an issue with:
 - What you expected
 - What actually happened
 - Steps to reproduce
+- Browser/device info

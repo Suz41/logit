@@ -12,26 +12,55 @@
 
 ---
 
-A clean, cloud-first movie logger. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build tools.
+A cloud-first personal movie logger. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build tools.
 
 ## Features
 
 - **Cloud Storage** — All data stored in Supabase, access from any device
+- **Auto Backup** — Automatic backup to Google Drive after every change
 - **TMDB Search** — Find any movie with poster, rating, cast, and metadata
 - **Personal Stats** — Films watched, average rating, runtime, top directors/actors
 - **Profile** — Avatar, favorite films, synced across devices
 - **Dark Theme** — Clean, minimal UI
 - **Responsive** — Works on mobile and desktop
 - **Import/Export** — JSON and text formats
+- **Missing Data Indicators** — Red dots highlight movies with incomplete metadata
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      USER DEVICE                        │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │   Library   │  │    Stats    │  │   Profile   │    │
+│  │  (index)    │  │  (PS.html)  │  │  (profile)  │    │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘    │
+│         │                │                │            │
+│         └────────────────┼────────────────┘            │
+│                          │                             │
+│                    ┌─────▼─────┐                       │
+│                    │ storage.js│                       │
+│                    └─────┬─────┘                       │
+└──────────────────────────┼──────────────────────────────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+        ┌─────▼─────┐ ┌────▼────┐ ┌────▼─────┐
+        │ Supabase  │ │ Google  │ │  TMDB    │
+        │ (Cloud DB)│ │ Drive   │ │  (API)   │
+        └───────────┘ └─────────┘ └──────────┘
+```
 
 ## Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
 | HTML5 | Structure |
-| CSS3 | Styling |
+| CSS3 | Styling (dark theme) |
 | JavaScript | Logic (vanilla, no frameworks) |
 | Supabase | Cloud database & authentication |
+| Google Drive API | Auto-backup & restore |
 | TMDB API | Movie data & search |
 | GitHub Pages | Hosting |
 
@@ -46,6 +75,54 @@ A clean, cloud-first movie logger. Built with vanilla HTML, CSS, and JavaScript 
 
 > **Indian Users:** TMDB API is blocked in India. You need a VPN to search and add movies. Once added, movies work without VPN.
 
+## Project Structure
+
+```
+logit/
+├── index.html          # Library (home)
+├── profile.html        # User profile & settings
+├── PS.html             # Stats dashboard
+├── about.html          # About page
+├── welcome.html        # Auth page
+├── reset.html          # Password reset
+├── migrations.sql      # Database setup SQL
+├── css/                # Stylesheets
+│   ├── main.css        # Global styles & nav
+│   ├── library.css     # Movie grid & search
+│   ├── modal.css       # Modals & sheets
+│   ├── stats.css       # Stats page
+│   ├── profile.css     # Profile page
+│   ├── auth.css        # Auth pages
+│   ├── about.css       # About page
+│   ├── components.css  # Reusable components
+│   ├── desktop.css     # Desktop overrides
+│   └── animations.css  # Animations
+├── js/                 # JavaScript modules
+│   ├── app.js          # Page detection & init
+│   ├── config.js       # API keys
+│   ├── constants.js    # Shared constants
+│   ├── storage.js      # Cloud storage operations
+│   ├── supabase.js     # Supabase client
+│   ├── auth.js         # Authentication
+│   ├── drive.js        # Google Drive integration
+│   ├── library.js      # Library page logic
+│   ├── stats.js        # Stats page logic
+│   ├── profile.js      # Profile page logic
+│   ├── modals.js       # Modal logic
+│   ├── search.js       # TMDB search
+│   ├── movieFactory.js # Movie object builder
+│   ├── movies.js       # Movie helpers
+│   ├── statutils.js    # Stats calculations
+│   ├── import.js       # Import logic
+│   ├── export.js       # Export logic
+│   ├── ui.js           # UI helpers
+│   ├── utils.js        # Utility functions
+│   ├── overlays.js     # Overlay UI
+│   └── posterPicker.js # Poster selection
+├── docs/               # Documentation
+└── LICENSE
+```
+
 ## Documentation
 
 | Document | Description |
@@ -59,28 +136,7 @@ A clean, cloud-first movie logger. Built with vanilla HTML, CSS, and JavaScript 
 | [Changelog](docs/CHANGELOG.md) | Version history |
 | [Contributing](docs/CONTRIBUTING.md) | Contribution guidelines |
 | [Security](docs/SECURITY.md) | Security policy |
-| [Code of Conduct](docs/CODE_OF_CONDUCT.md) | Community standards |
 | [AI Tools Used](docs/USED_AI.md) | AI tools used in development |
-
-## Project Structure
-
-```
-logit/
-├── index.html          # Library (home)
-├── profile.html        # User profile
-├── PS.html             # Stats dashboard
-├── about.html          # About page
-├── welcome.html        # Auth page
-├── config.html         # Supabase config
-├── reset.html          # Password reset
-├── migrations.sql      # Database setup
-├── css/                # Stylesheets
-├── js/                 # JavaScript modules
-├── docs/               # Documentation
-├── .github/            # GitHub templates
-├── LICENSE
-└── .gitignore
-```
 
 ## License
 
