@@ -917,3 +917,125 @@
     border-radius: 4px;
   }
 }
+
+/* ========= GOOGLE DRIVE ACCOUNT CARD ========= */
+.driveAccountCard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.driveAccountMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.driveAccountIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.driveAccountDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.driveAccountHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.driveAccountName {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.driveAccountEmail {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.driveStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid var(--border);
+  color: var(--muted);
+}
+
+.driveStatusBadge.connected {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: rgba(46, 204, 113, 0.3);
+  color: #2ecc71;
+}
+
+.driveStatusBadge.disconnected {
+  background: rgba(231, 76, 60, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.driveConnectBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.driveConnectBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.driveConnectBtn.connected {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border-color: rgba(231, 76, 60, 0.3);
+}
+
+.driveConnectBtn.connected:hover {
+  background: rgba(231, 76, 60, 0.2);
+}
+

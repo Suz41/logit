@@ -405,14 +405,80 @@ Logit.ProfilePage = {
       if ($('profileName')) $('profileName').textContent = newName;
     });
 
-    // Google Drive Backup/Restore
+    // Google Drive Backup/Restore & Status Management
+    async function updateDriveStatusUI() {
+      var badge = $('driveStatusBadge');
+      var statusText = $('driveStatusText');
+      var emailEl = $('driveAccountEmail');
+      var nameEl = $('driveAccountName');
+      var connectBtn = $('driveConnectBtn');
+
+      if (!badge || !emailEl || !connectBtn) return;
+
+      Logit.Drive.init();
+
+      if (Logit.Drive.isAuthenticated()) {
+        var savedEmail = localStorage.getItem('logit_drive_user_email');
+        var savedName = localStorage.getItem('logit_drive_user_name');
+
+        if (savedEmail) {
+          emailEl.textContent = savedEmail;
+          if (savedName && nameEl) nameEl.textContent = savedName;
+        } else {
+          emailEl.textContent = 'Connected';
+        }
+
+        badge.className = 'driveStatusBadge connected';
+        if (statusText) statusText.textContent = 'Connected';
+        connectBtn.textContent = 'Disconnect';
+        connectBtn.className = 'driveConnectBtn connected';
+
+        try {
+          var info = await Logit.Drive.getUserInfo();
+          if (info && info.email) {
+            emailEl.textContent = info.email;
+            if (info.name && nameEl) nameEl.textContent = info.name;
+          }
+        } catch (e) {}
+      } else {
+        badge.className = 'driveStatusBadge disconnected';
+        if (statusText) statusText.textContent = 'Not Connected';
+        emailEl.textContent = 'No account linked';
+        if (nameEl) nameEl.textContent = 'Google Drive';
+        connectBtn.textContent = 'Connect';
+        connectBtn.className = 'driveConnectBtn';
+      }
+    }
+
+    updateDriveStatusUI();
+
+    if ($('driveConnectBtn')) $('driveConnectBtn').addEventListener('click', async function() {
+      if (Logit.Drive.isAuthenticated()) {
+        if (confirm('Disconnect Google Drive account?')) {
+          Logit.Drive.signOut();
+          await updateDriveStatusUI();
+        }
+      } else {
+        try {
+          Logit.Drive.init();
+          await new Promise(function(resolve, reject) {
+            Logit.Drive.requestAuth(resolve, reject, true);
+          });
+          await updateDriveStatusUI();
+        } catch (e) {
+          alert('Failed to connect Google Drive: ' + (e.message || e));
+        }
+      }
+    });
+
     if ($('driveBackupBtn')) $('driveBackupBtn').addEventListener('click', async function() {
       var btn = $('driveBackupBtn');
       btn.disabled = true;
       btn.querySelector('span').textContent = 'Connecting...';
       try {
         Logit.Drive.init();
-        await new Promise(function(resolve) { Logit.Drive.requestAuth(resolve); });
+        await new Promise(function(resolve, reject) { Logit.Drive.requestAuth(resolve, reject); });
+        await updateDriveStatusUI();
         btn.querySelector('span').textContent = 'Backing up...';
         var result = await Logit.Drive.backup();
         alert(result.message);
@@ -421,6 +487,7 @@ Logit.ProfilePage = {
       }
       btn.disabled = false;
       btn.querySelector('span').textContent = 'Backup to Drive';
+      await updateDriveStatusUI();
     });
 
     if ($('driveRestoreBtn')) $('driveRestoreBtn').addEventListener('click', async function() {
@@ -430,7 +497,8 @@ Logit.ProfilePage = {
       btn.querySelector('span').textContent = 'Connecting...';
       try {
         Logit.Drive.init();
-        await new Promise(function(resolve) { Logit.Drive.requestAuth(resolve); });
+        await new Promise(function(resolve, reject) { Logit.Drive.requestAuth(resolve, reject); });
+        await updateDriveStatusUI();
         btn.querySelector('span').textContent = 'Restoring...';
         var result = await Logit.Drive.restore();
         alert(result.message);
@@ -440,6 +508,7 @@ Logit.ProfilePage = {
       }
       btn.disabled = false;
       btn.querySelector('span').textContent = 'Restore from Drive';
+      await updateDriveStatusUI();
     });
 
     // Import / Export

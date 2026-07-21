@@ -2,7 +2,7 @@ window.Logit = window.Logit || {};
 
 /**
  * Google Drive Integration Module for Logit
- * Provides authentication, automated backup, and restore capabilities.
+ * Provides authentication, automated backup, restore, and profile info capabilities.
  */
 Logit.Drive = {
   _CLIENT_ID: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
@@ -10,6 +10,8 @@ Logit.Drive = {
   _FOLDER_NAME: 'Logit',
   _FOLDER_KEY: 'logit_drive_folder_id',
   _TOKEN_KEY: 'logit_drive_token',
+  _USER_EMAIL_KEY: 'logit_drive_user_email',
+  _USER_NAME_KEY: 'logit_drive_user_name',
 
   _tokenClient: null,
   _accessToken: null,
@@ -38,6 +40,10 @@ Logit.Drive = {
           this._accessToken = response.access_token;
           localStorage.setItem(this._TOKEN_KEY, response.access_token);
           console.log('[Drive] Authentication successful');
+          
+          // Fetch user info right after auth
+          this.getUserInfo().catch(e => console.warn(e));
+
           if (this._onAuthSuccess) this._onAuthSuccess(response);
         },
       });
@@ -84,12 +90,40 @@ Logit.Drive = {
   },
 
   /**
-   * Clear access token and cached folder ID from local state & storage.
+   * Fetch connected Google user profile info.
+   * @returns {Promise<{email: string, name: string, photo: string} | null>}
+   */
+  async getUserInfo() {
+    if (!this._accessToken) return null;
+    try {
+      const res = await this._apiFetch('https://www.googleapis.com/drive/v3/about?fields=user');
+      const data = await res.json();
+      if (data && data.user) {
+        const info = {
+          email: data.user.emailAddress || '',
+          name: data.user.displayName || '',
+          photo: data.user.photoLink || ''
+        };
+        if (info.email) localStorage.setItem(this._USER_EMAIL_KEY, info.email);
+        if (info.name) localStorage.setItem(this._USER_NAME_KEY, info.name);
+        return info;
+      }
+      return null;
+    } catch (e) {
+      console.warn('[Drive] Failed to fetch user info:', e);
+      return null;
+    }
+  },
+
+  /**
+   * Clear access token and cached folder ID & user info from local storage.
    */
   clearToken() {
     this._accessToken = null;
     localStorage.removeItem(this._TOKEN_KEY);
     localStorage.removeItem(this._FOLDER_KEY);
+    localStorage.removeItem(this._USER_EMAIL_KEY);
+    localStorage.removeItem(this._USER_NAME_KEY);
   },
 
   /**
