@@ -918,44 +918,27 @@
   }
 }
 
-/* ========= GOOGLE DRIVE ACCOUNT CARD ========= */
-.driveAccountCard {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.driveAccountMain {
+/* ========= GOOGLE DRIVE STATUS ROW ========= */
+.driveAccountRow {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 0.5px solid var(--border);
 }
 
-.driveAccountIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 0.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text);
+.driveAccountRow > svg {
+  color: var(--muted);
   flex-shrink: 0;
 }
 
 .driveAccountDetails {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+  gap: 2px;
 }
 
 .driveAccountHeader {
@@ -966,13 +949,13 @@
 }
 
 .driveAccountName {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   color: var(--text);
 }
 
 .driveAccountEmail {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -982,31 +965,26 @@
 .driveStatusBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 11px;
+  border-radius: 12px;
+  font-size: 10px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid var(--border);
-  color: var(--muted);
 }
 
 .driveStatusBadge.connected {
-  background: rgba(46, 204, 113, 0.12);
-  border-color: rgba(46, 204, 113, 0.3);
+  background: rgba(46, 204, 113, 0.15);
   color: #2ecc71;
 }
 
 .driveStatusBadge.disconnected {
-  background: rgba(231, 76, 60, 0.12);
-  border-color: rgba(231, 76, 60, 0.3);
+  background: rgba(231, 76, 60, 0.15);
   color: #e74c3c;
 }
 
 .statusDot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: currentColor;
 }
@@ -1015,9 +993,9 @@
   background: rgba(255, 255, 255, 0.08);
   border: 0.5px solid var(--border);
   color: var(--text);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -1026,11 +1004,10 @@
 
 .driveConnectBtn:hover {
   background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .driveConnectBtn.connected {
-  background: rgba(231, 76, 60, 0.1);
+  background: rgba(231, 76, 60, 0.12);
   color: #e74c3c;
   border-color: rgba(231, 76, 60, 0.3);
 }
@@ -1038,4 +1015,5 @@
 .driveConnectBtn.connected:hover {
   background: rgba(231, 76, 60, 0.2);
 }
+
 
