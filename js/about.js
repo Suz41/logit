@@ -4,6 +4,9 @@ Logit.AboutPage = {
   async init() {
     var $ = Logit.Utils.byId;
 
+    // Initialize Supabase and check auth
+    Logit.Supabase.init();
+
     async function renderStorage() {
       var usage = await Logit.Storage.getCloudStorageUsage();
       var fmt = Logit.Storage.formatBytes(usage.bytes);
