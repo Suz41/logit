@@ -13,6 +13,7 @@ All notable changes to Log!t will be documented in this file.
 - Custom Change Password modal overlay styled directly with system variables
 - Clickable "Forgot Password?" recovery link inside the Change Password dialog to trigger password reset links to user email
 - Password visibility toggle buttons (eye icon) added to both password inputs inside the Change Password modal overlay
+- Replaced all unicode emoji icons (`👁️`) in the password fields with crisp, responsive inline vector SVG icons across all login and change password modules
 
 ### Changed
 - Complete rewrite of `Logit.Drive` integration using modern `fetch()` API and async/await
