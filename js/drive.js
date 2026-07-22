@@ -201,11 +201,7 @@ Logit.Drive = {
       };
 
       const content = JSON.stringify(backupData, null, 2);
-      const now = new Date();
-      const dateStr = now.getFullYear() + '-' +
-        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-        String(now.getDate()).padStart(2, '0');
-      const fileName = `logit-${movies.length}-movies-${dateStr}.json`;
+      const fileName = 'logit-backup.json';
 
       const folderId = await this._getOrCreateFolder();
       const existingFileId = await this._findFileByName(fileName, folderId);
