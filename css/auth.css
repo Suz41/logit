@@ -1,138 +1,234 @@
-/* ========= Log!t Design System - Auth & Profile ========= */
+/* ========= Log!t Design System - Auth Styling ========= */
 
-/* ========= WELCOME PAGE ========= */
 .welcomePage {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 16px;
+  padding: 24px;
+  background-color: #060608;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(48, 209, 88, 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(98, 0, 238, 0.07) 0%, transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating Ambient Orbs */
+.welcomePage::before,
+.welcomePage::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: floatOrb 25s infinite alternate ease-in-out;
+}
+
+.welcomePage::before {
+  background: rgba(48, 209, 88, 0.12);
+  top: 15%;
+  left: 5%;
+}
+
+.welcomePage::after {
+  background: rgba(98, 0, 238, 0.09);
+  bottom: 15%;
+  right: 5%;
+  animation-delay: -12.5s;
+}
+
+@keyframes floatOrb {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(80px, 60px) scale(1.2);
+  }
 }
 
 .welcomeContainer {
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
+  z-index: 1;
+  animation: introFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes introFade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .welcomeContent {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .welcomeLogo {
   text-align: center;
-  padding: 24px 0 8px;
+  padding: 16px 0 8px;
 }
 
 .welcomeLogo h1 {
   font-family: 'Poppins', sans-serif;
-  font-size: 42px;
+  font-size: 44px;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   color: var(--text);
   margin: 0;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.logo-accent {
+  color: var(--green);
+  display: inline-block;
+  text-shadow: 0 0 20px rgba(48, 209, 88, 0.75);
+  animation: logoPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+    text-shadow: 0 0 20px rgba(48, 209, 88, 0.75);
+  }
+  50% {
+    transform: scale(1.08);
+    text-shadow: 0 0 30px rgba(48, 209, 88, 0.95);
+  }
 }
 
 .welcomeTagline {
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  margin: 4px 0 0 0;
-  letter-spacing: 0.3px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 8px 0 0 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .welcomeMessage {
   text-align: center;
-  padding: 0 8px;
+  padding: 0 16px;
 }
 
 .welcomeMessage p {
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
-/* ========= AUTH FORM (Stats-style cards) ========= */
+/* ========= AUTH FORM (Glassmorphic Card) ========= */
 .authCard {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
+  background: rgba(18, 18, 22, 0.65);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .authForm {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .authInput {
   width: 100%;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
+  padding: 13px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
-  transition: border-color 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .authInput::placeholder {
-  color: var(--dim);
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .authInput:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--green);
+  background: rgba(0, 0, 0, 0.65);
+  box-shadow: 0 0 0 3px rgba(48, 209, 88, 0.15);
 }
 
 .authActions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .btnPrimary {
   width: 100%;
-  height: 44px;
+  height: 46px;
   border: none;
-  border-radius: 10px;
-  background: #fff;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #30d158 0%, #10b981 100%);
   color: #000;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 12px rgba(48, 209, 88, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 6px 18px rgba(48, 209, 88, 0.3);
 }
 
 .btnPrimary:active {
-  transform: scale(0.98);
-  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(1px) scale(0.98);
+  filter: brightness(0.95);
 }
 
 .btnSecondary {
   width: 100%;
-  height: 44px;
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .btnSecondary:active {
-  transform: scale(0.98);
-  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(1px) scale(0.98);
 }
 
 .authFooter {
@@ -148,19 +244,24 @@
   border: none;
   color: var(--muted);
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .authLink:hover {
   color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .authMessage {
   font-size: 12px;
-  color: var(--accent);
+  color: var(--red);
   text-align: center;
   min-height: 16px;
+  line-height: 1.4;
 }
 
 /* ========= PASSWORD TOGGLE ========= */
@@ -169,12 +270,12 @@
 }
 
 .passwordWrap .authInput {
-  padding-right: 40px;
+  padding-right: 42px;
 }
 
 .passwordToggle {
   position: absolute;
-  right: 8px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -183,34 +284,27 @@
   cursor: pointer;
   font-size: 16px;
   padding: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.passwordToggle:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
 }
 
 /* ========= RESPONSIVE ========= */
 @media (min-width: 1024px) {
-  .welcomePage {
-    background: #000;
-  }
-
   .welcomeContainer {
-    max-width: 400px;
+    max-width: 380px;
     padding: 0;
   }
 
   .welcomeLogo h1 {
-    font-size: 52px;
+    font-size: 48px;
   }
 
   .authCard {
-    padding: 20px;
-  }
-
-  .profileContainer {
-    max-width: 480px;
-    margin: 20px auto;
-    padding: 0 0 40px;
-  }
-
-  .profileCard {
-    padding: 18px;
+    padding: 28px;
   }
 }
