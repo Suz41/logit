@@ -21,7 +21,7 @@ All notable changes to Log!t will be documented in this file.
 - Fixed mobile vertical spacing gaps and element alignment across settings content blocks
 
 ### Fixed
-- Fixed duplicate Google Drive backup creation by using a static `logit-backup.json` filename, ensuring in-place updates and replacing existing files
+- Fixed duplicate Google Drive backups by automatically finding, updating, and renaming any existing backup files to match the new count and date format (e.g. `logit-count-movies-date.json`), maintaining exactly one file in the folder
 - Fixed OAuth token callback promise resolution timing before updating status UI
 - Fixed username text offset by removing inline element flex width skewing
 - Fixed mobile spacing collapse where `.contentBlock` margin was overridden to `0`
