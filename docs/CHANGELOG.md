@@ -9,6 +9,12 @@ All notable changes to Log!t will be documented in this file.
 - Back button in sign up mode to return to sign in
 - Confirm password field in change password modal
 - Google Drive connection status badge (green/red dot)
+- Google Drive token expires after 30 minutes of inactivity
+- Session timeout after 60 minutes of inactivity
+- Search rate limiting (300ms minimum between TMDB requests)
+- Last backup timestamp display in settings
+- RLS policies for all database tables (movies, settings, users)
+- Offline fallback message when Supabase is unavailable
 
 ### Changed
 - Simplified login page — removed animations, gradients, orbs
@@ -18,6 +24,7 @@ All notable changes to Log!t will be documented in this file.
 - Change password modal — redesigned, no double-box, matches app aesthetic
 - Settings buttons — improved hover/active states for mobile and PC
 - Removed pulse animation from Google Drive status dot
+- Rewrote README — concise, scannable, feature table
 
 ### Fixed
 - Google Drive shows "Not Connected" when not authenticated (was showing connected)

@@ -16,15 +16,30 @@ All movie data is stored in Supabase cloud database with Row Level Security (RLS
 | Service | What's Stored | Security |
 |---------|---------------|----------|
 | Supabase | Movies, settings, users | RLS policies, auth required |
-| Google Drive | Backup JSON | OAuth 2.0, user's own Drive |
+| Google Drive | Backup JSON | OAuth 2.0, user's own Drive, 30min token expiry |
 | localStorage | API keys, preferences | Browser-only, no secrets |
 
 ## Authentication
 
-- Email/password via Supabase Auth
+- Email/username login via Supabase Auth
 - Google Drive uses OAuth 2.0 (user grants access)
 - No passwords stored in plain text
-- Session tokens managed by Supabase
+- Session timeout after 60 minutes of inactivity
+- Google Drive token expires after 30 minutes
+
+## Row Level Security (RLS)
+
+All tables have RLS enabled with policies:
+
+- **movies**: Users can only read/write their own movies
+- **settings**: Users can only read/write their own settings
+- **users**: Anyone can read profiles (for username lookup), users can only update their own
+
+## API Rate Limiting
+
+- TMDB API requests are rate-limited to 300ms between calls
+- Automatic retry on failure with exponential backoff
+- Search results cached to reduce API calls
 
 ## API Keys
 

@@ -15,24 +15,14 @@ Logit.Drive = {
 
   _tokenClient: null,
   _accessToken: null,
-  _TOKEN_EXPIRY_KEY: 'logit_drive_token_expiry',
-  _ACTIVITY_KEY: 'logit_last_activity',
-  _SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutes
 
   /**
    * Initialize Google Auth Token Client & load stored credentials.
    */
   init() {
     const savedToken = localStorage.getItem(this._TOKEN_KEY);
-    const tokenExpiry = localStorage.getItem(this._TOKEN_EXPIRY_KEY);
-
-    if (savedToken && tokenExpiry) {
-      // Check if token expired (30 min)
-      if (Date.now() > parseInt(tokenExpiry)) {
-        this.clearToken();
-      } else {
-        this._accessToken = savedToken;
-      }
+    if (savedToken) {
+      this._accessToken = savedToken;
     }
 
     if (window.google && google.accounts && google.accounts.oauth2) {
@@ -46,7 +36,6 @@ Logit.Drive = {
           }
           this._accessToken = response.access_token;
           localStorage.setItem(this._TOKEN_KEY, response.access_token);
-          localStorage.setItem(this._TOKEN_EXPIRY_KEY, String(Date.now() + this._SESSION_TIMEOUT));
         },
       });
     } else {
@@ -170,7 +159,6 @@ Logit.Drive = {
   clearToken() {
     this._accessToken = null;
     localStorage.removeItem(this._TOKEN_KEY);
-    localStorage.removeItem(this._TOKEN_EXPIRY_KEY);
     localStorage.removeItem(this._FOLDER_KEY);
     localStorage.removeItem(this._USER_EMAIL_KEY);
     localStorage.removeItem(this._USER_NAME_KEY);
