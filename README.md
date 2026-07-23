@@ -22,6 +22,7 @@ A cloud-first personal movie logger. Search any movie via TMDB, rate it, and tra
 | **Cloud Sync** | All data stored in Supabase — access from any device |
 | **Google Drive Backup** | Auto-backup after every change, restore anytime |
 | **Username or Email Login** | Sign in with either |
+| **Error Handling** | Retry button, offline detection, clear error states |
 | **Stats Dashboard** | Films watched, average rating, runtime, top directors/actors |
 | **Profile** | Avatar, favorite films, bio — synced everywhere |
 | **Import/Export** | JSON and text formats |

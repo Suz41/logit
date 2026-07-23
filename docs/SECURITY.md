@@ -25,7 +25,7 @@ All movie data is stored in Supabase cloud database with Row Level Security (RLS
 - Google Drive uses OAuth 2.0 (user grants access)
 - No passwords stored in plain text
 - Session timeout after 60 minutes of inactivity
-- Google Drive token expires after 30 minutes
+- Centralized user ID helper (`Logit.Auth.getUserId()`)
 
 ## Row Level Security (RLS)
 
@@ -37,8 +37,9 @@ All tables have RLS enabled with policies:
 
 ## API Rate Limiting
 
-- TMDB API requests are rate-limited to 300ms between calls
+- TMDB API requests are queued and rate-limited to 300ms between calls
 - Automatic retry on failure with exponential backoff
+- Respects 429 Rate-Limited responses and Retry-After headers
 - Search results cached to reduce API calls
 
 ## API Keys

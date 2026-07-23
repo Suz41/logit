@@ -10,10 +10,14 @@ All notable changes to Log!t will be documented in this file.
 - Confirm password field in change password modal
 - Google Drive connection status badge (green/red dot)
 - Session timeout after 60 minutes of inactivity
+- TMDB request queue — serializes simultaneous requests, respects 429 + Retry-After
 - Search rate limiting (300ms minimum between TMDB requests)
 - Last backup timestamp display in settings
 - RLS policies for all database tables (movies, settings, users)
 - Offline fallback message when Supabase is unavailable
+- Retry button when library fails to load
+- Centralized auth helper `Logit.Auth.getUserId()`
+- Network error detection (offline, connection failed)
 
 ### Changed
 - Simplified login page — removed animations, gradients, orbs
@@ -24,11 +28,14 @@ All notable changes to Log!t will be documented in this file.
 - Settings buttons — improved hover/active states for mobile and PC
 - Removed pulse animation from Google Drive status dot
 - Rewrote README — concise, scannable, feature table
+- `loadMovies()` returns `{ movies, error }` for better error handling
 
 ### Fixed
 - Google Drive shows "Not Connected" when not authenticated (was showing connected)
 - Login page alignment issues (logo, forgot password, spacing)
 - Google Drive token persists across page reloads
+- Distinguishes "Library is empty" from "Failed to load library"
+- Removed direct localStorage usage for user ID — now uses centralized helper
 
 ## [3.3.0] - 2026-07-21
 
