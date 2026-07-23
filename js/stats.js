@@ -46,7 +46,7 @@ Logit.StatsPage = {
         const res = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${API}&query=${encodeURIComponent(name)}`);
         const data = await res.json();
         const path = data.results?.[0]?.profile_path;
-        return path ? `https://image.tmdb.org/t/p/w342${path}` : 'https://placehold.co/80x80/111/666?text=%20';
+        return path ? `https://image.tmdb.org/t/p/w185${path}` : 'https://placehold.co/80x80/111/666?text=%20';
       } catch (e) {
         return 'https://placehold.co/80x80/111/666?text=%20';
       }

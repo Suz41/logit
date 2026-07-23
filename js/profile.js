@@ -222,7 +222,7 @@ Logit.ProfilePage = {
         item.dataset.id = m.id;
         item.dataset.title = m.title;
         item.dataset.poster = m.poster_path || '';
-        var poster = m.poster_path ? '<img src="https://image.tmdb.org/t/p/w342' + m.poster_path + '" alt="' + Logit.Utils.esc(m.title) + '">' : '';
+        var poster = m.poster_path ? '<img src="https://image.tmdb.org/t/p/w185' + m.poster_path + '" alt="' + Logit.Utils.esc(m.title) + '">' : '';
         item.innerHTML = poster + '<span>' + Logit.Utils.esc(m.title) + ' (' + (m.release_date || '').slice(0, 4) + ')</span>';
         item.addEventListener('click', function() {
           self._selectedFav = {
@@ -819,7 +819,7 @@ Logit.ProfilePage = {
       var fragment = document.createDocumentFragment();
       for (var i = 0; i < Math.min(directors.length, 8); i++) {
         var p = directors[i];
-        var imgUrl = 'https://image.tmdb.org/t/p/w342' + p.profile_path;
+        var imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
         var item = document.createElement('div');
         item.className = 'directorItem';
         item.setAttribute('data-url', imgUrl);
