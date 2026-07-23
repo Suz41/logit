@@ -35,24 +35,42 @@ Logit.ProfilePage = {
       // Initialize Google Drive for auto-backup
       if (typeof google !== 'undefined' && google.accounts) {
         Logit.Drive.init();
+        this.refreshBackupTimeFromDrive();
       }
       this.showLastBackup();
     } catch (e) { console.error('Profile init error:', e); }
   },
 
   showLastBackup() {
-    var lastBackup = localStorage.getItem(this._LAST_BACKUP_KEY);
     var el = document.getElementById('lastBackupTime');
-    if (el && lastBackup) {
+    if (!el) return;
+
+    var lastBackup = localStorage.getItem(this._LAST_BACKUP_KEY);
+    if (lastBackup) {
       var diff = Date.now() - parseInt(lastBackup);
       var mins = Math.floor(diff / 60000);
       var hours = Math.floor(mins / 60);
-      if (hours > 0) el.textContent = hours + 'h ago';
+      var days = Math.floor(hours / 24);
+      if (days > 0) el.textContent = days + 'd ago';
+      else if (hours > 0) el.textContent = hours + 'h ago';
       else if (mins > 0) el.textContent = mins + 'm ago';
       else el.textContent = 'Just now';
-    } else if (el) {
+    } else {
       el.textContent = 'Never';
     }
+  },
+
+  async refreshBackupTimeFromDrive() {
+    var el = document.getElementById('lastBackupTime');
+    if (!el || !Logit.Drive || !Logit.Drive.isAuthenticated()) return;
+
+    try {
+      var driveTime = await Logit.Drive.getLastBackupTime();
+      if (driveTime) {
+        localStorage.setItem(this._LAST_BACKUP_KEY, String(driveTime));
+        this.showLastBackup();
+      }
+    } catch (e) {}
   },
 
   updateLastBackup() {

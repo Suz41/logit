@@ -220,7 +220,8 @@ Logit.Drive = {
         await this._createFile(fileName, content, folderId);
       }
 
-      return { success: true, message: `Backup saved: ${fileName}` };
+      const backupTime = Date.now();
+      return { success: true, message: `Backup saved: ${fileName}`, backupTime: backupTime };
     } catch (err) {
       console.error('[Drive] Backup failed:', err);
       return { success: false, message: `Backup failed: ${err.message}` };
@@ -375,6 +376,23 @@ Logit.Drive = {
     if (!data.files) return [];
 
     return data.files.filter(f => f.name && (f.name.startsWith('logit-') || f.name.endsWith('.json')));
+  },
+
+  /**
+   * Get the last backup time from Google Drive
+   * @returns {Promise<number|null>} timestamp or null
+   */
+  async getLastBackupTime() {
+    if (!this._accessToken) return null;
+    try {
+      const folderId = await this._getOrCreateFolder();
+      const files = await this._listBackupFiles(folderId);
+      if (!files || files.length === 0) return null;
+      files.sort((a, b) => (b.modifiedTime || '').localeCompare(a.modifiedTime || ''));
+      return files[0].modifiedTime ? new Date(files[0].modifiedTime).getTime() : null;
+    } catch (e) {
+      return null;
+    }
   },
 
   async _createFile(fileName, contentText, folderId) {
