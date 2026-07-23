@@ -2,6 +2,27 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.4.0] - 2026-07-23
+
+### Added
+- Username login — sign in with username or email
+- Back button in sign up mode to return to sign in
+- Confirm password field in change password modal
+- Google Drive connection status badge (green/red dot)
+
+### Changed
+- Simplified login page — removed animations, gradients, orbs
+- Login page buttons — no hover effects, clean minimal style
+- Login form layout — "or" divider between Sign In and Create Account
+- Forgot password link centered inside auth card
+- Change password modal — redesigned, no double-box, matches app aesthetic
+- Settings buttons — improved hover/active states for mobile and PC
+- Removed pulse animation from Google Drive status dot
+
+### Fixed
+- Google Drive shows "Not Connected" when not authenticated (was showing connected)
+- Login page alignment issues (logo, forgot password, spacing)
+
 ## [3.3.0] - 2026-07-21
 
 ### Added

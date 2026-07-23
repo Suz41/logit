@@ -1,144 +1,75 @@
 <h1 align="center">Log!t</h1>
 
-<p align="center">
-  <strong>Search, rate, and track every movie you watch.</strong>
-</p>
+<p align="center">Search, rate, and track every movie you watch.</p>
 
 <p align="center">
   <a href="https://suz41.github.io/logit">Live Demo</a> ·
-  <a href="https://github.com/Suz41/logit/issues">Report Bug</a> ·
-  <a href="https://github.com/Suz41/logit/blob/main/docs/TUTORIAL.md">Tutorial</a>
+  <a href="https://github.com/Suz41/logit/blob/main/docs/TUTORIAL.md">Tutorial</a> ·
+  <a href="https://github.com/Suz41/logit/blob/main/docs/CHANGELOG.md">Changelog</a>
 </p>
 
 ---
 
-A cloud-first personal movie logger. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build tools.
+## What is Log!t?
+
+A cloud-first personal movie logger. Search any movie via TMDB, rate it, and track everything you watch. Your data syncs across all your devices.
 
 ## Features
 
-- **Cloud Storage** — All data stored in Supabase, access from any device
-- **Username or Email Login** — Sign in with either username or email
-- **Auto Backup** — Automatic backup to Google Drive after every change
-- **TMDB Search** — Find any movie with poster, rating, cast, and metadata
-- **Personal Stats** — Films watched, average rating, runtime, top directors/actors
-- **Profile** — Avatar, favorite films, synced across devices
-- **Change Password** — Update password from settings with confirmation
-- **Dark Theme** — Clean, minimal pure black UI
-- **Responsive** — Works on mobile and desktop
-- **Import/Export** — JSON and text formats
-- **Missing Data Indicators** — Red dots highlight movies with incomplete metadata
+| Feature | Description |
+|---------|-------------|
+| **TMDB Search** | Find any movie with poster, rating, cast, and metadata |
+| **Cloud Sync** | All data stored in Supabase — access from any device |
+| **Google Drive Backup** | Auto-backup after every change, restore anytime |
+| **Username or Email Login** | Sign in with either |
+| **Stats Dashboard** | Films watched, average rating, runtime, top directors/actors |
+| **Profile** | Avatar, favorite films, bio — synced everywhere |
+| **Import/Export** | JSON and text formats |
+| **Dark Theme** | Minimal pure black UI, responsive on mobile and desktop |
 
-## How It Works
+## Quick Start
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                      USER DEVICE                        │
-│                                                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
-│  │   Library   │  │    Stats    │  │   Profile   │    │
-│  │  (index)    │  │  (PS.html)  │  │  (profile)  │    │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘    │
-│         │                │                │            │
-│         └────────────────┼────────────────┘            │
-│                          │                             │
-│                    ┌─────▼─────┐                       │
-│                    │ storage.js│                       │
-│                    └─────┬─────┘                       │
-└──────────────────────────┼──────────────────────────────┘
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-        ┌─────▼─────┐ ┌────▼────┐ ┌────▼─────┐
-        │ Supabase  │ │ Google  │ │  TMDB    │
-        │ (Cloud DB)│ │ Drive   │ │  (API)   │
-        └───────────┘ └─────────┘ └──────────┘
-```
+1. Go to **[suz41.github.io/logit](https://suz41.github.io/logit)**
+2. Create an account or sign in
+3. Set your TMDB API key in **Settings**
+4. Start logging movies
 
 ## Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| HTML5 | Structure |
-| CSS3 | Styling (dark theme) |
-| JavaScript | Logic (vanilla, no frameworks) |
-| Supabase | Cloud database & authentication |
-| Google Drive API | Auto-backup & restore |
-| TMDB API | Movie data & search |
-| GitHub Pages | Hosting |
-
-## Getting Started
-
-1. Visit [suz41.github.io/logit](https://suz41.github.io/logit)
-2. Create an account or sign in with email/username
-3. Set your TMDB API key in Settings
-4. Start logging movies
-
-## Important
-
-> **Indian Users:** TMDB API is blocked in India. You need a VPN to search and add movies. Once added, movies work without VPN.
+- **Frontend:** Vanilla HTML, CSS, JavaScript — no frameworks
+- **Database:** Supabase (PostgreSQL)
+- **Auth:** Supabase Auth
+- **Backup:** Google Drive API
+- **Movie Data:** TMDB API
+- **Hosting:** GitHub Pages
 
 ## Project Structure
 
 ```
 logit/
 ├── index.html          # Library (home)
-├── profile.html        # User profile & settings
+├── profile.html        # Profile & settings
 ├── PS.html             # Stats dashboard
 ├── about.html          # About page
-├── welcome.html        # Auth page
+├── welcome.html        # Login/signup
 ├── reset.html          # Password reset
-├── migrations.sql      # Database setup SQL
-├── css/                # Stylesheets
-│   ├── main.css        # Global styles & nav
-│   ├── library.css     # Movie grid & search
-│   ├── modal.css       # Modals & sheets
-│   ├── stats.css       # Stats page
-│   ├── profile.css     # Profile page
-│   ├── auth.css        # Auth pages
-│   ├── about.css       # About page
-│   ├── components.css  # Reusable components
-│   ├── desktop.css     # Desktop overrides
-│   └── animations.css  # Animations
+├── migrations.sql      # Database setup
+├── css/                # Styles
 ├── js/                 # JavaScript modules
-│   ├── app.js          # Page detection & init
-│   ├── config.js       # API keys
-│   ├── constants.js    # Shared constants
-│   ├── storage.js      # Cloud storage operations
-│   ├── supabase.js     # Supabase client
-│   ├── auth.js         # Authentication
-│   ├── drive.js        # Google Drive integration
-│   ├── library.js      # Library page logic
-│   ├── stats.js        # Stats page logic
-│   ├── profile.js      # Profile page logic
-│   ├── modals.js       # Modal logic
-│   ├── search.js       # TMDB search
-│   ├── movieFactory.js # Movie object builder
-│   ├── movies.js       # Movie helpers
-│   ├── statutils.js    # Stats calculations
-│   ├── import.js       # Import logic
-│   ├── export.js       # Export logic
-│   ├── ui.js           # UI helpers
-│   ├── utils.js        # Utility functions
-│   ├── overlays.js     # Overlay UI
-│   └── posterPicker.js # Poster selection
-├── docs/               # Documentation
-└── LICENSE
+└── docs/               # Documentation
 ```
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Tutorial](docs/TUTORIAL.md) | Step-by-step usage guide |
-| [Signup](docs/SIGNUP.md) | Account creation & login guide |
-| [FAQ](docs/FAQ.md) | Frequently asked questions |
-| [Setup](docs/SETUP.md) | Installation & configuration |
-| [Design](docs/DESIGN.md) | Design system & tokens |
-| [Flowchart](docs/FLOWCHART.md) | App flow & architecture |
-| [Changelog](docs/CHANGELOG.md) | Version history |
-| [Contributing](docs/CONTRIBUTING.md) | Contribution guidelines |
-| [Security](docs/SECURITY.md) | Security policy |
-| [AI Tools Used](docs/USED_AI.md) | AI tools used in development |
+- [Tutorial](docs/TUTORIAL.md) — How to use Log!t
+- [Signup](docs/SIGNUP.md) — Account creation guide
+- [FAQ](docs/FAQ.md) — Frequently asked questions
+- [Setup](docs/SETUP.md) — Installation & configuration
+- [Changelog](docs/CHANGELOG.md) — Version history
+
+## Note for Indian Users
+
+TMDB API is blocked in India. You need a VPN to search and add movies. Once added, movies work without VPN.
 
 ## License
 
@@ -148,6 +79,6 @@ logit/
 
 <p align="center">
   Built with vanilla HTML, CSS & JS<br>
-  No frameworks. No build tools. No dependencies.<br><br>
-  Created by <a href="https://github.com/Suz41">Suz41</a> · <a href="https://instagram.com/suzalpins">Instagram</a>
+  No frameworks. No build tools.<br><br>
+  Created by <a href="https://github.com/Suz41">Suz41</a>
 </p>
