@@ -29,7 +29,6 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0.4;
-  animation: floatOrb 25s infinite alternate ease-in-out;
 }
 
 .welcomePage::before {
@@ -42,34 +41,12 @@
   background: rgba(255, 255, 255, 0.02);
   bottom: 15%;
   right: 5%;
-  animation-delay: -12.5s;
-}
-
-@keyframes floatOrb {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translate(60px, 40px) scale(1.15);
-  }
 }
 
 .welcomeContainer {
   width: 100%;
   max-width: 360px;
   z-index: 1;
-  animation: introFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes introFade {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .welcomeContent {
@@ -97,18 +74,6 @@
   color: var(--text);
   display: inline-block;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  animation: logoPulse 2.5s infinite ease-in-out;
-}
-
-@keyframes logoPulse {
-  0%, 100% {
-    transform: scale(1);
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  }
-  50% {
-    transform: scale(1.05);
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  }
 }
 
 .welcomeTagline {
