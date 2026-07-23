@@ -11,13 +11,14 @@
 
 .welcomeContainer {
   width: 100%;
-  max-width: 340px;
+  max-width: 320px;
 }
 
 .welcomeContent {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  gap: 32px;
 }
 
 .welcomeLogo {
@@ -26,7 +27,7 @@
 
 .welcomeLogo h1 {
   font-family: 'Poppins', sans-serif;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: -1px;
   color: var(--text);
@@ -43,6 +44,7 @@
 
 .welcomeMessage {
   text-align: center;
+  margin-top: -16px;
 }
 
 .welcomeMessage p {
@@ -54,6 +56,7 @@
 
 /* ========= AUTH FORM ========= */
 .authCard {
+  width: 100%;
   background: var(--bg);
   border: 0.5px solid var(--border);
   border-radius: 12px;
@@ -129,10 +132,7 @@
 }
 
 .authFooter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  text-align: center;
 }
 
 .authLink {
@@ -142,7 +142,7 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 0;
 }
 
 .authLink:active {
@@ -185,10 +185,10 @@
 /* ========= RESPONSIVE ========= */
 @media (min-width: 1024px) {
   .welcomeContainer {
-    max-width: 360px;
+    max-width: 340px;
   }
 
   .welcomeLogo h1 {
-    font-size: 40px;
+    font-size: 36px;
   }
 }
