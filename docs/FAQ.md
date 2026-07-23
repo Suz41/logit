@@ -23,7 +23,7 @@ Yes. Log!t requires an account to store your movies in the cloud.
 
 <details>
 <summary><strong>How do I start?</strong></summary>
-Visit <a href="https://suz41.github.io/logit">suz41.github.io/logit</a>, create an account, set your TMDB API key in Settings, and start adding movies.
+Visit <a href="https://suz41.github.io/logit">suz41.github.io/logit</a>, sign in or create an account, set your TMDB API key in Settings, and start adding movies.
 </details>
 
 <details>
@@ -105,7 +105,7 @@ Verify your TMDB API key is set in Settings. Check your internet connection (and
 
 <details>
 <summary><strong>Can't sign in?</strong></summary>
-Make sure you're using the correct email and password. Use the "Forgot Password" link to reset.
+Make sure you're using the correct email (or username) and password. Use the "Forgot Password?" link to reset.
 </details>
 
 <details>

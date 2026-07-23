@@ -3,20 +3,21 @@
 ## Creating an Account
 
 1. Go to [suz41.github.io/logit](https://suz41.github.io/logit)
-2. You'll see the welcome page
+2. Click **Create Account**
 3. Enter your:
    - **Username** (must be unique)
    - **Email**
    - **Password** (minimum 6 characters)
 4. Click **Create Account**
 5. Check your email for confirmation
-6. Sign in — your movies will sync to the cloud automatically
+6. Use **Back to Sign In** to return to login
 
 ## Logging In
 
 1. Go to the welcome page
-2. Enter your email and password
+2. Enter your **email or username** and password
 3. Click **Sign In**
+4. Or click **Forgot Password?** to reset
 
 ## Forgot Password
 

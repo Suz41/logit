@@ -9,7 +9,6 @@ All notable changes to Log!t will be documented in this file.
 - Back button in sign up mode to return to sign in
 - Confirm password field in change password modal
 - Google Drive connection status badge (green/red dot)
-- Google Drive token expires after 30 minutes of inactivity
 - Session timeout after 60 minutes of inactivity
 - Search rate limiting (300ms minimum between TMDB requests)
 - Last backup timestamp display in settings
@@ -29,6 +28,7 @@ All notable changes to Log!t will be documented in this file.
 ### Fixed
 - Google Drive shows "Not Connected" when not authenticated (was showing connected)
 - Login page alignment issues (logo, forgot password, spacing)
+- Google Drive token persists across page reloads
 
 ## [3.3.0] - 2026-07-21
 

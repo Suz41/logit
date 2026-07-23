@@ -5,10 +5,19 @@
 ### 1. Open the App
 Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 
-### 2. Create an Account
+### 2. Sign In or Create Account
+**Sign In:**
+- Enter your email or username
+- Enter your password
+- Click **Sign In**
+- Or click **Forgot Password?** to reset
+
+**Create Account:**
+- Click **Create Account**
 - Enter your username, email, and password
 - Click **Create Account**
 - Check your email for confirmation
+- Use **Back to Sign In** to return to login
 
 ### 3. Set TMDB API Key
 - Click the **Settings** icon
