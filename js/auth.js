@@ -93,10 +93,30 @@ Logit.Auth = {
   },
 
   async handleSignIn() {
-    var email = (document.getElementById('authEmail') || {}).value;
+    var input = (document.getElementById('authEmail') || {}).value;
     var password = (document.getElementById('authPassword') || {}).value;
-    if (!email || !password) { this.setMessage('Enter email and password'); return; }
-    await this.signInWithEmail(email.trim(), password.trim());
+    if (!input || !password) { this.setMessage('Enter email/username and password'); return; }
+
+    var email = input.trim();
+    // If input doesn't look like an email, look up by username
+    if (!email.includes('@')) {
+      var client = Logit.Supabase.getClient();
+      if (client) {
+        try {
+          var { data } = await client.from('users').select('email').eq('username', email).single();
+          if (data && data.email) {
+            email = data.email;
+          } else {
+            this.setMessage('Username not found');
+            return;
+          }
+        } catch (e) {
+          this.setMessage('Username not found');
+          return;
+        }
+      }
+    }
+    await this.signInWithEmail(email, password.trim());
   },
 
   async handleCreateAccount() {
@@ -104,6 +124,7 @@ Logit.Auth = {
     var email = (document.getElementById('authEmail') || {}).value;
     var password = (document.getElementById('authPassword') || {}).value;
     if (!username || !email || !password) { this.setMessage('Fill all fields'); return; }
+    if (!email.includes('@')) { this.setMessage('Enter a valid email'); return; }
     if (password.length < 6) { this.setMessage('Password must be 6+ characters'); return; }
     await this.signUpWithEmail(email.trim(), password.trim(), username.trim());
   },
