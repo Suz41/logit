@@ -651,10 +651,13 @@ Logit.ProfilePage = {
       Logit.Utils.openModal($('changePasswordModal'));
       $('changeCurrentPassword').value = '';
       $('changeNewPassword').value = '';
+      $('changeConfirmPassword').value = '';
       $('changeCurrentPassword').type = 'password';
       $('changeNewPassword').type = 'password';
+      $('changeConfirmPassword').type = 'password';
       $('toggleCurrentPasswordBtn').innerHTML = EYE_CLOSED_SVG;
       $('toggleNewPasswordBtn').innerHTML = EYE_CLOSED_SVG;
+      $('toggleConfirmPasswordBtn').innerHTML = EYE_CLOSED_SVG;
       $('changePasswordStatus').textContent = '';
       $('changeCurrentPassword').focus();
     });
@@ -675,6 +678,7 @@ Logit.ProfilePage = {
     }
     setupPasswordToggle('changeCurrentPassword', 'toggleCurrentPasswordBtn');
     setupPasswordToggle('changeNewPassword', 'toggleNewPasswordBtn');
+    setupPasswordToggle('changeConfirmPassword', 'toggleConfirmPasswordBtn');
 
     if ($('changePasswordModalClose')) $('changePasswordModalClose').addEventListener('click', function() {
       Logit.Utils.closeModal($('changePasswordModal'));
@@ -684,9 +688,11 @@ Logit.ProfilePage = {
       var statusEl = $('changePasswordStatus');
       var currentPass = $('changeCurrentPassword').value;
       var newPass = $('changeNewPassword').value;
+      var confirmPass = $('changeConfirmPassword').value;
 
       if (!currentPass) { statusEl.textContent = 'Please enter your current password.'; return; }
       if (!newPass || newPass.length < 6) { statusEl.textContent = 'New password must be 6+ characters.'; return; }
+      if (newPass !== confirmPass) { statusEl.textContent = 'Passwords do not match.'; return; }
 
       statusEl.textContent = 'Updating...';
       statusEl.style.color = 'var(--text)';
