@@ -17,11 +17,13 @@ A cloud-first personal movie logger. Built with vanilla HTML, CSS, and JavaScrip
 ## Features
 
 - **Cloud Storage** — All data stored in Supabase, access from any device
+- **Username or Email Login** — Sign in with either username or email
 - **Auto Backup** — Automatic backup to Google Drive after every change
 - **TMDB Search** — Find any movie with poster, rating, cast, and metadata
 - **Personal Stats** — Films watched, average rating, runtime, top directors/actors
 - **Profile** — Avatar, favorite films, synced across devices
-- **Dark Theme** — Clean, minimal UI
+- **Change Password** — Update password from settings with confirmation
+- **Dark Theme** — Clean, minimal pure black UI
 - **Responsive** — Works on mobile and desktop
 - **Import/Export** — JSON and text formats
 - **Missing Data Indicators** — Red dots highlight movies with incomplete metadata
@@ -67,7 +69,7 @@ A cloud-first personal movie logger. Built with vanilla HTML, CSS, and JavaScrip
 ## Getting Started
 
 1. Visit [suz41.github.io/logit](https://suz41.github.io/logit)
-2. Create an account or sign in
+2. Create an account or sign in with email/username
 3. Set your TMDB API key in Settings
 4. Start logging movies
 
