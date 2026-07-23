@@ -14,7 +14,7 @@ Logit.Utils = {
   /** @param {string} path @param {string} [size] @returns {string} */
   img(path, size) {
     if (!path) return '';
-    return 'https://image.tmdb.org/t/p/' + (size || 'w500') + path;
+    return 'https://image.tmdb.org/t/p/' + (size || 'w780') + path;
   },
 
   /** @param {Date} date @returns {{ day: number, month: string }} */
