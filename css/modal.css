@@ -732,22 +732,33 @@
   text-transform: uppercase;
 }
 
-/* Minimal Close button for meta details and poster sheet */
+/* Sticky Close button for meta details and poster sheet */
 .metaCloseBtn, .posterCloseBtn {
-  position: absolute;
-  top: 14px;
-  right: 18px;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 26px;
-  line-height: 1;
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 100;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 8px;
-  z-index: 10;
-  transition: color 0.2s ease;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.2s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  margin-top: -6px;
+  margin-bottom: -24px;
 }
 
 .metaCloseBtn:hover, .posterCloseBtn:hover {
-  color: #fff;
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
