@@ -38,7 +38,15 @@ Logit.StatsPage = {
       .sort((a, b) => b[1].movies.size - a[1].movies.size)
       .slice(0, 5);
 
-    const topActors = Object.entries(stats.actorCount)
+    const topMainActors = Object.entries(stats.mainActorCount)
+      .sort((a, b) => b[1].movies.size - a[1].movies.size)
+      .slice(0, 5);
+
+    const topSupportActors = Object.entries(stats.supportActorCount)
+      .sort((a, b) => b[1].movies.size - a[1].movies.size)
+      .slice(0, 5);
+
+    const topProductions = Object.entries(stats.productionCount)
       .sort((a, b) => b[1].movies.size - a[1].movies.size)
       .slice(0, 5);
 
@@ -53,23 +61,36 @@ Logit.StatsPage = {
       }
     }
 
+    async function fetchCompanyImage(name) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/company?api_key=${API}&query=${encodeURIComponent(name)}`);
+        const data = await res.json();
+        const path = data.results?.[0]?.logo_path;
+        return path ? `https://image.tmdb.org/t/p/w185${path}` : 'https://placehold.co/80x80/111/666?text=%20';
+      } catch (e) {
+        return 'https://placehold.co/80x80/111/666?text=%20';
+      }
+    }
+
     async function renderPeople() {
       var dList = $('directorList');
-      var aList = $('actorList');
+      var maList = $('mainActorList');
+      var saList = $('supportActorList');
+      var pList = $('productionList');
 
-      var directorImagePromises = topDirectors.map(function(entry) {
-        return entry[1].img ? Promise.resolve(entry[1].img) : fetchPersonImage(entry[0]);
-      });
-      var actorImagePromises = topActors.map(function(entry) {
-        return entry[1].img ? Promise.resolve(entry[1].img) : fetchPersonImage(entry[0]);
-      });
+      var allPromises = [
+        ...topDirectors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
+        ...topMainActors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
+        ...topSupportActors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
+        ...topProductions.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchCompanyImage(e[0]))
+      ];
+      var allImages = await Promise.all(allPromises);
 
-      var results = await Promise.all([
-        Promise.all(directorImagePromises),
-        Promise.all(actorImagePromises)
-      ]);
-      var directorImages = results[0];
-      var actorImages = results[1];
+      var offset = 0;
+      var directorImages = allImages.slice(offset, offset + topDirectors.length); offset += topDirectors.length;
+      var mainActorImages = allImages.slice(offset, offset + topMainActors.length); offset += topMainActors.length;
+      var supportActorImages = allImages.slice(offset, offset + topSupportActors.length); offset += topSupportActors.length;
+      var productionImages = allImages.slice(offset, offset + topProductions.length); offset += topProductions.length;
 
       dList.textContent = '';
       topDirectors.forEach(function(entry, index) {
@@ -77,11 +98,37 @@ Logit.StatsPage = {
         dList.append(Logit.Utils.createPersonCard(entry[0], directorImages[index], entry[1].movies.size, moviesHtml));
       });
 
-      aList.textContent = '';
-      topActors.forEach(function(entry, index) {
+      maList.textContent = '';
+      topMainActors.forEach(function(entry, index) {
         var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
-        aList.append(Logit.Utils.createPersonCard(entry[0], actorImages[index], entry[1].movies.size, moviesHtml));
+        maList.append(Logit.Utils.createPersonCard(entry[0], mainActorImages[index], entry[1].movies.size, moviesHtml));
       });
+
+      saList.textContent = '';
+      if (topSupportActors.length === 0) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+        emptyDiv.textContent = 'No data yet';
+        saList.append(emptyDiv);
+      } else {
+        topSupportActors.forEach(function(entry, index) {
+          var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
+          saList.append(Logit.Utils.createPersonCard(entry[0], supportActorImages[index], entry[1].movies.size, moviesHtml));
+        });
+      }
+
+      pList.textContent = '';
+      if (topProductions.length === 0) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+        emptyDiv.textContent = 'No data yet';
+        pList.append(emptyDiv);
+      } else {
+        topProductions.forEach(function(entry, index) {
+          var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
+          pList.append(Logit.Utils.createPersonCard(entry[0], productionImages[index], entry[1].movies.size, moviesHtml));
+        });
+      }
     }
 
     renderPeople();
@@ -145,6 +192,12 @@ Logit.StatsPage = {
       return parseInt(b[0]) - parseInt(a[0]);
     });
     renderMetaSection($('yearWrap'), $('yearTotal'), decades, stats.decadeMovies, function(e) { return e[0]; });
+
+    // Production Companies (meta card)
+    var prodEntries = Object.entries(stats.productionCount)
+      .map(function(e) { return [e[0], e[1].movies.size]; })
+      .sort(function(a, b) { return b[1] - a[1]; });
+    renderMetaSection($('productionWrap'), $('productionTotal'), prodEntries, stats.productionMovies, function(e) { return e[0]; });
 
     // ========= COLLAPSIBLE TOGGLES =========
     document.querySelectorAll('.metaCard.toggleable').forEach(function(card) {

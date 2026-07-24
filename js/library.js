@@ -369,7 +369,16 @@ Logit.LibraryPage = {
         image.src = esc(img(movie.poster_path, 'w342'));
         image.loading = 'lazy';
         image.onerror = handleImgError;
-        card.append(image);
+        var info = document.createElement('div');
+        info.className = 'resultInfo';
+        var titleEl = document.createElement('div');
+        titleEl.className = 'resultTitle';
+        titleEl.textContent = movie.title || '';
+        var yearEl = document.createElement('div');
+        yearEl.className = 'resultYear';
+        yearEl.textContent = movie.release_date ? movie.release_date.slice(0, 4) : '';
+        info.append(titleEl, yearEl);
+        card.append(image, info);
         card.onclick = function() { Logit.Modals.openRating(movie, API, addMovieToDB); };
         fragment.append(card);
       });
@@ -453,6 +462,7 @@ Logit.LibraryPage = {
       }
       m.d = $('eLogged').value;
       m.c = $('eCast').value;
+      m.sc = $('eSupporting').value;
 
       try {
         await Logit.Storage.saveMovie(m, 'update');

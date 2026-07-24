@@ -114,7 +114,7 @@ Logit.Storage = {
 
     try {
       var { data } = await client.from('movies')
-        .select('id, t, sp, g, c, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id')
+        .select('id, t, sp, g, c, sc, pc, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id')
         .eq('user_id', userId);
       if (!data) return { count: 0, bytes: 0, formatted: '0 B' };
       var bytes = new TextEncoder().encode(JSON.stringify(data)).length;

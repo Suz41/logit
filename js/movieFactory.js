@@ -14,6 +14,13 @@ Logit.MovieFactory = {
 
   /** @param {Object} d TMDB movie detail @param {string} rating @param {string} watchType @param {string} watchDate @returns {Object} */
   fromTMDB(d, rating, watchType, watchDate) {
+    var cast = (d.credits && d.credits.cast) ? d.credits.cast : [];
+    var mainCast = cast.filter(function(x) { return x.order < 5; })
+      .slice(0, 5).map(function(x) { return x.name; });
+    var supportCast = cast.filter(function(x) { return x.order >= 5; })
+      .slice(0, 10).map(function(x) { return x.name; });
+    var prods = (d.production_companies || []).map(function(x) { return x.name; });
+
     return {
       id: this.generateUUID(),
       tmdb_id: String(d.id || ''),
@@ -23,7 +30,9 @@ Logit.MovieFactory = {
       rt: d.runtime || 0,
       g: (d.genres || []).map(function(x) { return x.name; }).join(', '),
       dr: ((d.credits && d.credits.crew ? d.credits.crew.find(function(x) { return x.job === 'Director'; }) : null) || {}).name || '',
-      c: (d.credits && d.credits.cast ? d.credits.cast.slice(0, 10).map(function(x) { return x.name; }) : []).join(', '),
+      c: mainCast.join(', '),
+      sc: supportCast.join(', '),
+      pc: prods.join(', '),
       lg: d.original_language || '',
       ct: (d.production_countries && d.production_countries[0] ? d.production_countries[0].name : ''),
       r: rating,

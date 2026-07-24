@@ -124,6 +124,32 @@
   display: block;
 }
 
+.result {
+  display: flex;
+  flex-direction: column;
+}
+
+.resultInfo {
+  padding: 4px 2px;
+  text-align: center;
+}
+
+.resultTitle {
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.resultYear {
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
 /* ========= RATING BOTTOM SHEET ========= */
 .ratingSheet {
   position: fixed;
@@ -365,7 +391,7 @@
   gap: 12px;
 }
 
-.info p, .logged p, .castBox p {
+.info p, .logged p {
   font-size: 10px;
   color: var(--muted);
   margin-bottom: 3px;
@@ -374,7 +400,7 @@
   font-weight: 600;
 }
 
-.info h4, .logged h4, .castBox h4 {
+.info h4, .logged h4 {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
@@ -385,11 +411,27 @@
   margin: 16px 0;
 }
 
-.castBox {
+.metaSection {
   background: var(--surface);
   border-radius: 14px;
   padding: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+}
+
+.metaSection p {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.metaSection h4 {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .actions {

@@ -104,6 +104,11 @@ Logit.Modals = {
     $('mWatch').textContent = movie.w || '';
     $('mLogged').textContent = movie.d || '';
     $('mCast').textContent = movie.c || '';
+    $('mSupporting').textContent = movie.sc || '';
+    $('mProduction').textContent = movie.pc || '';
+
+    var supWrap = $('supportingWrap');
+    if (supWrap) supWrap.style.display = movie.sc ? '' : 'none';
 
     $('eDirector').value = movie.dr || '';
     $('eLang').value = movie.lg || '';
@@ -112,6 +117,7 @@ Logit.Modals = {
     $('eWatch').checked = /^Rewatch/i.test(movie.w || '');
     $('eLogged').value = movie.d || '';
     $('eCast').value = movie.c || '';
+    $('eSupporting').value = movie.sc || '';
   },
 
   closeMeta() {

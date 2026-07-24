@@ -6,7 +6,11 @@ Logit.StatUtils = {
     const data = {
       countryCount: {},
       directorCount: {},
+      mainActorCount: {},
+      supportActorCount: {},
       actorCount: {},
+      productionCount: {},
+      productionMovies: {},
       genreCount: {},
       genreMovies: {},
       langCount: {},
@@ -60,15 +64,43 @@ Logit.StatUtils = {
         data.directorCount[name].movies.add(movie.t);
       }
 
-      /* ACTORS */
+      /* ACTORS — split main vs supporting */
       if (movie.c) {
         movie.c.split(',').forEach(actor => {
           const name = actor.trim();
           if (!name) return;
+          if (!data.mainActorCount[name]) {
+            data.mainActorCount[name] = { img: '', movies: new Set() };
+          }
+          data.mainActorCount[name].movies.add(movie.t);
           if (!data.actorCount[name]) {
             data.actorCount[name] = { img: '', movies: new Set() };
           }
           data.actorCount[name].movies.add(movie.t);
+        });
+      }
+      if (movie.sc) {
+        movie.sc.split(',').forEach(actor => {
+          const name = actor.trim();
+          if (!name) return;
+          if (!data.supportActorCount[name]) {
+            data.supportActorCount[name] = { img: '', movies: new Set() };
+          }
+          data.supportActorCount[name].movies.add(movie.t);
+        });
+      }
+
+      /* PRODUCTION COMPANIES */
+      if (movie.pc) {
+        movie.pc.split(',').forEach(prod => {
+          const name = prod.trim();
+          if (!name) return;
+          if (!data.productionCount[name]) {
+            data.productionCount[name] = { img: '', movies: new Set() };
+          }
+          data.productionCount[name].movies.add(movie.t);
+          if (!data.productionMovies[name]) data.productionMovies[name] = [];
+          data.productionMovies[name].push(movie.t);
         });
       }
 

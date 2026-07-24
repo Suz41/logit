@@ -257,6 +257,26 @@
     display: none;
   }
 
+  .result {
+    border-radius: 8px !important;
+  }
+
+  .resultInfo {
+    padding: 6px 4px;
+  }
+
+  .resultTitle {
+    font-size: 11px;
+  }
+
+  .resultYear {
+    font-size: 10px;
+  }
+
+  .metaSection {
+    padding: 14px;
+  }
+
   /* Center poster sheet modal on PC */
   .posterPicker {
     display: flex;
@@ -446,9 +466,13 @@
     font-size: 10px;
   }
   
-  .peopleGrid {
+  .peopleGrid, .peopleGrid3 {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
+  }
+
+  .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
+    grid-column: span 2;
   }
   
   .peopleCard {
