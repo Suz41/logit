@@ -89,8 +89,8 @@
 /* ========= PEOPLE GRID (DIRECTORS & ACTORS) ========= */
 .peopleGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
@@ -142,13 +142,13 @@
 }
 
 .person img {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
   background: #111;
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: 8px;
 }
 
 .personInfo {
@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 32px;
+  min-height: 28px;
 }
 
 .personName {
@@ -185,7 +185,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding-left: 44px;
+  padding-left: 36px;
   width: 100%;
 }
 

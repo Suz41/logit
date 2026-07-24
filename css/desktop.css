@@ -490,6 +490,10 @@
     height: 36px;
   }
   
+  .personMovies {
+    padding-left: 44px;
+  }
+  
   .metaGrid {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
