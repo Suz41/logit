@@ -400,33 +400,6 @@ Logit.ProfilePage = {
 
     if ($('backBtn')) $('backBtn').addEventListener('click', function() { window.history.back(); });
 
-    // Todoist
-    var todoistInput = $('todoistApiKey');
-    if (todoistInput) {
-      todoistInput.value = Logit.Todoist.getApiKey();
-      todoistInput.addEventListener('change', function() {
-        Logit.Todoist.setApiKey(todoistInput.value.trim());
-      });
-    }
-
-    if ($('todoistSyncBtn')) $('todoistSyncBtn').addEventListener('click', async function() {
-      if (!Logit.Todoist.isConfigured()) {
-        alert('Please enter your Todoist API key first.');
-        return;
-      }
-      var btn = $('todoistSyncBtn');
-      btn.disabled = true;
-      btn.querySelector('span').textContent = 'Syncing...';
-      try {
-        var result = await Logit.Todoist.sync();
-        alert('Synced! ' + result.pending + ' movies pending review.');
-      } catch (e) {
-        alert('Sync failed: ' + e.message);
-      }
-      btn.disabled = false;
-      btn.querySelector('span').textContent = 'Sync from Todoist';
-    });
-
     if ($('editAvatarBtn')) $('editAvatarBtn').addEventListener('click', function() { self.openDirectorModal(); });
 
     if ($('clearAvatarBtn')) $('clearAvatarBtn').addEventListener('click', function() {
