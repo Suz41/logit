@@ -237,10 +237,11 @@
   }
 
   .meta {
-    max-width: 500px;
+    max-width: 520px;
     height: auto;
     max-height: 85vh;
     border-radius: 20px;
+    padding: 24px;
     transform: scale(0.95) translateY(0);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
@@ -274,7 +275,16 @@
   }
 
   .metaSection {
-    padding: 14px;
+    padding: 16px;
+  }
+
+  .posterWrap {
+    width: 100px;
+    height: 150px;
+  }
+
+  .topRow h2 {
+    font-size: 22px;
   }
 
   /* Center poster sheet modal on PC */

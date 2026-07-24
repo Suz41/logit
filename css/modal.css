@@ -352,15 +352,17 @@
 }
 
 .ratingEdit button {
-  height: 28px;
-  min-width: 36px;
+  height: 32px;
+  min-width: 38px;
   border: none;
   border-radius: 8px;
   background: var(--surface);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  padding: 0 6px;
+  padding: 0 8px;
+  transition: background 0.15s, color 0.15s;
 }
 
 .ratingEdit button.active {
@@ -373,14 +375,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .chips span {
   background: var(--surface);
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   font-weight: 500;
 }
@@ -388,13 +390,13 @@
 .info {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .info p, .logged p {
   font-size: 10px;
   color: var(--muted);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -405,23 +407,27 @@
   font-weight: 500;
   line-height: 1.4;
   word-break: break-word;
+  color: var(--text);
 }
 
 .logged {
-  margin: 16px 0;
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: 14px;
 }
 
 .metaSection {
   background: var(--surface);
   border-radius: 14px;
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 12px;
 }
 
 .metaSection p {
   font-size: 10px;
   color: var(--muted);
-  margin-bottom: 3px;
+  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -432,6 +438,33 @@
   font-weight: 500;
   line-height: 1.4;
   word-break: break-word;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.metaSection h4:empty {
+  display: none;
+}
+
+.metaSection h4:empty + .metaInput {
+  margin-top: 0;
+}
+
+.metaSection .metaInput {
+  margin-top: 0;
+}
+
+.nameChip {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
 }
 
 .actions {

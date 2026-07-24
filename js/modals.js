@@ -6,6 +6,19 @@ Logit.Modals = {
     e.target.src = Logit.POSTER_FALLBACK;
   },
 
+  _renderChips(el, text) {
+    el.textContent = '';
+    if (!text) return;
+    text.split(',').forEach(function(name) {
+      name = name.trim();
+      if (!name) return;
+      var chip = document.createElement('span');
+      chip.className = 'nameChip';
+      chip.textContent = name;
+      el.appendChild(chip);
+    });
+  },
+
   openRating(movie, apiKey, onAdd) {
     var old = document.querySelector('.ratingSheet');
     if (old) old.remove();
@@ -103,9 +116,9 @@ Logit.Modals = {
     $('mCountry').textContent = movie.ct || '';
     $('mWatch').textContent = movie.w || '';
     $('mLogged').textContent = movie.d || '';
-    $('mCast').textContent = movie.c || '';
-    $('mSupporting').textContent = movie.sc || '';
-    $('mProduction').textContent = movie.pc || '';
+    this._renderChips($('mCast'), movie.c);
+    this._renderChips($('mSupporting'), movie.sc);
+    this._renderChips($('mProduction'), movie.pc);
 
     var prodWrap = document.querySelector('#mProduction').closest('.metaSection');
     if (prodWrap) prodWrap.style.display = movie.pc ? '' : 'none';
