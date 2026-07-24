@@ -259,6 +259,7 @@
 }
 
 .meta {
+  position: relative;
   width: 100%;
   background: #000000;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -661,16 +662,17 @@
   backdrop-filter: blur(8px);
 }
 
+/* Minimal poster sheet design */
 .posterSheet {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg);
-  border: 0.5px solid var(--border);
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  padding: 16px;
+  padding: 24px 20px 32px;
   max-height: 80vh;
   overflow: auto;
   transform: translateY(100%);
@@ -682,11 +684,7 @@
 }
 
 .posterSheetHandle {
-  width: 36px;
-  height: 4px;
-  background: #48484a;
-  border-radius: 2px;
-  margin: 0 auto 14px;
+  display: none;
 }
 
 .posterGrid {
@@ -732,4 +730,24 @@
   font-weight: 700;
   color: #fff;
   text-transform: uppercase;
+}
+
+/* Minimal Close button for meta details and poster sheet */
+.metaCloseBtn, .posterCloseBtn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
+  transition: color 0.2s ease;
+}
+
+.metaCloseBtn:hover, .posterCloseBtn:hover {
+  color: #fff;
 }

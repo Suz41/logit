@@ -11,11 +11,17 @@ Logit.PosterPicker = {
     picker.setAttribute('role', 'dialog');
     picker.setAttribute('aria-label', 'Choose poster');
     picker.innerHTML = '<div class="posterBg" aria-hidden="true"></div>'
-      + '<div class="posterSheet"><div class="posterSheetHandle"></div><div class="posterGrid" style="text-align:center;padding:20px;color:var(--muted);">Loading posters...</div></div>';
+      + '<div class="posterSheet">'
+      + '<button class="posterCloseBtn" aria-label="Close modal">&times;</button>'
+      + '<div class="posterSheetHandle"></div>'
+      + '<div class="posterGrid" style="text-align:center;padding:20px;color:var(--muted);">Loading posters...</div>'
+      + '</div>';
 
     document.body.append(picker);
     requestAnimationFrame(function() { picker.classList.add('active'); });
     Logit.Overlays.push(function() { picker.remove(); });
+
+    picker.querySelector('.posterCloseBtn').onclick = function() { Logit.Overlays.closeTop(); };
 
     var tmdbId = movie.tmdb_id;
     var posters = [];
