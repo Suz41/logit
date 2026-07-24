@@ -350,15 +350,47 @@ style="width:0%">
 
 </div>
 
-<!-- API KEY + CLEAR -->
+<!-- API KEYS -->
+<div class="card">
+  <div class="cardTitle">API Keys</div>
+  <div class="apiList">
+    <div class="apiItem">
+      <div class="apiInfo">
+        <div class="apiName">TMDB</div>
+        <div class="apiDesc">Movie search & metadata</div>
+      </div>
+      <input type="text" id="tmdbApiKey" class="apiInput" placeholder="Enter key">
+      <a href="https://www.themoviedb.org/settings/api" target="_blank" class="apiLink">Get Key</a>
+    </div>
+    <div class="apiItem">
+      <div class="apiInfo">
+        <div class="apiName">Todoist</div>
+        <div class="apiDesc">Import movies from tasks</div>
+      </div>
+      <input type="text" id="todoistApiKeyAbout" class="apiInput" placeholder="Enter key">
+      <a href="https://todoist.com/app/settings/integrations/developer" target="_blank" class="apiLink">Get Key</a>
+    </div>
+    <div class="apiItem">
+      <div class="apiInfo">
+        <div class="apiName">Supabase</div>
+        <div class="apiDesc">Cloud database</div>
+      </div>
+      <input type="text" id="supabaseUrl" class="apiInput" placeholder="Project URL">
+    </div>
+    <div class="apiItem">
+      <div class="apiInfo">
+        <div class="apiName">Supabase Key</div>
+        <div class="apiDesc">Anon key</div>
+      </div>
+      <input type="password" id="supabaseKey" class="apiInput" placeholder="Anon key">
+    </div>
+  </div>
+  <button class="saveAllBtn" id="saveAllKeys">Save All Keys</button>
+</div>
 
+<!-- DANGER ZONE -->
 <div class="aboutActions">
-<button data-action="setApiKey">
-TMDB API Key
-</button>
-<button data-action="clearAllData" class="danger">
-Clear All Data
-</button>
+  <button data-action="clearAllData" class="danger">Clear All Data</button>
 </div>
 
 </section>
