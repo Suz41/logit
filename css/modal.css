@@ -529,9 +529,15 @@
 }
 
 .deleteBtn {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: #d90429 !important;
+  color: #ffffff !important;
+  border-color: #d90429 !important;
+}
+
+.deleteBtn:hover {
+  background: #b90320 !important;
+  border-color: #b90320 !important;
+  color: #ffffff !important;
 }
 
 /* ========= META EDIT STATE ========= */
