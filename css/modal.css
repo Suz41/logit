@@ -246,13 +246,12 @@
 .metaModal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  backdrop-filter: blur(12px) saturate(180%);
+  background: rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   display: none;
   align-items: flex-end;
   z-index: 400;
-  transition: opacity 0.3s ease;
 }
 
 .metaModal.active {
@@ -261,18 +260,15 @@
 
 .meta {
   width: 100%;
-  background: radial-gradient(circle at 50% 0%, #1c1c1e 0%, #0a0a0c 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-left: 0.5px solid rgba(255, 255, 255, 0.08);
-  border-right: 0.5px solid rgba(255, 255, 255, 0.08);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-  padding: 20px 20px 32px;
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 24px 20px 32px;
   max-height: 90vh;
   overflow: auto;
   transform: translateY(100%);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .metaModal.active .meta {
@@ -280,33 +276,23 @@
 }
 
 .metaHandle {
-  width: 40px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 99px;
-  margin: 0 auto 20px;
+  display: none; /* Removed slide-down handle/pill */
 }
 
 .metaHeader {
   display: flex;
-  gap: 18px;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
 .posterWrap {
   position: relative;
-  width: 95px;
-  height: 142px;
+  width: 90px;
+  height: 135px;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  transition: transform 0.2s ease;
-}
-
-.posterWrap:hover {
-  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .poster {
@@ -338,9 +324,9 @@
 
 .topRow {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 6px;
   margin-bottom: 12px;
 }
 
@@ -353,49 +339,45 @@
   color: #fff;
 }
 
+/* Minimal rating presentation - no background pill */
 .ratingBox {
-  height: auto;
-  padding: 4px 10px;
-  border-radius: 8px;
-  background: rgba(255, 199, 0, 0.1);
-  border: 1px solid rgba(255, 199, 0, 0.25);
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffcc00;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffcc00;
-  flex-shrink: 0;
-  gap: 3px;
+  gap: 4px;
+  margin-top: 2px;
 }
 
 .ratingBox::before {
   content: "★";
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .ratingEdit {
   display: none;
   gap: 6px;
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .ratingEdit button {
-  height: 32px;
-  min-width: 38px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  height: 28px;
+  min-width: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  background: transparent;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
   transition: all 0.15s ease;
 }
 
 .ratingEdit button:hover {
-  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 
@@ -403,48 +385,47 @@
   background: #fff;
   color: #000;
   border-color: #fff;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.25);
 }
 
+/* Minimal tags display - no backgrounds, bullet-separated */
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 0px;
 }
 
 .chips span {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 11px;
-  color: #c7c7cc;
+  font-size: 12px;
+  color: var(--muted);
   font-weight: 500;
 }
 
+.chips span:not(:last-child)::after {
+  content: "  ·";
+  margin-left: 8px;
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+}
+
+/* Minimal grid layout - no box card elements */
 .info {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .info > div {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .info p, .logged p, .metaSection p {
   font-size: 9px;
-  color: #8e8e93;
-  margin-bottom: 6px;
+  color: var(--muted);
+  margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 700;
@@ -452,18 +433,17 @@
 
 .info h4, .logged h4 {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
   word-break: break-word;
-  color: #f2f2f7;
+  color: #e5e5ea;
 }
 
 .logged {
-  margin: 0 0 12px 0;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  margin: 16px 0;
+  padding: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -474,15 +454,13 @@
 }
 
 .metaSection {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 14px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 0;
+  margin-bottom: 0;
 }
 
 .metaSection p {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .metaSection h4 {
@@ -492,7 +470,7 @@
   word-break: break-word;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .metaSection h4:empty {
@@ -507,51 +485,44 @@
   margin-top: 0;
 }
 
+/* Minimal name chip - clean text separated by commas */
 .nameChip {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 11px;
+  display: inline;
+  font-size: 13px;
   font-weight: 500;
-  color: #f2f2f7;
-  white-space: nowrap;
-  transition: all 0.2s ease;
+  color: #fff;
+  white-space: normal;
 }
 
-.nameChip:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
+.nameChip:not(:last-child)::after {
+  content: ", ";
+  color: var(--muted);
 }
 
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 .actions button {
-  height: 48px;
+  height: 44px;
   border: none;
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
 }
 
 .actions button:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .edit {
   background: #ffffff;
   color: #000000;
-  border: 1px solid #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
 }
 
 .edit:hover {
@@ -559,44 +530,45 @@
 }
 
 .deleteBtn {
-  background: rgba(255, 69, 58, 0.1);
+  background: transparent;
   color: #ff453a;
-  border: 1px solid rgba(255, 69, 58, 0.2);
+  border: 1px solid rgba(255, 69, 58, 0.3);
 }
 
 .deleteBtn:hover {
-  background: rgba(255, 69, 58, 0.15);
-  border-color: rgba(255, 69, 58, 0.3);
+  background: rgba(255, 69, 58, 0.08);
+  border-color: rgba(255, 69, 58, 0.5);
 }
 
 /* ========= META EDIT STATE ========= */
+/* Minimal bottom-bordered inputs */
 .metaInput {
   display: none;
   width: 100%;
-  height: 38px;
-  margin-top: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 32px;
+  margin-top: 4px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   outline: none;
-  border-radius: 8px;
-  padding: 0 12px;
+  border-radius: 0;
+  padding: 4px 0;
   color: #fff;
   font-size: 13px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-bottom-color 0.2s;
 }
 
 .metaInput:focus {
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  border-bottom-color: #fff;
 }
 
 .metaInputSmall {
-  width: 70px;
-  height: 28px;
+  width: 60px;
+  height: 24px;
   margin-top: 0;
-  padding: 0 8px;
+  padding: 0 4px;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
 }
 
 .meta.editing .metaInput {
@@ -605,8 +577,8 @@
 
 .meta.editing .metaInputSmall {
   display: inline-block;
-  width: 70px;
-  height: 28px;
+  width: 60px;
+  height: 24px;
 }
 
 .meta.editing h4 {
@@ -662,7 +634,6 @@
   background: #30d158;
   color: #000;
   border-color: #30d158;
-  box-shadow: 0 4px 12px rgba(48, 209, 88, 0.25);
 }
 
 .meta.editing #saveBtn:hover {

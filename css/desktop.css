@@ -240,13 +240,13 @@
     max-width: 520px;
     height: auto;
     max-height: 85vh;
-    border-radius: 24px;
+    border-radius: 12px;
     padding: 24px;
     transform: scale(0.95) translateY(0);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   }
 
   .metaModal.active .meta {
@@ -275,7 +275,7 @@
   }
 
   .metaSection {
-    padding: 16px;
+    padding: 16px 0;
   }
 
   .posterWrap {
