@@ -50,6 +50,10 @@ Logit.StatsPage = {
       .sort((a, b) => b[1].movies.size - a[1].movies.size)
       .slice(0, 5);
 
+    const topCoProductions = Object.entries(stats.coProductionCount)
+      .sort((a, b) => b[1].movies.size - a[1].movies.size)
+      .slice(0, 5);
+
     async function fetchPersonImage(name) {
       try {
         const res = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${API}&query=${encodeURIComponent(name)}`);
@@ -66,7 +70,7 @@ Logit.StatsPage = {
         const res = await fetch(`https://api.themoviedb.org/3/search/company?api_key=${API}&query=${encodeURIComponent(name)}`);
         const data = await res.json();
         const path = data.results?.[0]?.logo_path;
-        return path ? `https://image.tmdb.org/t/p/w185${path}` : 'https://placehold.co/80x80/111/666?text=%20';
+        return path ? `https://image.tmdb.org/t/p/original${path}` : 'https://placehold.co/80x80/111/666?text=%20';
       } catch (e) {
         return 'https://placehold.co/80x80/111/666?text=%20';
       }
@@ -77,12 +81,14 @@ Logit.StatsPage = {
       var maList = $('mainActorList');
       var saList = $('supportActorList');
       var pList = $('productionList');
+      var cpList = $('coProductionList');
 
       var allPromises = [
         ...topDirectors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
         ...topMainActors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
         ...topSupportActors.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchPersonImage(e[0])),
-        ...topProductions.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchCompanyImage(e[0]))
+        ...topProductions.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchCompanyImage(e[0])),
+        ...topCoProductions.map(e => e[1].img ? Promise.resolve(e[1].img) : fetchCompanyImage(e[0]))
       ];
       var allImages = await Promise.all(allPromises);
 
@@ -91,6 +97,7 @@ Logit.StatsPage = {
       var mainActorImages = allImages.slice(offset, offset + topMainActors.length); offset += topMainActors.length;
       var supportActorImages = allImages.slice(offset, offset + topSupportActors.length); offset += topSupportActors.length;
       var productionImages = allImages.slice(offset, offset + topProductions.length); offset += topProductions.length;
+      var coProductionImages = allImages.slice(offset, offset + topCoProductions.length); offset += topCoProductions.length;
 
       dList.textContent = '';
       topDirectors.forEach(function(entry, index) {
@@ -127,6 +134,19 @@ Logit.StatsPage = {
         topProductions.forEach(function(entry, index) {
           var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
           pList.append(Logit.Utils.createPersonCard(entry[0], productionImages[index], entry[1].movies.size, moviesHtml));
+        });
+      }
+
+      cpList.textContent = '';
+      if (topCoProductions.length === 0) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+        emptyDiv.textContent = 'No data yet';
+        cpList.append(emptyDiv);
+      } else {
+        topCoProductions.forEach(function(entry, index) {
+          var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
+          cpList.append(Logit.Utils.createPersonCard(entry[0], coProductionImages[index], entry[1].movies.size, moviesHtml));
         });
       }
     }
@@ -198,6 +218,12 @@ Logit.StatsPage = {
       .map(function(e) { return [e[0], e[1].movies.size]; })
       .sort(function(a, b) { return b[1] - a[1]; });
     renderMetaSection($('productionWrap'), $('productionTotal'), prodEntries, stats.productionMovies, function(e) { return e[0]; });
+
+    // Co-Production Companies (meta card)
+    var coProdEntries = Object.entries(stats.coProductionCount)
+      .map(function(e) { return [e[0], e[1].movies.size]; })
+      .sort(function(a, b) { return b[1] - a[1]; });
+    renderMetaSection($('coProductionWrap'), $('coProductionTotal'), coProdEntries, stats.coProductionMovies, function(e) { return e[0]; });
 
     // ========= COLLAPSIBLE TOGGLES =========
     document.querySelectorAll('.metaCard.toggleable').forEach(function(card) {

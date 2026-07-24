@@ -6,7 +6,7 @@ Logit.Export = {
     let data, ext, mime;
     if (format === 'json') {
       const slim = movies.map(function(m) {
-        return { id: m.id, t: m.t, tmdb_id: m.tmdb_id || '', imdb_id: m.imdb_id || '', yr: m.yr, r: m.r, d: m.d, w: m.w, sp: m.sp, sc: m.sc || '', pc: m.pc || '' };
+        return { id: m.id, t: m.t, tmdb_id: m.tmdb_id || '', imdb_id: m.imdb_id || '', yr: m.yr, r: m.r, d: m.d, w: m.w, sp: m.sp, sc: m.sc || '', pc: m.pc || '', co: m.co || '' };
       });
       data = JSON.stringify(slim, null, 2);
       mime = 'application/json';

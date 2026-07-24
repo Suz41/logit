@@ -1,5 +1,5 @@
 /**
- * Backfill Script: Add supporting cast (sc) and production companies (pc)
+ * Backfill Script: Add supporting cast (sc), production (pc), and co-production (co)
  * to old movies that don't have these fields.
  *
  * HOW TO USE:
@@ -21,11 +21,11 @@
   var { data: movies, error } = await client.from('movies').select('*').eq('user_id', userId);
   if (error) { console.error('Failed to load movies:', error); return; }
 
-  var toUpdate = movies.filter(function(m) { return !m.sc && !m.pc && m.tmdb_id; });
+  var toUpdate = movies.filter(function(m) { return (!m.sc && !m.pc && !m.co) && m.tmdb_id; });
   console.log('Found ' + movies.length + ' total movies, ' + toUpdate.length + ' need backfill.');
 
   if (toUpdate.length === 0) {
-    console.log('Nothing to backfill — all movies already have sc/pc fields.');
+    console.log('Nothing to backfill — all movies already have sc/pc/co fields.');
     return;
   }
 
@@ -47,11 +47,12 @@
       var prods = (d.production_companies || []).map(function(x) { return x.name; });
 
       var sc = supportCast.join(', ');
-      var pc = prods.join(', ');
+      var pc = prods.length > 0 ? prods[0] : '';
+      var co = prods.slice(1).join(', ');
 
-      var { error: updateErr } = await client.from('movies').update({ sc: sc, pc: pc }).eq('id', movie.id);
+      var { error: updateErr } = await client.from('movies').update({ sc: sc, pc: pc, co: co }).eq('id', movie.id);
       if (updateErr) { failed++; console.log('  → Update error:', updateErr.message); }
-      else { updated++; console.log('  → sc: ' + (sc || '(none)') + ' | pc: ' + (pc || '(none)')); }
+      else { updated++; console.log('  → sc: ' + (sc || '(none)') + ' | pc: ' + (pc || '(none)') + ' | co: ' + (co || '(none)')); }
     } catch (e) {
       failed++;
       console.log('  → Error:', e.message);

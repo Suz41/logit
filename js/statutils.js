@@ -11,6 +11,8 @@ Logit.StatUtils = {
       actorCount: {},
       productionCount: {},
       productionMovies: {},
+      coProductionCount: {},
+      coProductionMovies: {},
       genreCount: {},
       genreMovies: {},
       langCount: {},
@@ -92,15 +94,28 @@ Logit.StatUtils = {
 
       /* PRODUCTION COMPANIES */
       if (movie.pc) {
-        movie.pc.split(',').forEach(prod => {
-          const name = prod.trim();
-          if (!name) return;
+        const name = movie.pc.trim();
+        if (name) {
           if (!data.productionCount[name]) {
             data.productionCount[name] = { img: '', movies: new Set() };
           }
           data.productionCount[name].movies.add(movie.t);
           if (!data.productionMovies[name]) data.productionMovies[name] = [];
           data.productionMovies[name].push(movie.t);
+        }
+      }
+
+      /* CO-PRODUCTION COMPANIES */
+      if (movie.co) {
+        movie.co.split(',').forEach(prod => {
+          const name = prod.trim();
+          if (!name) return;
+          if (!data.coProductionCount[name]) {
+            data.coProductionCount[name] = { img: '', movies: new Set() };
+          }
+          data.coProductionCount[name].movies.add(movie.t);
+          if (!data.coProductionMovies[name]) data.coProductionMovies[name] = [];
+          data.coProductionMovies[name].push(movie.t);
         });
       }
 

@@ -20,6 +20,8 @@ Logit.MovieFactory = {
     var supportCast = cast.filter(function(x) { return x.order >= 5; })
       .slice(0, 10).map(function(x) { return x.name; });
     var prods = (d.production_companies || []).map(function(x) { return x.name; });
+    var mainProd = prods.length > 0 ? prods[0] : '';
+    var coProds = prods.slice(1);
 
     return {
       id: this.generateUUID(),
@@ -32,7 +34,8 @@ Logit.MovieFactory = {
       dr: ((d.credits && d.credits.crew ? d.credits.crew.find(function(x) { return x.job === 'Director'; }) : null) || {}).name || '',
       c: mainCast.join(', '),
       sc: supportCast.join(', '),
-      pc: prods.join(', '),
+      pc: mainProd,
+      co: coProds.join(', '),
       lg: d.original_language || '',
       ct: (d.production_countries && d.production_countries[0] ? d.production_countries[0].name : ''),
       r: rating,
