@@ -23,17 +23,14 @@ Logit.AboutPage = {
 
     // Load existing API keys
     if ($('tmdbApiKey')) $('tmdbApiKey').value = Logit.Config.getApiKey() || '';
-    if ($('todoistApiKeyAbout')) $('todoistApiKeyAbout').value = localStorage.getItem('logit_todoist_key') || '';
 
-    // Save all keys
+    // Save key
     if ($('saveAllKeys')) $('saveAllKeys').addEventListener('click', function() {
       var tmdb = ($('tmdbApiKey') || {}).value.trim();
-      var todoist = ($('todoistApiKeyAbout') || {}).value.trim();
 
       if (tmdb) Logit.Config.setApiKey(tmdb);
-      if (todoist) localStorage.setItem('logit_todoist_key', todoist);
 
-      alert('Keys saved!');
+      alert('Key saved!');
       location.reload();
     });
 
