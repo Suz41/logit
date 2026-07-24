@@ -409,3 +409,58 @@ body.hide-dates .movieDate {
   color: var(--muted);
   font-size: 14px;
 }
+
+.pendingOverview {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* ========= TODO PAGE ========= */
+.todoPage {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.todoHeader {
+  margin-bottom: 16px;
+}
+
+.todoHeader h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.todoSub {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 4px 0 0 0;
+}
+
+.todoList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.todoEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.todoEmpty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.todoHint {
+  font-size: 12px;
+}
