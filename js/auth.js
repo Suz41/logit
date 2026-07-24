@@ -26,7 +26,6 @@ Logit.Auth = {
       var user = await Logit.Supabase.getUser();
       if (session && user) {
         this._currentUser = user;
-        localStorage.removeItem('logit_offline_mode');
         localStorage.setItem(this._SESSION_TIMEOUT_KEY, String(Date.now()));
         this.redirectToLibrary();
         return;
@@ -50,7 +49,6 @@ Logit.Auth = {
     var self = this;
     var signInBtn = document.getElementById('signInBtn');
     var createBtn = document.getElementById('createAccountBtn');
-    var offlineBtn = document.getElementById('continueOfflineBtn');
     var toggleBtn = document.getElementById('togglePassword');
     var forgotBtn = document.getElementById('forgotPasswordBtn');
     var backBtn = document.getElementById('backToSignIn');
@@ -61,7 +59,6 @@ Logit.Auth = {
       else self.handleCreateAccount();
     });
     if (backBtn) backBtn.addEventListener('click', function() { self.toggleMode(); });
-    if (offlineBtn) offlineBtn.style.display = 'none';
     if (toggleBtn) toggleBtn.addEventListener('click', function() { self.togglePassword(); });
     if (forgotBtn) forgotBtn.addEventListener('click', function() { self.handleForgotPassword(); });
 
@@ -183,7 +180,6 @@ Logit.Auth = {
       var { data, error } = await client.auth.signInWithPassword({ email: email, password: password });
       if (error) { this.setMessage(error.message); return; }
       this._currentUser = data.user;
-      localStorage.removeItem('logit_offline_mode');
       localStorage.setItem('logit_user_id', data.user.id);
       await this.initializeCloudUser();
       this.redirectToLibrary();
@@ -235,7 +231,6 @@ Logit.Auth = {
     var client = Logit.Supabase.getClient();
     if (client) await client.auth.signOut();
     localStorage.removeItem('logit_user_id');
-    localStorage.removeItem('logit_offline_mode');
     location.href = 'welcome.html';
   },
 

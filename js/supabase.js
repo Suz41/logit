@@ -52,25 +52,6 @@ Logit.Supabase = {
   },
 
   /**
-   * Check if cloud is available
-   * @returns {boolean}
-   */
-  isAvailable() {
-    return this._client !== null;
-  },
-
-  /**
-   * Show offline message
-   */
-  showOfflineMessage() {
-    var msg = document.getElementById('authMessage');
-    if (msg) {
-      msg.textContent = 'Cloud unavailable. Check your connection.';
-      msg.style.color = 'var(--muted)';
-    }
-  },
-
-  /**
    * Get authenticated user
    * @returns {Promise<Object|null>}
    */
