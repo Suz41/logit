@@ -106,10 +106,9 @@ Logit.Modals = {
     $('mCast').textContent = movie.c || '';
     $('mSupporting').textContent = movie.sc || '';
     $('mProduction').textContent = movie.pc || '';
-    $('mCoProduction').textContent = movie.co || '';
 
-    var coWrap = document.getElementById('coProductionWrap');
-    if (coWrap) coWrap.style.display = movie.co ? '' : 'none';
+    var prodWrap = document.querySelector('#mProduction').closest('.metaSection');
+    if (prodWrap) prodWrap.style.display = movie.pc ? '' : 'none';
 
     var supWrap = $('supportingWrap');
     if (supWrap) supWrap.style.display = movie.sc ? '' : 'none';

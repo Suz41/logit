@@ -21,11 +21,11 @@
   var { data: movies, error } = await client.from('movies').select('*').eq('user_id', userId);
   if (error) { console.error('Failed to load movies:', error); return; }
 
-  var toUpdate = movies.filter(function(m) { return (!m.sc && !m.pc && !m.co) && m.tmdb_id; });
+  var toUpdate = movies.filter(function(m) { return (!m.sc && !m.pc) && m.tmdb_id; });
   console.log('Found ' + movies.length + ' total movies, ' + toUpdate.length + ' need backfill.');
 
   if (toUpdate.length === 0) {
-    console.log('Nothing to backfill — all movies already have sc/pc/co fields.');
+    console.log('Nothing to backfill — all movies already have sc/pc fields.');
     return;
   }
 
@@ -44,15 +44,14 @@
       var cast = (d.credits && d.credits.cast) ? d.credits.cast : [];
       var supportCast = cast.filter(function(x) { return x.order >= 5; })
         .slice(0, 10).map(function(x) { return x.name; });
-      var prods = (d.production_companies || []).map(function(x) { return x.name; });
+      var prods = (d.production_companies || []).map(function(x) { return x.name; }).filter(function(n) { return n && n.trim(); });
 
       var sc = supportCast.join(', ');
       var pc = prods.length > 0 ? prods[0] : '';
-      var co = prods.slice(1).join(', ');
 
-      var { error: updateErr } = await client.from('movies').update({ sc: sc, pc: pc, co: co }).eq('id', movie.id);
+      var { error: updateErr } = await client.from('movies').update({ sc: sc, pc: pc }).eq('id', movie.id);
       if (updateErr) { failed++; console.log('  → Update error:', updateErr.message); }
-      else { updated++; console.log('  → sc: ' + (sc || '(none)') + ' | pc: ' + (pc || '(none)') + ' | co: ' + (co || '(none)')); }
+      else { updated++; console.log('  → sc: ' + (sc || '(none)') + ' | pc: ' + (pc || '(none)')); }
     } catch (e) {
       failed++;
       console.log('  → Error:', e.message);
