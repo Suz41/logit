@@ -294,6 +294,11 @@
     display: none !important;
   }
 
+  /* Hide mobile-only buttons on PC */
+  .mobileOnly {
+    display: none !important;
+  }
+
   /* Center rating sheet modal on PC */
   .ratingSheet {
     display: flex;
