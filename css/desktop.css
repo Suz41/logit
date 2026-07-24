@@ -240,13 +240,13 @@
     max-width: 520px;
     height: auto;
     max-height: 85vh;
-    border-radius: 20px;
+    border-radius: 24px;
     padding: 24px;
     transform: scale(0.95) translateY(0);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
-    border: 0.5px solid rgba(255,255,255,0.06);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
   }
 
   .metaModal.active .meta {
