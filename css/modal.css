@@ -343,16 +343,11 @@
 .ratingBox {
   font-size: 14px;
   font-weight: 600;
-  color: #ffcc00;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 4px;
   margin-top: 2px;
-}
-
-.ratingBox::before {
-  content: "★";
-  font-size: 13px;
 }
 
 .ratingEdit {
@@ -508,16 +503,23 @@
 
 .actions button {
   height: 44px;
-  border: none;
+  border: 1px solid #ffffff;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  background: #ffffff;
+  color: #000000;
 }
 
 .actions button:active {
   transform: scale(0.98);
+}
+
+.actions button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 .edit {
@@ -525,19 +527,10 @@
   color: #000000;
 }
 
-.edit:hover {
-  background: rgba(255, 255, 255, 0.9);
-}
-
 .deleteBtn {
-  background: transparent;
-  color: #ff453a;
-  border: 1px solid rgba(255, 69, 58, 0.3);
-}
-
-.deleteBtn:hover {
-  background: rgba(255, 69, 58, 0.08);
-  border-color: rgba(255, 69, 58, 0.5);
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
 
 /* ========= META EDIT STATE ========= */
@@ -631,13 +624,14 @@
 
 .meta.editing #saveBtn {
   display: block;
-  background: #30d158;
-  color: #000;
-  border-color: #30d158;
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
 
 .meta.editing #saveBtn:hover {
-  background: #28b84b;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 .meta.editing #editBtn, .meta.editing #deleteBtn {

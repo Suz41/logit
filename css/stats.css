@@ -57,15 +57,7 @@
   color: #fff;
 }
 #ratingAvg {
-  color: #ffcc00;
-}
-#ratingAvg::before {
-  content: "★";
-  margin-right: 6px;
-  color: #ffcc00;
-  font-size: 20px;
-  vertical-align: middle;
-  display: inline-block;
+  color: #ffffff;
 }
 
 .statBox p {
@@ -397,10 +389,10 @@
 
 .actionBtn {
   height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #ffffff;
   border-radius: 8px;
-  background: transparent;
-  color: #fff;
+  background: #ffffff;
+  color: #000000;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -417,15 +409,15 @@
 }
 
 .actionBtn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 .actionBtn.full {
   grid-column: 1 / -1;
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
 
 .actionBtn.full:hover {
