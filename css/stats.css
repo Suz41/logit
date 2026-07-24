@@ -226,8 +226,8 @@
 /* ========= META GRIDS (GENRES, LANGUAGES, REGIONS) ========= */
 .metaGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .metaCard {
@@ -327,7 +327,7 @@
 }
 
 .metaName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
@@ -337,10 +337,10 @@
 }
 
 .metaCount {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--muted);
-  margin-left: 8px;
+  margin-left: 6px;
   flex-shrink: 0;
 }
 
