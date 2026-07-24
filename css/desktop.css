@@ -680,6 +680,30 @@
     font-size: 15px;
   }
 
+  /* ========= TODO PAGE PC ========= */
+  .todoPage {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px 30px;
+  }
+
+  .todoHeader h2 {
+    font-size: 24px;
+  }
+
+  .pendingCard {
+    padding: 16px;
+  }
+
+  .pendingPoster {
+    width: 80px;
+    height: 120px;
+  }
+
+  .pendingTitle {
+    font-size: 16px;
+  }
+
   /* Sleek modern scrollbars for PC */
   ::-webkit-scrollbar {
     width: 8px;
