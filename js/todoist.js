@@ -23,15 +23,19 @@ Logit.Todoist = {
 
   /**
    * Fetch tasks from Todoist API (only from "Movies" or "Log!t" project)
+   * Uses corsproxy.io for CORS support on deployed sites
    * @returns {Promise<Array>}
    */
   async fetchTasks() {
     const apiKey = this.getApiKey();
     if (!apiKey) return [];
 
+    const PROXY = 'https://corsproxy.io/?url=';
+    const BASE = 'https://api.todoist.com/rest/v2';
+
     try {
-      // First, get projects to find "Movies" or "Log!t" project
-      const projRes = await fetch('https://api.todoist.com/rest/v2/projects', {
+      // Get projects
+      const projRes = await fetch(PROXY + encodeURIComponent(BASE + '/projects'), {
         headers: { 'Authorization': 'Bearer ' + apiKey }
       });
 
@@ -52,7 +56,7 @@ Logit.Todoist = {
       }
 
       // Fetch tasks from that project
-      const res = await fetch('https://api.todoist.com/rest/v2/tasks?project_id=' + movieProject.id, {
+      const res = await fetch(PROXY + encodeURIComponent(BASE + '/tasks?project_id=' + movieProject.id), {
         headers: { 'Authorization': 'Bearer ' + apiKey }
       });
 
