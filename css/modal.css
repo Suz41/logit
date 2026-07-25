@@ -440,14 +440,6 @@
   padding: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 14px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.logged > div {
-  display: flex;
-  flex-direction: column;
 }
 
 .logged p {
@@ -458,10 +450,6 @@
   font-size: 13px;
   font-weight: 500;
   color: #e5e5ea;
-}
-
-.logged .metaInput {
-  width: 100%;
 }
 
 .metaSection {
