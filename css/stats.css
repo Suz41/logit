@@ -553,7 +553,7 @@
   }
 
   .metaGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .actionGrid {
@@ -565,12 +565,28 @@
   }
 
   .statBox h2, #timeCount {
-    font-size: 26px;
+    font-size: 30px;
   }
 
   .statBox p {
-    font-size: 8px;
+    font-size: 9px;
     letter-spacing: 1.5px;
+  }
+
+  .sectionTitle {
+    font-size: 12px;
+  }
+
+  .personName {
+    font-size: 14px;
+  }
+
+  .metaTitle {
+    font-size: 12px;
+  }
+
+  .metaName {
+    font-size: 14px;
   }
 }
 

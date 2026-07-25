@@ -28,6 +28,7 @@ Logit.ProfilePage = {
       this.loadProfile();
       await this.loadAvatarFromCloud();
       await this.loadMoviesFromCloud();
+      if (typeof Logit.PosterCycle !== 'undefined' && this._movies) Logit.PosterCycle.start(this._movies);
       this.loadStats();
       await this.loadFavoritesFromCloud();
       this.loadFavorites();
