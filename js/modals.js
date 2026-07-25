@@ -150,32 +150,34 @@ Logit.Modals = {
     var meta = document.querySelector('.meta');
     if (!meta || !posterPath) return;
 
-    // Generate a consistent color from the poster path
-    var hash = 0;
-    for (var i = 0; i < posterPath.length; i++) {
-      hash = posterPath.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    var h = Math.abs(hash) % 360;
-    var r, g, b;
-    // HSL to RGB
-    var s = 0.5, l = 0.45;
-    var c = (1 - Math.abs(2 * l - 1)) * s;
-    var x = c * (1 - Math.abs((h / 60) % 2 - 1));
-    var m = l - c / 2;
-    if (h < 60) { r = c; g = x; b = 0; }
-    else if (h < 120) { r = x; g = c; b = 0; }
-    else if (h < 180) { r = 0; g = c; b = x; }
-    else if (h < 240) { r = 0; g = x; b = c; }
-    else if (h < 300) { r = x; g = 0; b = c; }
-    else { r = c; g = 0; b = x; }
-    r = Math.round((r + m) * 255);
-    g = Math.round((g + m) * 255);
-    b = Math.round((b + m) * 255);
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var size = 20;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(img, 0, 0, size, size);
+      var data = ctx.getImageData(0, 0, size, size).data;
 
-    meta.style.setProperty('--poster-r', r);
-    meta.style.setProperty('--poster-g', g);
-    meta.style.setProperty('--poster-b', b);
-    meta.classList.add('poster-tinted');
+      var r = 0, g = 0, b = 0, count = 0;
+      for (var i = 0; i < data.length; i += 16) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+      r = Math.round(r / count);
+      g = Math.round(g / count);
+      b = Math.round(b / count);
+
+      meta.style.setProperty('--poster-r', r);
+      meta.style.setProperty('--poster-g', g);
+      meta.style.setProperty('--poster-b', b);
+      meta.classList.add('poster-tinted');
+    };
+    img.src = Logit.Utils.img(posterPath);
   },
 
   closeMeta() {
