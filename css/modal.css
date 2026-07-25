@@ -287,8 +287,10 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  background: #000000;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10,10,10,0.7);
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   padding: 24px 20px 32px;
@@ -714,8 +716,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #000000;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10,10,10,0.7);
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   padding: 24px 20px 32px;
