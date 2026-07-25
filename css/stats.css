@@ -17,7 +17,7 @@
 /* ========= HERO STATS ========= */
 .hero {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 
@@ -61,12 +61,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Runtime box spans full width */
-#runtimeBox {
-  grid-column: 1 / -1;
-  padding: 20px 10px;
-}
-
 .timeSub {
   font-size: 9px;
   font-weight: 500;
@@ -90,6 +84,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.peopleGrid3 .peopleCard:last-child:nth-child(odd) {
+  grid-column: span 1;
 }
 
 .sectionTitle {
@@ -546,19 +544,12 @@
 
 /* ========= MOBILE OVERRIDES ========= */
 @media (max-width: 600px) {
-  .hero {
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-
-  #runtimeBox {
-    grid-column: 1 / -1;
-    padding: 16px 10px;
-  }
-
   .peopleGrid {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
+    grid-column: span 2;
   }
 
   .sectionTitle {
@@ -588,7 +579,7 @@
   }
 
   .metaGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .metaCard {
@@ -614,7 +605,7 @@
   }
 
   .actionGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .actionBtn.full {
@@ -628,6 +619,10 @@
   .statBox p {
     font-size: 8px;
     letter-spacing: 1.5px;
+  }
+
+  .hero {
+    gap: 6px;
   }
 }
 
