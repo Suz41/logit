@@ -229,25 +229,24 @@ Logit.LibraryPage = {
         state.loadError = 'Failed to load movies';
       }
       renderMovies();
+      startPosterCycle();
     }
     loadAndRender();
 
     // ========= RANDOM POSTER BACKGROUND CYCLE =========
-    (function() {
+    function startPosterCycle() {
       var posterBg = document.getElementById('posterBg');
       if (!posterBg) return;
 
-      function cycle() {
+      setInterval(function() {
         if (!state.movies || state.movies.length === 0) return;
         var withPoster = state.movies.filter(function(m) { return m.sp; });
         if (withPoster.length === 0) return;
         var random = withPoster[Math.floor(Math.random() * withPoster.length)];
-        posterBg.style.backgroundImage = 'url(' + img(random.sp) + ')';
+        posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(random.sp) + ')';
         posterBg.classList.add('active');
-      }
-
-      setInterval(cycle, 5000);
-    })();
+      }, 5000);
+    }
 
     // ========= SETTINGS PANEL =========
     var settingsBtn = $('settingsBtn');
