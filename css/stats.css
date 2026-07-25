@@ -1,85 +1,72 @@
-/* ========= Log!t Design System - Stats Page Components ========= */
+/* ========= Log!t Stats Page ========= */
 
-/* Hide headerTitle on mobile to prevent logo overlap */
 @media (max-width: 1023px) {
-  .headerTitle {
-    display: none;
-  }
+  .headerTitle { display: none; }
 }
 
 .mapWrap {
   padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* ========= HERO STATS ========= */
+/* ========= HERO ========= */
 .hero {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 .statBox {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 16px 10px;
+  padding: 24px 12px;
   text-align: center;
-  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
   min-height: 90px;
 }
 
-.statBox:active {
-  transform: scale(0.97);
-}
-
-.statBox:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.02);
-}
-
 .statBox h2, #timeCount {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 4px;
-  color: #fff;
-  letter-spacing: -0.5px;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+  color: var(--text);
+  letter-spacing: -1.5px;
 }
 
 .statBox p {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--muted);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 2px;
 }
 
 .timeSub {
   font-size: 9px;
   font-weight: 500;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 6px;
   line-height: 1.3;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.2s, opacity 0.2s, margin-top 0.2s;
 }
 
 #runtimeBox.expanded .timeSub {
   max-height: 40px;
   opacity: 1;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-/* ========= PEOPLE GRID (DIRECTORS & ACTORS) ========= */
+/* ========= PEOPLE ========= */
 .peopleGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -100,10 +87,9 @@
 }
 
 .peopleCard {
-  background: var(--surface);
   border: 0.5px solid var(--border);
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px;
   overflow: hidden;
 }
 
@@ -116,9 +102,8 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   overflow: hidden;
-  padding: 12px 0;
+  padding: 10px 0;
 }
 
 .person + .person {
@@ -129,17 +114,16 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
 }
 
 .person img {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   object-fit: cover;
-  background: #111;
+  background: var(--surface);
   flex-shrink: 0;
-  margin-right: 12px;
 }
 
 .personInfo {
@@ -148,20 +132,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0;
 }
 
 .personName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
+  min-width: 0;
 }
 
 .personCount {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
   margin-left: 8px;
@@ -171,11 +157,10 @@
 .personMovies {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.25s ease-out, padding 0.25s ease-out;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding-left: 48px;
+  padding-left: 44px;
   width: 100%;
 }
 
@@ -183,43 +168,42 @@
   max-height: 300px;
   overflow-y: auto;
   padding-top: 10px;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 
 .movieChip {
   font-size: 11px;
   font-weight: 500;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  padding: 5px 10px;
+  background: rgba(255,255,255,0.05);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  padding: 4px 10px;
   border-radius: 8px;
   white-space: nowrap;
 }
 
 .empty {
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
   color: var(--muted);
-  text-align: center;
   padding: 24px;
 }
 
-/* ========= META GRIDS (GENRES, LANGUAGES, REGIONS) ========= */
+/* ========= META ========= */
 .metaGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 .metaCard {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
+  background: var(--bg);
+  padding: 14px 16px;
   overflow: hidden;
 }
 
@@ -235,7 +219,7 @@
   cursor: pointer;
   user-select: none;
   margin-bottom: 0;
-  transition: margin-bottom 0.25s ease-out;
+  padding: 2px 0;
 }
 
 .metaCard.toggleable.active .metaHead {
@@ -245,34 +229,18 @@
 .metaLeft {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .metaArrow {
-  font-size: 14px;
-  line-height: 1;
+  font-size: 11px;
   color: var(--muted);
-  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
-  width: 10px;
+  width: 8px;
   text-align: center;
 }
 
 .metaCard.active .metaArrow {
   transform: rotate(90deg);
-}
-
-.metaCollapse {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.25s ease-out;
-}
-
-.metaCollapseInner {
-  overflow: hidden;
-}
-
-.metaCard.active .metaCollapse {
-  grid-template-rows: 1fr;
 }
 
 .metaTitle {
@@ -284,9 +252,22 @@
 }
 
 .metaTotal {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.metaCollapse {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+.metaCollapseInner {
+  overflow: hidden;
+}
+
+.metaCard.active .metaCollapse {
+  grid-template-rows: 1fr;
 }
 
 .metaWrap {
@@ -298,9 +279,8 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   overflow: hidden;
-  padding: 10px 0;
+  padding: 8px 0;
 }
 
 .metaItem + .metaItem {
@@ -316,17 +296,18 @@
 }
 
 .metaName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
+  min-width: 0;
 }
 
 .metaCount {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
   margin-left: 8px;
@@ -336,27 +317,25 @@
 .metaMovies {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.25s ease-out, padding 0.25s ease-out;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding-left: 0;
   width: 100%;
 }
 
 .metaItem.active .metaMovies {
   max-height: 300px;
   overflow-y: auto;
-  padding-top: 10px;
-  padding-bottom: 6px;
+  padding-top: 8px;
+  padding-bottom: 4px;
 }
 
 .metaMovie {
   font-size: 11px;
   font-weight: 500;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.05);
+  border: 0.5px solid rgba(255,255,255,0.08);
   padding: 4px 10px;
   border-radius: 8px;
   white-space: nowrap;
@@ -366,17 +345,19 @@
 .actionGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 8px;
 }
 
 .actionBtn {
   height: 48px;
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
+  border: none;
+  background: var(--bg);
   color: var(--text);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
@@ -384,16 +365,6 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.2s, border-color 0.2s, transform 0.1s;
-}
-
-.actionBtn:active {
-  transform: scale(0.97);
-}
-
-.actionBtn:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .actionBtn.full {
@@ -401,12 +372,13 @@
 }
 
 .actionBtn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
+  opacity: 0.5;
 }
 
-/* ========= IMPORT/EXPORT MODAL ========= */
+/* ========= IMPORT MODAL ========= */
 .importModal {
   position: fixed;
   inset: 0;
@@ -417,7 +389,6 @@
   flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s;
 }
 
 .importModal.active {
@@ -428,7 +399,7 @@
 .importTextarea {
   flex: 1;
   width: 100%;
-  background: #000000;
+  background: #000;
   border: 0.5px solid var(--border);
   outline: none;
   border-radius: 12px;
@@ -448,7 +419,6 @@
 .importFooter {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
 .importBtn {
@@ -461,12 +431,10 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 .importBtn:disabled {
-  opacity: 0.4;
-  cursor: default;
+  opacity: 0.3;
 }
 
 .importStatus {
@@ -481,9 +449,7 @@
 .exportModal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.8);
   display: none;
   align-items: center;
   justify-content: center;
@@ -496,7 +462,7 @@
 
 .exportSheet {
   width: 90%;
-  max-width: 320px;
+  max-width: 300px;
   background: #111;
   border: 0.5px solid var(--border);
   border-radius: 20px;
@@ -505,7 +471,7 @@
 }
 
 .exportSheet h3 {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 16px;
 }
@@ -541,4 +507,3 @@
   color: var(--muted);
   margin-top: 8px;
 }
-
