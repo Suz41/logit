@@ -103,7 +103,7 @@ Logit.Modals = {
     document.querySelector('.meta').classList.remove('editing');
     Logit.Overlays.push(function() { Logit.Modals.closeMeta(); });
 
-    var posterBg = document.getElementById('posterBg');
+    var posterBg = document.getElementById('posterBgModal');
     if (posterBg && movie.sp) {
       posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(movie.sp) + ')';
       posterBg.classList.add('active');
@@ -150,7 +150,7 @@ Logit.Modals = {
       metaModal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('no-scroll');
     }
-    var posterBg = document.getElementById('posterBg');
+    var posterBg = document.getElementById('posterBgModal');
     if (posterBg) posterBg.classList.remove('active');
   },
 

@@ -254,12 +254,29 @@
   z-index: 400;
 }
 
+.metaModal .posterBgModal {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  filter: blur(60px) saturate(1.2);
+  transform: scale(1.2);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.metaModal .posterBgModal.active {
+  opacity: 0.3;
+}
+
 .metaModal.active {
   display: flex;
 }
 
 .meta {
   position: relative;
+  z-index: 1;
   width: 100%;
   background: #000000;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
