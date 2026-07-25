@@ -477,12 +477,14 @@
     font-size: 10px;
   }
   
-  .peopleGrid, .peopleGrid3 {
+  #runtimeBox {
+    padding: 32px 16px;
+  }
+  
+  .peopleGrid {
     grid-template-columns: 1fr 1fr;
   }
 
-  
-  
   .peopleCard {
     padding: 20px;
     border-radius: 16px;
@@ -505,8 +507,6 @@
     background: #000000;
     border: 1px solid rgba(255,255,255,0.08);
   }
-  
-  
   
   .actionGrid {
     grid-template-columns: repeat(3, 1fr);
