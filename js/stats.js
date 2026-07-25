@@ -93,15 +93,23 @@ Logit.StatsPage = {
       var productionImages = allImages.slice(offset, offset + topProductions.length); offset += topProductions.length;
 
       dList.textContent = '';
+      var maxDir = topDirectors[0] ? topDirectors[0][1].movies.size : 1;
       topDirectors.forEach(function(entry, index) {
         var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
-        dList.append(Logit.Utils.createPersonCard(entry[0], directorImages[index], entry[1].movies.size, moviesHtml));
+        var cardEl = Logit.Utils.createPersonCard(entry[0], directorImages[index], entry[1].movies.size, moviesHtml);
+        var pct = Math.round((entry[1].movies.size / maxDir) * 100);
+        cardEl.style.setProperty('--pct', pct + '%');
+        dList.append(cardEl);
       });
 
       maList.textContent = '';
+      var maxMA = topMainActors[0] ? topMainActors[0][1].movies.size : 1;
       topMainActors.forEach(function(entry, index) {
         var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
-        maList.append(Logit.Utils.createPersonCard(entry[0], mainActorImages[index], entry[1].movies.size, moviesHtml));
+        var cardEl = Logit.Utils.createPersonCard(entry[0], mainActorImages[index], entry[1].movies.size, moviesHtml);
+        var pct = Math.round((entry[1].movies.size / maxMA) * 100);
+        cardEl.style.setProperty('--pct', pct + '%');
+        maList.append(cardEl);
       });
 
       saList.textContent = '';
@@ -111,9 +119,13 @@ Logit.StatsPage = {
         emptyDiv.textContent = 'No data yet';
         saList.append(emptyDiv);
       } else {
+        var maxSA = topSupportActors[0] ? topSupportActors[0][1].movies.size : 1;
         topSupportActors.forEach(function(entry, index) {
           var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
-          saList.append(Logit.Utils.createPersonCard(entry[0], supportActorImages[index], entry[1].movies.size, moviesHtml));
+          var cardEl = Logit.Utils.createPersonCard(entry[0], supportActorImages[index], entry[1].movies.size, moviesHtml);
+          var pct = Math.round((entry[1].movies.size / maxSA) * 100);
+          cardEl.style.setProperty('--pct', pct + '%');
+          saList.append(cardEl);
         });
       }
 
@@ -124,9 +136,13 @@ Logit.StatsPage = {
         emptyDiv.textContent = 'No data yet';
         pList.append(emptyDiv);
       } else {
+        var maxProd = topProductions[0] ? topProductions[0][1].movies.size : 1;
         topProductions.forEach(function(entry, index) {
           var moviesHtml = Logit.Utils.renderMovieChips(Array.from(entry[1].movies));
-          pList.append(Logit.Utils.createPersonCard(entry[0], productionImages[index], entry[1].movies.size, moviesHtml));
+          var cardEl = Logit.Utils.createPersonCard(entry[0], productionImages[index], entry[1].movies.size, moviesHtml);
+          var pct = Math.round((entry[1].movies.size / maxProd) * 100);
+          cardEl.style.setProperty('--pct', pct + '%');
+          pList.append(cardEl);
         });
       }
     }
@@ -144,11 +160,15 @@ Logit.StatsPage = {
         wrapEl.append(emptyDiv);
         return;
       }
+      var maxCount = entries[0][1] || 1;
       entries.forEach(function(entry) {
         var name = labelFn(entry);
         var count = entry[1];
         var moviesHtml = Logit.Utils.renderMetaMovies(moviesMap[entry[0]] || []);
-        wrapEl.append(Logit.Utils.createMetaItem(name, count, moviesHtml));
+        var itemEl = Logit.Utils.createMetaItem(name, count, moviesHtml);
+        var pct = Math.round((count / maxCount) * 100);
+        itemEl.style.setProperty('--pct', pct + '%');
+        wrapEl.append(itemEl);
       });
     }
 
@@ -181,9 +201,13 @@ Logit.StatsPage = {
       emptyDiv.textContent = 'No rewatches yet';
       rewatchWrap.append(emptyDiv);
     } else {
+      var maxRewatch = rewatched[0] ? rewatched[0][1].count : 1;
       rewatched.forEach(function(entry) {
         var moviesHtml = Logit.Utils.renderMetaMovies(entry[1].dates || []);
-        rewatchWrap.append(Logit.Utils.createMetaItem(entry[0], entry[1].count + 'x', moviesHtml));
+        var itemEl = Logit.Utils.createMetaItem(entry[0], entry[1].count + 'x', moviesHtml);
+        var pct = Math.round((entry[1].count / maxRewatch) * 100);
+        itemEl.style.setProperty('--pct', pct + '%');
+        rewatchWrap.append(itemEl);
       });
     }
 
