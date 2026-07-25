@@ -241,15 +241,10 @@ Logit.LibraryPage = {
       var posters = state.movies.filter(function(m) { return m.sp; });
       if (posters.length === 0) return;
 
-      var index = Math.floor(Math.random() * posters.length);
       function cycle() {
-        posterBg.style.backgroundImage = 'url(' + img(posters[index].sp) + ')';
+        var random = posters[Math.floor(Math.random() * posters.length)];
+        posterBg.style.backgroundImage = 'url(' + img(random.sp) + ')';
         posterBg.classList.add('active');
-        index = (index + 1) % posters.length;
-        // Skip to next random poster
-        if (index === Math.floor(Math.random() * posters.length)) {
-          index = Math.floor(Math.random() * posters.length);
-        }
       }
 
       cycle();
