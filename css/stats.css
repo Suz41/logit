@@ -196,12 +196,14 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
+  align-items: start;
 }
 
 .metaGrid3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
+  align-items: start;
 }
 
 .metaCard {
