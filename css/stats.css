@@ -198,6 +198,12 @@
   gap: 12px;
 }
 
+.metaGrid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
 .metaCard {
   background: var(--surface);
   border: 0.5px solid var(--border);
