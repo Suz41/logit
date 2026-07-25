@@ -241,6 +241,7 @@ Logit.LibraryPage = {
       // Create movie name label
       var nameLabel = document.createElement('div');
       nameLabel.className = 'posterBgName';
+      nameLabel.innerHTML = '<span class="posterBgTitle"></span><span class="posterBgMeta"></span>';
       posterBg.parentNode.insertBefore(nameLabel, posterBg.nextSibling);
 
       setInterval(function() {
@@ -250,7 +251,9 @@ Logit.LibraryPage = {
         var random = withPoster[Math.floor(Math.random() * withPoster.length)];
         posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(random.sp) + ')';
         posterBg.classList.add('active');
-        nameLabel.textContent = random.t || '';
+        nameLabel.querySelector('.posterBgTitle').textContent = random.t || '';
+        var meta = [random.yr, random.g, random.r ? random.r + '/5' : ''].filter(Boolean).join(' · ');
+        nameLabel.querySelector('.posterBgMeta').textContent = meta;
         nameLabel.classList.add('active');
       }, 10000);
     }
