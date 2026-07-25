@@ -238,6 +238,11 @@ Logit.LibraryPage = {
       var posterBg = document.getElementById('posterBg');
       if (!posterBg) return;
 
+      // Create movie name label
+      var nameLabel = document.createElement('div');
+      nameLabel.className = 'posterBgName';
+      posterBg.parentNode.insertBefore(nameLabel, posterBg.nextSibling);
+
       setInterval(function() {
         if (!state.movies || state.movies.length === 0) return;
         var withPoster = state.movies.filter(function(m) { return m.sp; });
@@ -245,7 +250,9 @@ Logit.LibraryPage = {
         var random = withPoster[Math.floor(Math.random() * withPoster.length)];
         posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(random.sp) + ')';
         posterBg.classList.add('active');
-      }, 5000);
+        nameLabel.textContent = random.t || '';
+        nameLabel.classList.add('active');
+      }, 10000);
     }
 
     // ========= SETTINGS PANEL =========
