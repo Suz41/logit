@@ -43,9 +43,7 @@ body.no-scroll {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(0,0,0,0.45);
-  -webkit-backdrop-filter: saturate(200%) blur(60px);
-  backdrop-filter: saturate(200%) blur(60px);
+  background: transparent;
   border-bottom: 0.5px solid rgba(255,255,255,0.05);
 }
 
