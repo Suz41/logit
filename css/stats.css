@@ -542,3 +542,35 @@
   margin-top: 8px;
 }
 
+/* ========= MOBILE OVERRIDES ========= */
+@media (max-width: 600px) {
+  .peopleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
+    grid-column: span 1;
+  }
+
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actionBtn.full {
+    grid-column: 1 / -1;
+  }
+
+  .statBox h2, #timeCount {
+    font-size: 26px;
+  }
+
+  .statBox p {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+}
+
