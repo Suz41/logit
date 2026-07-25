@@ -103,6 +103,12 @@ Logit.Modals = {
     document.querySelector('.meta').classList.remove('editing');
     Logit.Overlays.push(function() { Logit.Modals.closeMeta(); });
 
+    var posterBg = document.getElementById('posterBg');
+    if (posterBg && movie.sp) {
+      posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(movie.sp) + ')';
+      posterBg.classList.add('active');
+    }
+
     var posterEl = $('mPoster');
     posterEl.src = Logit.Utils.esc(Logit.Utils.img(movie.sp));
     posterEl.onerror = Logit.Modals._handleImgError;
@@ -144,6 +150,8 @@ Logit.Modals = {
       metaModal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('no-scroll');
     }
+    var posterBg = document.getElementById('posterBg');
+    if (posterBg) posterBg.classList.remove('active');
   },
 
   openAdd(modalElement, queryInput) {
