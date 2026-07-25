@@ -477,12 +477,10 @@
   }
   
   .peopleGrid, .peopleGrid3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
   }
 
-  .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
-    grid-column: span 2;
-  }
+  
   
   .peopleCard {
     padding: 20px;
@@ -497,7 +495,7 @@
   }
   
   .metaGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
   }
   
   .metaCard {
@@ -510,7 +508,7 @@
   
   
   .actionGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-top: 10px;
   }
