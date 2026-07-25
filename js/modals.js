@@ -141,6 +141,43 @@ Logit.Modals = {
     $('eCast').value = movie.c || '';
     $('eSupporting').value = movie.sc || '';
     $('eProduction').value = movie.pc || '';
+
+    // Extract dominant color from poster and tint modal
+    this._applyPosterTheme(movie.sp);
+  },
+
+  _applyPosterTheme(posterPath) {
+    var meta = document.querySelector('.meta');
+    if (!meta || !posterPath) return;
+
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var size = 20;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(img, 0, 0, size, size);
+      var data = ctx.getImageData(0, 0, size, size).data;
+
+      var r = 0, g = 0, b = 0, count = 0;
+      for (var i = 0; i < data.length; i += 16) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+      r = Math.round(r / count);
+      g = Math.round(g / count);
+      b = Math.round(b / count);
+
+      meta.style.setProperty('--poster-r', r);
+      meta.style.setProperty('--poster-g', g);
+      meta.style.setProperty('--poster-b', b);
+      meta.classList.add('poster-tinted');
+    };
+    img.src = Logit.Utils.img(posterPath);
   },
 
   closeMeta() {
@@ -152,6 +189,8 @@ Logit.Modals = {
     }
     var posterBg = document.getElementById('posterBg');
     if (posterBg) posterBg.classList.remove('active');
+    var meta = document.querySelector('.meta');
+    if (meta) meta.classList.remove('poster-tinted');
   },
 
   openAdd(modalElement, queryInput) {
