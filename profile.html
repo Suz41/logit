@@ -1,1 +1,343 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Profile - Log!t</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/main.css?v=40"><link rel="stylesheet" href="css/components.css?v=40"><link rel="stylesheet" href="css/profile.css?v=40"><link rel="stylesheet" href="css/modal.css?v=40"><link rel="stylesheet" href="css/desktop.css?v=40"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="https://accounts.google.com/gsi/client" async defer></script></head><body><div class="posterBg" id="posterBg"></div><header class="header" id="header">  <div class="headerRow">    <div style="display:flex;align-items:center;gap:10px;flex:1;">      <a href="index.html" class="logo">Log!t</a>    </div>    <div class="pcHeaderNav">      <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>      <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>    </div>    <div style="display:flex;gap:6px;">      <button class="settingsIcon" id="backBtn" title="Back">        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>      </button>    </div>  </div></header><section class="profilePage">  <!-- Profile Header -->  <div class="profileHeader">    <div class="profileTop">      <!-- Avatar -->      <div class="avatarWrap" id="avatarWrap">        <div class="avatar" id="profileAvatar">S</div>        <button class="avatarEdit" id="editAvatarBtn" title="Change avatar">          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>        </button>        <button class="avatarClear" id="clearAvatarBtn" title="Clear avatar">          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>        </button>        <input type="file" id="avatarInput" accept="image/*" style="display:none;">      </div>      <!-- Name -->      <div class="profileIdentity">        <div class="profileNameRow">          <h1 class="profileName" id="profileName">Loading...</h1>          <button class="editNameBtn" id="editUsernameBtn" title="Edit username">            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>          </button>        </div>        <p class="profileBio" id="profileBioMobile">Movie enthusiast. Tracking every watch.</p>      </div>      <!-- Stats -->      <div class="profileStats">        <div class="profileStat">          <span class="profileStatNum" id="statFilms">0</span>          <span class="profileStatLabel">FILMS</span>        </div>        <div class="profileStat">          <span class="profileStatNum" id="statRating">0.0</span>          <span class="profileStatLabel">AVG</span>        </div>        <div class="profileStat">          <span class="profileStatNum" id="statRewatch">0</span>          <span class="profileStatLabel">REWATCH</span>        </div>        <div class="profileStat">          <span class="profileStatNum" id="statHours">0</span>          <span class="profileStatLabel">HOURS</span>        </div>      </div>    </div>  </div>  <!-- Tab Navigation -->  <div class="profileTabs">    <button class="profileTab active" data-tab="profile">Profile</button>    <button class="profileTab" data-tab="settings">Settings</button>  </div>  <!-- Tab Content -->  <div class="profileContent">    <!-- Profile Tab -->    <div class="tabPanel active" id="panel-profile">      <div class="twoColumn">        <div class="colLeft">          <div class="contentBlock">            <h3 class="blockTitle">FAVORITE FILMS</h3>            <div class="favGrid" id="favFilmsGrid"></div>          </div>        </div>        <div class="colRight">          <div class="contentBlock">            <h3 class="blockTitle">BIO</h3>            <p class="bioText" id="profileBio">Movie enthusiast. Tracking every watch.</p>          </div>          <div class="contentBlock">            <h3 class="blockTitle">STORAGE</h3>            <div class="storageInfo">              <div class="storageRow">                <span class="storageLabel">Movies</span>                <span class="storageValue" id="moviesCount">0</span>              </div>              <div class="storageRow">                <span class="storageLabel">Cloud Usage</span>                <span class="storageValue" id="cloudStorageUsage">0 B / 500 MB</span>              </div>            </div>          </div>        </div>      </div>    </div>    <!-- Settings Tab -->    <div class="tabPanel" id="panel-settings">      <div class="settingsSection">                <!-- 1. ACCOUNT -->        <div class="contentBlock">          <h3 class="blockTitle">ACCOUNT</h3>          <div class="settingsList">            <button class="settingsItem" id="changePasswordBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>              <span>Change Password</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>            <button class="settingsItem" id="signOutBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>              <span>Sign Out</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>          </div>        </div>        <!-- 2. GOOGLE DRIVE -->        <div class="contentBlock">          <h3 class="blockTitle">GOOGLE DRIVE</h3>          <div class="driveCloudCard minimal" id="driveAccountCard">            <div class="driveCloudHeaderTop">              <div class="driveCloudIcon">                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>              </div>              <div class="driveCloudTitleWrap">                <div class="driveCloudTitleRow">                  <span class="driveCloudTitle" id="driveAccountName">Google Drive</span>                  <span class="driveStatusBadge disconnected" id="driveStatusBadge">                    <span class="statusDot"></span>                    <span id="driveStatusText">Not Connected</span>                  </span>                </div>                <div class="driveCloudEmail" id="driveAccountEmail">No Google account linked</div>              </div>            </div>            <button type="button" class="driveConnectBtn" id="driveConnectBtn">Connect</button>          </div>        </div>        <!-- 3. BACKUP & DATA -->        <div class="contentBlock">          <h3 class="blockTitle">BACKUP & DATA</h3>          <div class="settingsList">            <button class="settingsItem" id="driveBackupBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>              <div class="backupInfo">                <span class="backupLabel">Backup to Drive</span>                <span class="backupTime" id="lastBackupTime">Never</span>              </div>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>            <button class="settingsItem" id="driveRestoreBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>              <span>Restore from Drive</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>            <button class="settingsItem" id="importBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>              <span>Import Movies (JSON/CSV)</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>            <button class="settingsItem" id="exportBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>              <span>Export Movies</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>          </div>        </div>        <!-- 4. DANGER ZONE -->        <div class="contentBlock">          <h3 class="blockTitle">DANGER ZONE</h3>          <div class="settingsList">            <button class="settingsItem danger" id="deleteAccountBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>              <span>Delete Account</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>            <button class="settingsItem danger" id="clearDataBtn">              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>              <span>Clear All Data</span>              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>            </button>          </div>        </div>      </div>    </div>  </div></section><!-- Import Modal --><div class="importModal" id="importModal">  <div class="importSheet">    <div class="modalHeader">      <h3>Import Movies</h3>      <button class="modalClose" id="importModalClose">&times;</button>    </div>    <div class="uploadArea">      <label class="uploadLabel">        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>        Upload File        <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">      </label>    </div>    <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>    <button class="importBtn" id="importStartBtn">Import</button>    <div class="importStatus" id="importStatus"></div>  </div></div><!-- Change Password Modal --><div class="changePasswordModal" id="changePasswordModal">  <div class="changePasswordSheet">    <div class="modalHeader">      <h3>Change Password</h3>      <button class="modalClose" id="changePasswordModalClose">&times;</button>    </div>    <div class="authForm modalAuthForm">      <div class="passwordInputWrap">        <input type="password" id="changeCurrentPassword" class="authInput modalInput" placeholder="Current Password">        <button type="button" class="modalPasswordToggle" id="toggleCurrentPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>      </div>      <div class="passwordInputWrap">        <input type="password" id="changeNewPassword" class="authInput modalInput" placeholder="New Password (6+ characters)">        <button type="button" class="modalPasswordToggle" id="toggleNewPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>      </div>      <div class="passwordInputWrap">        <input type="password" id="changeConfirmPassword" class="authInput modalInput" placeholder="Confirm New Password">        <button type="button" class="modalPasswordToggle" id="toggleConfirmPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>      </div>      <div class="forgotPasswordContainer">        <button type="button" id="modalForgotPasswordBtn" class="modalForgotLink">Forgot Password?</button>      </div>      <button class="importBtn modalSubmitBtn" id="modalChangePasswordStartBtn">Update Password</button>      <div id="changePasswordStatus" class="modalStatusMsg"></div>    </div>  </div></div><!-- Export Modal --><div class="exportModal" id="exportModal">  <div class="exportSheet">    <h3>Export Movies</h3>    <div class="exportBtns">      <button class="exportTypeBtn json" id="exportJsonBtn">JSON</button>      <button class="exportTypeBtn txt" id="exportTxtBtn">Text</button>      <button class="exportTypeBtn cancel" id="exportCancelBtn">Cancel</button>    </div>  </div></div><!-- Add Favorite Modal --><div class="favModal" id="favModal">  <div class="favSheet">    <div class="modalHeader">      <h3>Add Favorite Film</h3>      <button class="modalClose" id="favModalClose">&times;</button>    </div>    <input type="text" class="favSearchInput" id="favSearchInput" placeholder="Search movie title...">    <div class="favSearchResults" id="favSearchResults"></div>    <div class="favSelected" id="favSelected" style="display:none;">      <img id="favSelectedPoster" src="" alt="">      <div class="favSelectedInfo">        <span id="favSelectedTitle"></span>        <button class="favRemoveBtn" id="favRemoveSelect">Remove</button>      </div>    </div>    <button class="favAddBtn" id="favConfirmBtn" disabled>Add to Favorites</button>  </div></div><!-- Director Avatar Modal --><div class="directorModal" id="directorModal">  <div class="directorSheet">    <div class="modalHeader">      <h3>Choose Director Avatar</h3>      <button class="modalClose" id="directorModalClose">&times;</button>    </div>    <input type="text" class="directorSearchInput" id="directorSearchInput" placeholder="Search director name...">    <div class="directorResults" id="directorResults"></div>  </div></div><script src="js/config.js?v=40"></script><script src="js/constants.js?v=40"></script><script src="js/storage.js?v=40"></script><script src="js/utils.js?v=40"></script><script src="js/supabase.js?v=40"></script><script src="js/auth.js?v=40"></script><script src="js/ui.js?v=40"></script><script src="js/import.js?v=40"></script><script src="js/search.js?v=40"></script><script src="js/movieFactory.js?v=40"></script><script src="js/movies.js?v=40"></script><script src="js/statutils.js?v=40"></script><script src="js/export.js?v=40"></script><script src="js/overlays.js?v=40"></script><script src="js/posterPicker.js?v=40"></script><script src="js/drive.js?v=40"></script><script src="js/posterCycle.js?v=40"></script><script src="js/profile.js?v=40"></script><script>  document.addEventListener('DOMContentLoaded', function() {    Logit.ProfilePage.init();    setTimeout(function() { if (typeof Logit.PosterCycle !== 'undefined') { Logit.Storage.loadMovies().then(function(r) { Logit.PosterCycle.start(r.movies); }); } }, 2000);  });</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Profile - Log!t</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css?v=37">
+<link rel="stylesheet" href="css/components.css?v=37">
+<link rel="stylesheet" href="css/profile.css?v=37">
+<link rel="stylesheet" href="css/modal.css?v=37">
+<link rel="stylesheet" href="css/desktop.css?v=37">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div class="posterBg" id="posterBg"></div>
+
+<header class="header" id="header">
+  <div class="headerRow">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;">
+      <a href="index.html" class="logo">Log!t</a>
+    </div>
+    <div class="pcHeaderNav">
+      <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>
+      <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="settingsIcon" id="backBtn" title="Back">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="profilePage">
+
+  <!-- Profile Header -->
+  <div class="profileHeader">
+    <div class="profileTop">
+      <!-- Avatar -->
+      <div class="avatarWrap" id="avatarWrap">
+        <div class="avatar" id="profileAvatar">S</div>
+        <button class="avatarEdit" id="editAvatarBtn" title="Change avatar">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <button class="avatarClear" id="clearAvatarBtn" title="Clear avatar">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+      </div>
+
+      <!-- Name -->
+      <div class="profileIdentity">
+        <div class="profileNameRow">
+          <h1 class="profileName" id="profileName">Loading...</h1>
+          <button class="editNameBtn" id="editUsernameBtn" title="Edit username">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          </button>
+        </div>
+        <p class="profileBio" id="profileBioMobile">Movie enthusiast. Tracking every watch.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="profileStats">
+        <div class="profileStat">
+          <span class="profileStatNum" id="statFilms">0</span>
+          <span class="profileStatLabel">FILMS</span>
+        </div>
+        <div class="profileStat">
+          <span class="profileStatNum" id="statRating">0.0</span>
+          <span class="profileStatLabel">AVG</span>
+        </div>
+        <div class="profileStat">
+          <span class="profileStatNum" id="statRewatch">0</span>
+          <span class="profileStatLabel">REWATCH</span>
+        </div>
+        <div class="profileStat">
+          <span class="profileStatNum" id="statHours">0</span>
+          <span class="profileStatLabel">HOURS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="profileTabs">
+    <button class="profileTab active" data-tab="profile">Profile</button>
+    <button class="profileTab" data-tab="settings">Settings</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="profileContent">
+
+    <!-- Profile Tab -->
+    <div class="tabPanel active" id="panel-profile">
+      <div class="twoColumn">
+        <div class="colLeft">
+          <div class="contentBlock">
+            <h3 class="blockTitle">FAVORITE FILMS</h3>
+            <div class="favGrid" id="favFilmsGrid"></div>
+          </div>
+        </div>
+        <div class="colRight">
+          <div class="contentBlock">
+            <h3 class="blockTitle">BIO</h3>
+            <p class="bioText" id="profileBio">Movie enthusiast. Tracking every watch.</p>
+          </div>
+          <div class="contentBlock">
+            <h3 class="blockTitle">STORAGE</h3>
+            <div class="storageInfo">
+              <div class="storageRow">
+                <span class="storageLabel">Movies</span>
+                <span class="storageValue" id="moviesCount">0</span>
+              </div>
+              <div class="storageRow">
+                <span class="storageLabel">Cloud Usage</span>
+                <span class="storageValue" id="cloudStorageUsage">0 B / 500 MB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div class="tabPanel" id="panel-settings">
+      <div class="settingsSection">
+        
+        <!-- 1. ACCOUNT -->
+        <div class="contentBlock">
+          <h3 class="blockTitle">ACCOUNT</h3>
+          <div class="settingsList">
+            <button class="settingsItem" id="changePasswordBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Change Password</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="signOutBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Sign Out</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. GOOGLE DRIVE -->
+        <div class="contentBlock">
+          <h3 class="blockTitle">GOOGLE DRIVE</h3>
+          <div class="driveCloudCard minimal" id="driveAccountCard">
+            <div class="driveCloudHeaderTop">
+              <div class="driveCloudIcon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>
+              </div>
+              <div class="driveCloudTitleWrap">
+                <div class="driveCloudTitleRow">
+                  <span class="driveCloudTitle" id="driveAccountName">Google Drive</span>
+                  <span class="driveStatusBadge disconnected" id="driveStatusBadge">
+                    <span class="statusDot"></span>
+                    <span id="driveStatusText">Not Connected</span>
+                  </span>
+                </div>
+                <div class="driveCloudEmail" id="driveAccountEmail">No Google account linked</div>
+              </div>
+            </div>
+            <button type="button" class="driveConnectBtn" id="driveConnectBtn">Connect</button>
+          </div>
+        </div>
+
+        <!-- 3. BACKUP & DATA -->
+        <div class="contentBlock">
+          <h3 class="blockTitle">BACKUP & DATA</h3>
+          <div class="settingsList">
+            <button class="settingsItem" id="driveBackupBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+              <div class="backupInfo">
+                <span class="backupLabel">Backup to Drive</span>
+                <span class="backupTime" id="lastBackupTime">Never</span>
+              </div>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="driveRestoreBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+              <span>Restore from Drive</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="importBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Import Movies (JSON/CSV)</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem" id="exportBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export Movies</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. DANGER ZONE -->
+        <div class="contentBlock">
+          <h3 class="blockTitle">DANGER ZONE</h3>
+          <div class="settingsList">
+            <button class="settingsItem danger" id="deleteAccountBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Delete Account</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="settingsItem danger" id="clearDataBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>Clear All Data</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- Import Modal -->
+<div class="importModal" id="importModal">
+  <div class="importSheet">
+    <div class="modalHeader">
+      <h3>Import Movies</h3>
+      <button class="modalClose" id="importModalClose">&times;</button>
+    </div>
+    <div class="uploadArea">
+      <label class="uploadLabel">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload File
+        <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
+      </label>
+    </div>
+    <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>
+    <button class="importBtn" id="importStartBtn">Import</button>
+    <div class="importStatus" id="importStatus"></div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="changePasswordModal" id="changePasswordModal">
+  <div class="changePasswordSheet">
+    <div class="modalHeader">
+      <h3>Change Password</h3>
+      <button class="modalClose" id="changePasswordModalClose">&times;</button>
+    </div>
+    <div class="authForm modalAuthForm">
+      <div class="passwordInputWrap">
+        <input type="password" id="changeCurrentPassword" class="authInput modalInput" placeholder="Current Password">
+        <button type="button" class="modalPasswordToggle" id="toggleCurrentPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+      </div>
+      <div class="passwordInputWrap">
+        <input type="password" id="changeNewPassword" class="authInput modalInput" placeholder="New Password (6+ characters)">
+        <button type="button" class="modalPasswordToggle" id="toggleNewPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+      </div>
+      <div class="passwordInputWrap">
+        <input type="password" id="changeConfirmPassword" class="authInput modalInput" placeholder="Confirm New Password">
+        <button type="button" class="modalPasswordToggle" id="toggleConfirmPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+      </div>
+      <div class="forgotPasswordContainer">
+        <button type="button" id="modalForgotPasswordBtn" class="modalForgotLink">Forgot Password?</button>
+      </div>
+      <button class="importBtn modalSubmitBtn" id="modalChangePasswordStartBtn">Update Password</button>
+      <div id="changePasswordStatus" class="modalStatusMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="exportModal" id="exportModal">
+  <div class="exportSheet">
+    <h3>Export Movies</h3>
+    <div class="exportBtns">
+      <button class="exportTypeBtn json" id="exportJsonBtn">JSON</button>
+      <button class="exportTypeBtn txt" id="exportTxtBtn">Text</button>
+      <button class="exportTypeBtn cancel" id="exportCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Favorite Modal -->
+<div class="favModal" id="favModal">
+  <div class="favSheet">
+    <div class="modalHeader">
+      <h3>Add Favorite Film</h3>
+      <button class="modalClose" id="favModalClose">&times;</button>
+    </div>
+    <input type="text" class="favSearchInput" id="favSearchInput" placeholder="Search movie title...">
+    <div class="favSearchResults" id="favSearchResults"></div>
+    <div class="favSelected" id="favSelected" style="display:none;">
+      <img id="favSelectedPoster" src="" alt="">
+      <div class="favSelectedInfo">
+        <span id="favSelectedTitle"></span>
+        <button class="favRemoveBtn" id="favRemoveSelect">Remove</button>
+      </div>
+    </div>
+    <button class="favAddBtn" id="favConfirmBtn" disabled>Add to Favorites</button>
+  </div>
+</div>
+
+<!-- Director Avatar Modal -->
+<div class="directorModal" id="directorModal">
+  <div class="directorSheet">
+    <div class="modalHeader">
+      <h3>Choose Director Avatar</h3>
+      <button class="modalClose" id="directorModalClose">&times;</button>
+    </div>
+    <input type="text" class="directorSearchInput" id="directorSearchInput" placeholder="Search director name...">
+    <div class="directorResults" id="directorResults"></div>
+  </div>
+</div>
+
+<script src="js/config.js?v=37"></script>
+<script src="js/constants.js?v=37"></script>
+<script src="js/storage.js?v=37"></script>
+<script src="js/utils.js?v=37"></script>
+<script src="js/supabase.js?v=37"></script>
+<script src="js/auth.js?v=37"></script>
+<script src="js/ui.js?v=37"></script>
+<script src="js/import.js?v=37"></script>
+<script src="js/search.js?v=37"></script>
+<script src="js/movieFactory.js?v=37"></script>
+<script src="js/movies.js?v=37"></script>
+<script src="js/statutils.js?v=37"></script>
+<script src="js/export.js?v=37"></script>
+<script src="js/overlays.js?v=37"></script>
+<script src="js/posterPicker.js?v=37"></script>
+<script src="js/drive.js?v=37"></script>
+<script src="js/posterCycle.js?v=16"></script>
+<script src="js/profile.js?v=37"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    Logit.ProfilePage.init();
+    setTimeout(function() { if (typeof Logit.PosterCycle !== 'undefined') { Logit.Storage.loadMovies().then(function(r) { Logit.PosterCycle.start(r.movies); }); } }, 2000);
+  });
+</script>
+</body>
+</html>
