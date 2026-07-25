@@ -68,7 +68,6 @@ body {
   flex-direction: column;
   gap: 6px;
   position: relative;
-  z-index: 1;
 }
 
 .posterBg {
@@ -85,7 +84,13 @@ body {
 }
 
 .posterBg.active {
-  opacity: 0.15;
+  opacity: 0.2;
+}
+
+@media (max-width: 1023px) {
+  .posterBg.active {
+    opacity: 0.25;
+  }
 }
 
 .monthSection {
