@@ -440,13 +440,16 @@
   padding: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .logged p {
-  margin-bottom: 0;
+  margin-bottom: 6px;
+}
+
+.logged h4 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e5e5ea;
 }
 
 .metaSection {
