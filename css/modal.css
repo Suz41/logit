@@ -443,13 +443,24 @@
 }
 
 .logged p {
-  margin-bottom: 6px;
+  font-size: 9px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .logged h4 {
   font-size: 13px;
   font-weight: 500;
+  line-height: 1.4;
   color: #e5e5ea;
+}
+
+.logged .metaInput {
+  width: 100%;
+  max-width: 200px;
 }
 
 .metaSection {
