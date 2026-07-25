@@ -336,8 +336,10 @@
     left: auto;
     right: auto;
     bottom: auto;
-    background: #0d0d0d;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(10,10,10,0.75);
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
     padding: 24px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
