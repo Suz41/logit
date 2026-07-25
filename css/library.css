@@ -67,6 +67,25 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.posterBg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  filter: blur(60px) saturate(1.2);
+  transform: scale(1.2);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.posterBg.active {
+  opacity: 0.15;
 }
 
 .monthSection {

@@ -197,6 +197,24 @@ Logit.LibraryPage = {
           if (movie) { state.current = movie; Logit.Modals.openMeta(movie); }
         });
 
+        // Poster background on hover
+        var posterBg = document.getElementById('posterBg');
+        if (posterBg && window.matchMedia('(hover: hover)').matches) {
+          grid.addEventListener('mouseover', function(e) {
+            var card = e.target.closest('.movie');
+            if (!card) return;
+            var img = card.querySelector('img');
+            if (img && img.src) {
+              posterBg.style.backgroundImage = 'url(' + img.src + ')';
+              posterBg.classList.add('active');
+            }
+          });
+          grid.addEventListener('mouseout', function(e) {
+            var card = e.target.closest('.movie');
+            if (card) posterBg.classList.remove('active');
+          });
+        }
+
         head.addEventListener('click', function() { section.classList.toggle('active'); });
 
         fragment.append(section);
