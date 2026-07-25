@@ -18,8 +18,8 @@
   .headerRow {
     max-width: none !important;
     margin: 0 !important;
-    height: 60px;
-    padding: 0 30px !important;
+    height: 54px;
+    padding: 0 24px !important;
   }
 
   .logo {
@@ -34,7 +34,7 @@
     display: flex;
     align-items: center;
     background: rgba(255, 255, 255, 0.04);
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
     padding: 3px;
     border-radius: 99px;
     gap: 2px;
@@ -43,18 +43,17 @@
   .pcNavBtn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 12px;
     font-weight: 500;
-    padding: 6px 16px;
+    padding: 6px 14px;
     border-radius: 99px;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
     font-family: inherit;
   }
 
   .pcNavBtn:hover {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
     background: rgba(255,255,255,0.04);
   }
 
