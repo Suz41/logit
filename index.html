@@ -113,11 +113,14 @@
         </div>
         <div class="chips">
           <span id="mYear"></span>
-          <span id="mRun"></span>
-          <input class="metaInput metaInputSmall" id="eRuntime" type="number" min="0" placeholder="min">
           <span id="mGenre"></span>
         </div>
         <div class="info">
+          <div>
+            <p>Runtime</p>
+            <h4 id="mRun"></h4>
+            <input class="metaInput metaInputSmall" id="eRuntime" type="number" min="0" placeholder="minutes">
+          </div>
           <div>
             <p>Director</p>
             <h4 id="mDirector"></h4>
@@ -163,6 +166,7 @@
     <div class="metaSection">
       <p>Production</p>
       <h4 id="mProduction"></h4>
+      <input class="metaInput" id="eProduction">
     </div>
     <div class="actions">
       <button class="edit" id="editBtn">Edit</button>

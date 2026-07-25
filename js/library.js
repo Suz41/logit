@@ -463,6 +463,7 @@ Logit.LibraryPage = {
       m.d = $('eLogged').value;
       m.c = $('eCast').value;
       m.sc = $('eSupporting').value;
+      m.pc = $('eProduction').value;
 
       try {
         await Logit.Storage.saveMovie(m, 'update');

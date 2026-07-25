@@ -134,6 +134,7 @@ Logit.Modals = {
     $('eLogged').value = movie.d || '';
     $('eCast').value = movie.c || '';
     $('eSupporting').value = movie.sc || '';
+    $('eProduction').value = movie.pc || '';
   },
 
   closeMeta() {
