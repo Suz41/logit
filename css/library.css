@@ -70,56 +70,20 @@ body {
   position: relative;
 }
 
-.posterBg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  filter: blur(60px) saturate(1.2);
-  transform: scale(1.2);
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
 
-.posterBg.active {
-  opacity: 0.2;
-}
 
-.posterBgName {
-  position: fixed;
-  bottom: 70px;
-  left: 14px;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 
-.posterBgName.active {
-  opacity: 1;
-}
 
-.posterBgTitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.5);
-}
 
-.posterBgMeta {
-  font-size: 10px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.25);
-}
+
+
+
+
+
+
 
 @media (max-width: 1023px) {
-  .posterBg.active {
-    opacity: 0.25;
-  }
+  
 }
 
 .monthSection {

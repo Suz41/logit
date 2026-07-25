@@ -43,10 +43,11 @@ body.no-scroll {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(0,0,0,0.7);
-  -webkit-backdrop-filter: saturate(180%) blur(40px);
-  backdrop-filter: saturate(180%) blur(40px);
-  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.03);
+  -webkit-backdrop-filter: saturate(150%) blur(40px);
+  backdrop-filter: saturate(150%) blur(40px);
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
 }
 
 .headerRow {
@@ -202,3 +203,10 @@ body.no-scroll {
   color: var(--muted);
   margin-top: 8px;
 }
+
+.posterBg { position: fixed; inset: 0; z-index: 0; background-size: cover; background-position: center; opacity: 0; filter: blur(60px) saturate(1.2); transform: scale(1.2); transition: opacity 0.4s ease; pointer-events: none; }
+.posterBg.active { opacity: 0.2; }
+.posterBgName { position: fixed; bottom: 70px; left: 14px; z-index: 0; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; display: flex; flex-direction: column; gap: 2px; }
+.posterBgName.active { opacity: 1; }
+.posterBgTitle { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); }
+.posterBgMeta { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.25); }
