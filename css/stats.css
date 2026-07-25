@@ -8,51 +8,51 @@
   padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* ========= HERO — horizontal bar ========= */
+/* ========= HERO ========= */
 .hero {
-  display: flex;
-  gap: 1px;
-  background: var(--border);
-  border-radius: 14px;
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .statBox {
-  flex: 1;
-  background: var(--bg);
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 8px;
+  padding: 24px 12px;
   text-align: center;
+  min-height: 90px;
 }
 
 .statBox h2, #timeCount {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: var(--text);
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
 }
 
 .statBox p {
-  font-size: 8px;
+  font-size: 9px;
   color: var(--muted);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
 }
 
 .timeSub {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 500;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 6px;
   line-height: 1.3;
   max-height: 0;
   overflow: hidden;
@@ -62,22 +62,22 @@
 #runtimeBox.expanded .timeSub {
   max-height: 40px;
   opacity: 1;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-/* ========= PEOPLE — 2x2 grid ========= */
+/* ========= PEOPLE ========= */
 .peopleGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
 .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
-  grid-column: span 2;
+  grid-column: span 1;
 }
 
 .sectionTitle {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
@@ -103,7 +103,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .person + .person {
@@ -114,12 +114,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .person img {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   object-fit: cover;
   background: var(--surface);
@@ -136,7 +136,7 @@
 }
 
 .personName {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
   white-space: nowrap;
@@ -147,10 +147,10 @@
 }
 
 .personCount {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
-  margin-left: 6px;
+  margin-left: 8px;
   flex-shrink: 0;
 }
 
@@ -159,26 +159,26 @@
   overflow: hidden;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding-left: 38px;
+  gap: 6px;
+  padding-left: 44px;
   width: 100%;
 }
 
 .person.active .personMovies {
   max-height: 300px;
   overflow-y: auto;
-  padding-top: 8px;
+  padding-top: 10px;
   padding-bottom: 4px;
 }
 
 .movieChip {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text);
   background: rgba(255,255,255,0.05);
   border: 0.5px solid rgba(255,255,255,0.08);
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
   white-space: nowrap;
 }
 
@@ -186,25 +186,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  padding: 20px;
+  padding: 24px;
 }
 
-/* ========= META — stacked list ========= */
+/* ========= META ========= */
 .metaGrid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .metaCard {
-  border-bottom: 0.5px solid var(--border);
-  padding: 12px 0;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
   overflow: hidden;
-}
-
-.metaCard:last-child {
-  border-bottom: none;
 }
 
 .metaHead {
@@ -212,13 +211,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0;
-  padding: 2px 0;
+  margin-bottom: 8px;
 }
 
 .metaCard.toggleable .metaHead {
   cursor: pointer;
   user-select: none;
+  margin-bottom: 0;
+  padding: 2px 0;
 }
 
 .metaCard.toggleable.active .metaHead {
@@ -232,7 +232,7 @@
 }
 
 .metaArrow {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   width: 8px;
   text-align: center;
@@ -243,11 +243,11 @@
 }
 
 .metaTitle {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-  text-transform: none;
-  letter-spacing: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .metaTotal {
@@ -279,7 +279,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 8px 0 8px 16px;
+  padding: 8px 0;
 }
 
 .metaItem + .metaItem {
@@ -318,7 +318,7 @@
   overflow: hidden;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -330,47 +330,47 @@
 }
 
 .metaMovie {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text);
   background: rgba(255,255,255,0.05);
   border: 0.5px solid rgba(255,255,255,0.08);
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
   white-space: nowrap;
 }
 
-/* ========= ACTIONS — row of 3 ========= */
+/* ========= ACTIONS ========= */
 .actionGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin-top: 8px;
 }
 
 .actionBtn {
-  height: 44px;
+  height: 48px;
   border: 0.5px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--surface);
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .actionBtn.full {
-  grid-column: span 1;
+  grid-column: 1 / -1;
 }
 
 .actionBtn svg {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   opacity: 0.5;
 }
