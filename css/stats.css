@@ -545,15 +545,63 @@
 /* ========= MOBILE OVERRIDES ========= */
 @media (max-width: 600px) {
   .peopleGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .peopleGrid3 .peopleCard:last-child:nth-child(odd) {
-    grid-column: span 1;
+    grid-column: span 2;
+  }
+
+  .sectionTitle {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .personName {
+    font-size: 12px;
+  }
+
+  .personCount {
+    font-size: 11px;
+  }
+
+  .person img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .person {
+    padding: 8px 0;
+  }
+
+  .personMovies {
+    padding-left: 36px;
   }
 
   .metaGrid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .metaCard {
+    padding: 12px;
+  }
+
+  .metaTitle {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .metaTotal {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .metaName {
+    font-size: 13px;
+  }
+
+  .metaItem {
+    padding: 7px 0;
   }
 
   .actionGrid {
@@ -565,28 +613,16 @@
   }
 
   .statBox h2, #timeCount {
-    font-size: 30px;
+    font-size: 28px;
   }
 
   .statBox p {
-    font-size: 9px;
+    font-size: 8px;
     letter-spacing: 1.5px;
   }
 
-  .sectionTitle {
-    font-size: 12px;
-  }
-
-  .personName {
-    font-size: 14px;
-  }
-
-  .metaTitle {
-    font-size: 12px;
-  }
-
-  .metaName {
-    font-size: 14px;
+  .hero {
+    gap: 6px;
   }
 }
 
