@@ -198,6 +198,12 @@
   gap: 12px;
 }
 
+.metaRow3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
 .metaCard {
   background: var(--surface);
   border: 0.5px solid var(--border);
