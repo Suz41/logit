@@ -1,10 +1,9 @@
 <h1 align="center">Log!t</h1>
 
-<p align="center">Search, rate, and track every movie you watch.</p>
+<p align="center">A minimal movie tracker. Search via TMDB, rate with half-stars, and watch your stats grow.</p>
 
 <p align="center">
   <a href="https://suz41.github.io/logit">Live Demo</a> ·
-  <a href="https://github.com/Suz41/logit/blob/main/docs/TUTORIAL.md">Tutorial</a> ·
   <a href="https://github.com/Suz41/logit/blob/main/docs/CHANGELOG.md">Changelog</a>
 </p>
 
@@ -12,21 +11,17 @@
 
 ## What is Log!t?
 
-A cloud-first personal movie logger. Search any movie via TMDB, rate it, and track everything you watch. Your data syncs across all your devices.
+A minimal, cloud-first movie logger. Search any movie via TMDB, rate it with half-star precision, and track everything you watch. Your data syncs across all your devices.
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| **TMDB Search** | Find any movie with poster, rating, cast, and metadata |
-| **Cloud Sync** | All data stored in Supabase — access from any device |
-| **Google Drive Backup** | Auto-backup after every change, restore anytime |
-| **Username or Email Login** | Sign in with either |
-| **Error Handling** | Retry button, offline detection, clear error states |
-| **Stats Dashboard** | Films watched, average rating, runtime, top directors/actors |
-| **Profile** | Avatar, favorite films, bio — synced everywhere |
-| **Import/Export** | JSON and text formats |
-| **Dark Theme** | Minimal pure black UI, responsive on mobile and desktop |
+- Search any movie via TMDB with auto-poster and metadata
+- Rate with half-star precision
+- Track first watch vs rewatches
+- Stats dashboard: genres, directors, actors, runtime, regions
+- Cloud sync via Supabase
+- Import / export your data anytime
+- Clean dark UI, no ads, no tracking
 
 ## Quick Start
 
@@ -40,7 +35,6 @@ A cloud-first personal movie logger. Search any movie via TMDB, rate it, and tra
 - **Frontend:** Vanilla HTML, CSS, JavaScript — no frameworks
 - **Database:** Supabase (PostgreSQL)
 - **Auth:** Supabase Auth
-- **Backup:** Google Drive API
 - **Movie Data:** TMDB API
 - **Hosting:** GitHub Pages
 

@@ -2,6 +2,17 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.5.0] - 2026-07-25
+
+### Changed
+- Stats page minimal redesign — clean separators, no animations, original palette
+- Meta sections (Genres, Languages, Regions, Most Rewatched, Release Years, Production Companies) now in 3-column flex layout
+- Expanding one section no longer stretches others in the same row
+- About page refreshed — new description, version bump to v3.3.0
+- Added Features, Changelog, and Credits sections to About page
+- Updated README — concise description, updated feature list
+- Removed unused docs (CODE_OF_CONDUCT, CONTRIBUTING, SECURITY, USED_AI, FLOWCHART, DESIGN)
+
 ## [3.4.0] - 2026-07-23
 
 ### Added
