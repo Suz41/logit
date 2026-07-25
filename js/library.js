@@ -209,10 +209,6 @@ Logit.LibraryPage = {
               posterBg.classList.add('active');
             }
           });
-          grid.addEventListener('mouseout', function(e) {
-            var card = e.target.closest('.movie');
-            if (card) posterBg.classList.remove('active');
-          });
         }
 
         head.addEventListener('click', function() { section.classList.toggle('active'); });
@@ -233,8 +229,32 @@ Logit.LibraryPage = {
         state.loadError = 'Failed to load movies';
       }
       renderMovies();
+      startPosterCycle();
     }
     loadAndRender();
+
+    // ========= RANDOM POSTER BACKGROUND CYCLE =========
+    function startPosterCycle() {
+      var posterBg = document.getElementById('posterBg');
+      if (!posterBg) return;
+
+      var posters = state.movies.filter(function(m) { return m.sp; });
+      if (posters.length === 0) return;
+
+      var index = Math.floor(Math.random() * posters.length);
+      function cycle() {
+        posterBg.style.backgroundImage = 'url(' + img(posters[index].sp) + ')';
+        posterBg.classList.add('active');
+        index = (index + 1) % posters.length;
+        // Skip to next random poster
+        if (index === Math.floor(Math.random() * posters.length)) {
+          index = Math.floor(Math.random() * posters.length);
+        }
+      }
+
+      cycle();
+      setInterval(cycle, 5000);
+    }
 
     // ========= SETTINGS PANEL =========
     var settingsBtn = $('settingsBtn');
