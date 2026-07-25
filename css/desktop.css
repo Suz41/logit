@@ -11,7 +11,9 @@
     margin-left: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    background: #0d0d0d !important;
+    background: rgba(0,0,0,0.45) !important;
+    -webkit-backdrop-filter: saturate(200%) blur(60px) !important;
+    backdrop-filter: saturate(200%) blur(60px) !important;
     z-index: 100 !important;
   }
 
