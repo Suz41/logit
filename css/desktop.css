@@ -495,10 +495,16 @@
   }
   
   .metaGrid {
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
   }
-  
+
+  .metaGrid .metaCard {
+    flex: 1 1 calc(33.333% - 14px);
+    min-width: 0;
+  }
+
   .metaCard {
     padding: 20px 0 0;
     border-radius: 0;

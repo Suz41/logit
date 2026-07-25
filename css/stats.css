@@ -193,17 +193,19 @@
 
 /* ========= META ========= */
 .metaGrid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-items: start;
 }
 
 .metaGrid3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
   gap: 12px;
-  align-items: start;
+}
+
+.metaGrid3 .metaCard {
+  flex: 1;
+  min-width: 0;
 }
 
 .metaCard {
