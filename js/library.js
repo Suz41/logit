@@ -252,7 +252,7 @@ Logit.LibraryPage = {
         posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(random.sp) + ')';
         posterBg.classList.add('active');
         nameLabel.querySelector('.posterBgTitle').textContent = random.t || '';
-        var meta = [random.yr, random.g, random.r ? random.r + '/5' : ''].filter(Boolean).join(' · ');
+        var meta = [random.yr, random.dr, random.r ? random.r + '/5' : '', random.d].filter(Boolean).join(' · ');
         nameLabel.querySelector('.posterBgMeta').textContent = meta;
         nameLabel.classList.add('active');
       }, 10000);
