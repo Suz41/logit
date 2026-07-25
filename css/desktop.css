@@ -114,10 +114,8 @@
     height: auto;
     max-height: 85vh;
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(10,10,10,0.85);
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0d0d0d;
     padding: 32px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
     transform: scale(0.95);
@@ -340,10 +338,8 @@
     left: auto;
     right: auto;
     bottom: auto;
-    background: rgba(10,10,10,0.85);
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 24px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
@@ -426,10 +422,8 @@
     pointer-events: none;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(10,10,10,0.85);
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255,255,255,0.06);
+    background: #000000;
   }
   
   .importModal.active {
@@ -459,16 +453,14 @@
   .statBox {
     padding: 28px 16px;
     border-radius: 16px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
     transition: border-color 0.2s, background-color 0.2s;
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
   }
   
   .statBox:hover {
-    border-color: rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.02);
   }
   
   .statBox h2, #timeCount {
@@ -494,10 +486,8 @@
   .peopleCard {
     padding: 20px;
     border-radius: 16px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
   }
   
   .person img {
@@ -512,20 +502,18 @@
   .metaCard {
     padding: 20px;
     border-radius: 16px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.08);
   }
+  
+  
   
   .actionGrid {
     grid-template-columns: repeat(3, 1fr);
   }
   
   .actionBtn {
-    background: rgba(255,255,255,0.06);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    background: #000000;
   }
   
   .actionBtn.full {
@@ -539,7 +527,7 @@
 
   /* ========= WELCOME PAGE PC ========= */
   .welcomePage {
-    background: transparent;
+    background: #000;
   }
   .welcomeContainer {
     max-width: 380px;

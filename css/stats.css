@@ -22,7 +22,7 @@
 }
 
 .statBox {
-  background: rgba(255,255,255,0.06);
+  background: var(--surface);
   border: 0.5px solid var(--border);
   border-radius: 16px;
   display: flex;
@@ -33,8 +33,6 @@
   text-align: center;
   transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
   min-height: 96px;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
 }
 
 .statBox:active {
@@ -102,13 +100,11 @@
 }
 
 .peopleCard {
-  background: rgba(255,255,255,0.06);
+  background: var(--surface);
   border: 0.5px solid var(--border);
   border-radius: 16px;
   padding: 16px;
   overflow: hidden;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
 }
 
 .peopleList {
@@ -141,7 +137,7 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  background: rgba(255,255,255,0.08);
+  background: #111;
   flex-shrink: 0;
   margin-right: 10px;
 }
@@ -220,13 +216,11 @@
 }
 
 .metaCard {
-  background: rgba(255,255,255,0.06);
+  background: var(--surface);
   border: 0.5px solid var(--border);
   border-radius: 16px;
   padding: 14px;
   overflow: hidden;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
 }
 
 .metaHead {
@@ -380,7 +374,7 @@
   height: 48px;
   border: 0.5px solid var(--border);
   border-radius: 14px;
-  background: rgba(255,255,255,0.06);
+  background: var(--surface);
   color: var(--text);
   font-size: 13px;
   font-weight: 600;
@@ -391,8 +385,6 @@
   justify-content: center;
   gap: 8px;
   transition: background 0.2s, border-color 0.2s, transform 0.1s;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
 }
 
 .actionBtn:active {
@@ -436,7 +428,7 @@
 .importTextarea {
   flex: 1;
   width: 100%;
-  background: rgba(0,0,0,0.4);
+  background: #000000;
   border: 0.5px solid var(--border);
   outline: none;
   border-radius: 12px;
@@ -505,13 +497,11 @@
 .exportSheet {
   width: 90%;
   max-width: 320px;
-  background: rgba(20,20,20,0.8);
+  background: #111;
   border: 0.5px solid var(--border);
   border-radius: 20px;
   padding: 24px;
   text-align: center;
-  -webkit-backdrop-filter: blur(30px);
-  backdrop-filter: blur(30px);
 }
 
 .exportSheet h3 {

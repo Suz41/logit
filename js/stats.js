@@ -15,7 +15,7 @@ Logit.StatsPage = {
 
     var result = await Logit.Storage.loadMovies();
     var movies = result.movies;
-    if (typeof Logit.PosterCycle !== 'undefined') Logit.PosterCycle.start(movies, false);
+    if (typeof Logit.PosterCycle !== 'undefined') Logit.PosterCycle.start(movies);
     var stats = Logit.StatUtils.aggregate(movies);
 
     // ========= HERO BOX =========
