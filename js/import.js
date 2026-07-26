@@ -68,13 +68,9 @@ Logit.Import = {
     }
 
     const yearMatch = title.match(/\b(19\d{2}|20\d{2})\b/);
-    if (yearMatch && !date) {
+    if (yearMatch) {
       year = yearMatch[1];
       title = title.replace(yearMatch[0], '');
-    } else if (date) {
-      const dp = date.match(/\d{4}/);
-      if (dp) year = dp[0];
-      else year = '2026';
     }
 
     title = title.replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '').replace(/\s{2,}/g, ' ').trim();

@@ -456,7 +456,7 @@ Logit.ListPage = {
     var detail = await Logit.Search.tmdb(url);
     if (!detail) { alert('Failed to get movie details'); return; }
 
-    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, r.date || new Date().toISOString().split('T')[0]);
+    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, Logit.Import.normalizeDate(r.date));
     var state = Logit.Storage.load();
     state.movies.unshift(movie);
     Logit.Storage.save(state);
