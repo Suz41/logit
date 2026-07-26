@@ -67,6 +67,7 @@ Logit.ListPage = {
     var saved = localStorage.getItem('logit_drive_link');
     if (saved && this.driveLinkInput) {
       this.driveLinkInput.value = saved;
+      this.connectDrive();
     }
   },
 
