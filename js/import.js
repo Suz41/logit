@@ -45,7 +45,14 @@ Logit.Import = {
     let year = null;
     let tmdbId = null;
     let imdbId = null;
+    let rewatch = false;
     let title = line;
+
+    // Check for rewatch (capital R at the end of the original line)
+    if (/\bR\s*$/.test(line)) {
+      rewatch = true;
+      title = title.replace(/\bR\s*$/, '');
+    }
 
     const imdbMatch = title.match(/\b(tt\d{7,8})\b/i);
     if (imdbMatch) { imdbId = imdbMatch[1]; title = title.replace(imdbMatch[0], ''); }
@@ -79,7 +86,7 @@ Logit.Import = {
     title = title.replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '').replace(/\s{2,}/g, ' ').trim();
     if (!title && !tmdbId && !imdbId) return null;
 
-    return { title: title, rating: rating, date: date, year: year, tmdbId: tmdbId, imdbId: imdbId, rewatch: false };
+    return { title: title, rating: rating, date: date, year: year, tmdbId: tmdbId, imdbId: imdbId, rewatch: rewatch };
   },
 
   /** @param {string|null} d @returns {string} YYYY-MM-DD */

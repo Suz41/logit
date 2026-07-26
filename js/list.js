@@ -495,6 +495,9 @@ Logit.ListPage = {
     await Logit.Storage.saveMovie(movie, 'create');
 
     var newLine = '{' + t.title + '} ' + (date || '') + ' ' + rating;
+    if (r.watch === 'Rewatch') {
+      newLine += ' R';
+    }
     if (r.originalLine && r.originalLine.endsWith('\r')) {
       newLine += '\r';
     }
