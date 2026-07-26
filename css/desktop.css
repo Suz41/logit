@@ -30,6 +30,10 @@
     display: none !important;
   }
 
+  #navList {
+    display: none !important;
+  }
+
   .pcHeaderNav {
     display: flex;
     align-items: center;

@@ -28,7 +28,11 @@ Logit.ListPage = {
 
     if (this.navList) {
       this.navList.addEventListener('click', function() {
-        self.showList();
+        if (self.listSection.style.display === 'block') {
+          self.showLibrary();
+        } else {
+          self.showList();
+        }
       });
     }
 
