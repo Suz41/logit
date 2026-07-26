@@ -55,7 +55,9 @@ Logit.Import = {
 
     let dateMatch = line.match(/\b(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})\b/);
     if (!dateMatch) dateMatch = line.match(/\b(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})\b/);
-    if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}[,\s]+\d{4})\b/i);
+    if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}[,\s]*\d{4})\b/i);
+    if (!dateMatch) dateMatch = line.match(/\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*)\b/i);
+    if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2})\b/i);
     if (dateMatch) { date = dateMatch[1]; title = title.replace(dateMatch[0], ''); }
 
     let ratingMatch = line.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
