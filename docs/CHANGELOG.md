@@ -2,6 +2,21 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.6.0] - 2026-07-26
+
+### Added
+- Obsidian Line View split-pane panel for the sync tab on PC, showing raw Obsidian text lines side-by-side with match indicators and clickable detail modals
+- Automatic Google Drive write-back brackets syntax `{Movie Title} Date Rating` to mark movies as imported
+- "No Match" UI cards showing unmatched or misspelled movies in the sync grid instead of hiding them
+- Instant search dropdown triggering and query pre-filling in details modal for "No Match" items
+- Support for case-sensitive capital `R` at the end of the line as a rewatch indicator (and preserving it on Google Drive write-back)
+
+### Fixed
+- Relative watch year defaulting to 2001 (in Chromium/V8) by appending the current year before parsing
+- Movie title rating collision bugs by requiring word boundaries on rating regex matches (preventing "2001" from being parsed as rating "1" and truncated)
+- Google Drive file updating auth by requesting the full read/write `drive` scope instead of `drive.file`
+- Carriage returns (`\r\n`) write-back bugs by storing and appending original carriage returns to file updates
+
 ## [3.5.0] - 2026-07-25
 
 ### Changed
