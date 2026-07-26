@@ -74,6 +74,7 @@ Logit.Import = {
     } else if (date) {
       const dp = date.match(/\d{4}/);
       if (dp) year = dp[0];
+      else year = '2026';
     }
 
     title = title.replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '').replace(/\s{2,}/g, ' ').trim();
