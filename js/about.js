@@ -42,6 +42,14 @@ Logit.AboutPage = {
       location.reload();
     });
 
+    // Save Drive link
+    if ($('saveDriveLink')) $('saveDriveLink').addEventListener('click', function() {
+      var drive = ($('driveFolderLink') || {}).value.trim();
+      if (drive) localStorage.setItem('logit_drive_link', drive);
+      else localStorage.removeItem('logit_drive_link');
+      alert('Drive link saved!');
+    });
+
     var clearBtn = document.querySelector('[data-action="clearAllData"]');
     if (clearBtn) {
       clearBtn.addEventListener('click', async function() {
