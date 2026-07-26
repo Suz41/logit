@@ -308,9 +308,26 @@ Logit.ListPage = {
             watch: m.rewatch ? 'Rewatch' : '1st Watch',
             originalLine: m.originalLine
           });
+        } else {
+          results.push({
+            tmdb: null,
+            title: m.title,
+            rating: m.rating || 3,
+            date: m.date || '',
+            watch: m.rewatch ? 'Rewatch' : '1st Watch',
+            originalLine: m.originalLine
+          });
         }
       } catch (e) {
         console.warn('[List] Search failed for:', m.title, e);
+        results.push({
+          tmdb: null,
+          title: m.title,
+          rating: m.rating || 3,
+          date: m.date || '',
+          watch: m.rewatch ? 'Rewatch' : '1st Watch',
+          originalLine: m.originalLine
+        });
       }
     }
 
@@ -330,15 +347,23 @@ Logit.ListPage = {
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
       var t = r.tmdb;
-      var poster = t.poster_path
-        ? 'https://image.tmdb.org/t/p/w342' + t.poster_path
-        : 'https://placehold.co/342x513/1a1a1a/333?text=No+Poster';
+      var poster, year, title;
+      if (t) {
+        poster = t.poster_path
+          ? 'https://image.tmdb.org/t/p/w342' + t.poster_path
+          : 'https://placehold.co/342x513/1a1a1a/333?text=No+Poster';
+        year = t.release_date ? t.release_date.substring(0, 4) : '';
+        title = t.title;
+      } else {
+        poster = 'https://placehold.co/342x513/1a1a1a/333?text=No+Match';
+        year = '';
+        title = (r.title || 'Unknown') + ' (No Match)';
+      }
 
-      var year = t.release_date ? t.release_date.substring(0, 4) : '';
       var html = '<div class="listItem" data-index="' + i + '">'
         + '<img class="listItemPoster" src="' + poster + '" alt="">'
         + '<div class="listItemOverlay">'
-        + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
+        + '<div class="listItemTitle">' + Logit.Utils.esc(title) + '</div>'
         + '<div class="listItemMeta">' + (year ? year + ' &middot; ' : '') + r.rating + '/5</div>'
         + '</div>'
         + '</div>';
@@ -362,18 +387,26 @@ Logit.ListPage = {
     this.currentModalIndex = index;
     var t = r.tmdb;
 
-    var backdrop = t.backdrop_path
-      ? 'https://image.tmdb.org/t/p/w780' + t.backdrop_path
-      : (t.poster_path ? 'https://image.tmdb.org/t/p/w500' + t.poster_path : '');
+    if (t) {
+      var backdrop = t.backdrop_path
+        ? 'https://image.tmdb.org/t/p/w780' + t.backdrop_path
+        : (t.poster_path ? 'https://image.tmdb.org/t/p/w500' + t.poster_path : '');
 
-    this.listModalImg.src = backdrop;
-    this.listModalTitle.textContent = t.title;
+      this.listModalImg.src = backdrop;
+      this.listModalTitle.textContent = t.title;
 
-    var year = t.release_date ? t.release_date.substring(0, 4) : '';
-    var genres = t.genre_ids ? this.getGenres(t.genre_ids) : (t.genres ? t.genres.slice(0, 2).map(function(g) { return g.name; }).join(', ') : '');
-    this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
+      var year = t.release_date ? t.release_date.substring(0, 4) : '';
+      var genres = t.genre_ids ? this.getGenres(t.genre_ids) : (t.genres ? t.genres.slice(0, 2).map(function(g) { return g.name; }).join(', ') : '');
+      this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
 
-    this.listModalDesc.textContent = t.overview || '';
+      this.listModalDesc.textContent = t.overview || '';
+    } else {
+      this.listModalImg.src = '';
+      this.listModalTitle.textContent = (r.title || 'Unknown') + ' (No Match)';
+      this.listModalMeta.textContent = 'Please search for the correct movie below';
+      this.listModalDesc.textContent = 'Could not find a match on TMDB for "' + (r.title || 'this movie') + '". Use the search box below to find the correct movie.';
+    }
+
     if (this.listModalRatingInput) {
       this.listModalRatingInput.value = String(r.rating || 3);
     }
@@ -382,8 +415,15 @@ Logit.ListPage = {
     }
     this.listModalOriginalLine.textContent = 'Obsidian: ' + r.originalLine;
 
-    this.listModalSearchInput.value = '';
+    this.listModalSearchInput.value = r.title || '';
     this.listModalResults.innerHTML = '';
+    
+    if (!t && r.title) {
+      var self = this;
+      setTimeout(function() {
+        self.searchAlternative();
+      }, 150);
+    }
 
     this.listModal.style.display = 'flex';
   },
@@ -472,6 +512,7 @@ Logit.ListPage = {
 
       this.listModalSearchInput.value = '';
       this.listModalResults.innerHTML = '';
+      this.renderList(this.currentResults);
     } catch (e) {
       console.warn('[List] Failed to fetch alternative:', e);
     }
@@ -484,6 +525,10 @@ Logit.ListPage = {
     var API = Logit.Config.getApiKey();
     if (!API) { alert('TMDB API key not set'); return; }
     var t = r.tmdb;
+    if (!t) {
+      alert('Please search for and select the correct movie match first.');
+      return;
+    }
     var url = 'https://api.themoviedb.org/3/movie/' + t.id + '?api_key=' + API + '&append_to_response=credits,images';
     var detail = await Logit.Search.tmdb(url);
     if (!detail) { alert('Failed to get movie details'); return; }
