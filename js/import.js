@@ -67,10 +67,13 @@ Logit.Import = {
       if (r >= 0.5 && r <= 5) { rating = r; title = title.replace(ratingMatch[0], ''); }
     }
 
-    const yearMatch = title.match(/\b(19\d{2}|20\d{2})\b/);
+    const yearMatch = title.match(/(?:[\(\[]\s*)?\b(19\d{2}|20\d{2})\b(?:\s*[\)\]])?$/);
     if (yearMatch) {
-      year = yearMatch[1];
-      title = title.replace(yearMatch[0], '');
+      const tempTitle = title.replace(yearMatch[0], '').trim();
+      if (tempTitle.length > 0) {
+        year = yearMatch[1];
+        title = tempTitle;
+      }
     }
 
     title = title.replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '').replace(/\s{2,}/g, ' ').trim();
