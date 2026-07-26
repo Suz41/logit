@@ -60,8 +60,8 @@ Logit.Import = {
     if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2})\b/i);
     if (dateMatch) { date = dateMatch[1]; title = title.replace(dateMatch[0], ''); }
 
-    let ratingMatch = line.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
-    if (!ratingMatch) ratingMatch = line.match(/(?:rating[:\s]*)?(\d(?:\.\d)?)(?!\s*[\/\d])/i);
+    let ratingMatch = title.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
+    if (!ratingMatch) ratingMatch = title.match(/(?:rating[:\s]*)?(\d(?:\.\d)?)(?!\s*[\/\d])/i);
     if (ratingMatch) {
       const r = parseFloat(ratingMatch[1]);
       if (r >= 0.5 && r <= 5) { rating = r; title = title.replace(ratingMatch[0], ''); }
