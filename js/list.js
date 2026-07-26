@@ -313,7 +313,7 @@ Logit.ListPage = {
         + '<img class="listItemPoster" src="' + poster + '" alt="">'
         + '<div class="listItemOverlay">'
         + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
-        + '<div class="listItemMeta">' + (year ? year + ' &middot; ' : '') + '★ ' + r.rating + '</div>'
+        + '<div class="listItemMeta">' + (year ? year + ' &middot; ' : '') + r.rating + '/5</div>'
         + '</div>'
         + '</div>';
 
