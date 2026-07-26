@@ -197,12 +197,14 @@ Logit.ListPage = {
   async searchTMDB(movies) {
     var API = Logit.Config.getApiKey();
     if (!API) {
-      alert('Set your TMDB API key first');
+      this.listItems.innerHTML = '<p class="listMessage">TMDB API key not set. Go to About → API Keys.</p>';
       return;
     }
 
     this.listEmpty.style.display = 'none';
-    this.listItems.innerHTML = '<p style="color:#888;font-size:13px;">Searching ' + movies.length + ' movies...</p>';
+    this.listItems.innerHTML = '<p class="listMessage">Searching ' + movies.length + ' movies...</p>';
+
+    console.log('[List] Parsing movies:', movies);
 
     var results = [];
     for (var i = 0; i < movies.length; i++) {
@@ -210,7 +212,9 @@ Logit.ListPage = {
       try {
         var url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(m.title);
         if (m.year) url += '&year=' + m.year;
+        console.log('[List] Searching:', m.title, 'year:', m.year);
         var data = await Logit.Search.tmdb(url);
+        console.log('[List] Result:', data);
         if (data && data.results && data.results.length > 0) {
           var tmdb = data.results[0];
           results.push({
@@ -221,10 +225,11 @@ Logit.ListPage = {
           });
         }
       } catch (e) {
-        console.warn('Search failed for:', m.title);
+        console.warn('[List] Search failed for:', m.title, e);
       }
     }
 
+    console.log('[List] Final results:', results);
     this.renderList(results);
   },
 
