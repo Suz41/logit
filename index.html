@@ -6,13 +6,13 @@
 <title>Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=40">
-<link rel="stylesheet" href="css/components.css?v=40">
-<link rel="stylesheet" href="css/library.css?v=40">
-<link rel="stylesheet" href="css/modal.css?v=40">
-<link rel="stylesheet" href="css/desktop.css?v=40">
-<link rel="stylesheet" href="css/animations.css?v=40">
-<link rel="stylesheet" href="css/auth.css?v=40">
+<link rel="stylesheet" href="css/main.css?v=41">
+<link rel="stylesheet" href="css/components.css?v=41">
+<link rel="stylesheet" href="css/library.css?v=41">
+<link rel="stylesheet" href="css/modal.css?v=41">
+<link rel="stylesheet" href="css/desktop.css?v=41">
+<link rel="stylesheet" href="css/animations.css?v=41">
+<link rel="stylesheet" href="css/auth.css?v=41">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -29,6 +29,7 @@
     </div>
     <div class="pcHeaderNav">
       <button class="pcNavBtn active" onclick="location.href='index.html'">Library</button>
+      <button class="pcNavBtn" id="pcListBtn">List <span class="listBadge" id="pcListBadge" style="display:none;"></span></button>
       <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
       <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
     </div>
@@ -63,10 +64,32 @@
 <div class="posterBg" id="posterBg"></div>
 <section class="library" id="library"></section>
 
+<!-- ========= LIST ========= -->
+<section class="listSection" id="listSection" style="display:none;">
+  <div class="listHeader">
+    <h2>Pending Imports</h2>
+    <div class="driveConnect">
+      <input type="text" placeholder="Paste Google Drive share link..." id="driveLinkInput" class="driveInput">
+      <button class="actionBtn" id="driveConnectBtn">Connect</button>
+    </div>
+  </div>
+  <div class="listEmpty" id="listEmpty">
+    <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <p>Connect your Google Drive to import movies from Obsidian</p>
+    <p style="font-size:11px;color:#666;">File must be set to "Anyone with the link" sharing</p>
+  </div>
+  <div class="listItems" id="listItems"></div>
+</section>
+
 <nav class="bottomNav" id="bottomNav">
   <button class="navItem on" id="navLibrary">
     <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
     <span class="navLabel">Library</span>
+  </button>
+  <button class="navItem" id="navList">
+    <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+    <span class="navLabel">List</span>
+    <span class="listBadge" id="navListBadge" style="display:none;"></span>
   </button>
   <button class="navAdd" id="navAdd">
     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -178,21 +201,22 @@
   </div>
 </section>
 
-<script src="js/constants.js?v=40"></script>
-<script src="js/config.js?v=40"></script>
-<script src="js/storage.js?v=40"></script>
-<script src="js/utils.js?v=40"></script>
-<script src="js/movieFactory.js?v=40"></script>
-<script src="js/movies.js?v=40"></script>
-<script src="js/overlays.js?v=40"></script>
-<script src="js/search.js?v=40"></script>
-<script src="js/posterPicker.js?v=40"></script>
-<script src="js/modals.js?v=40"></script>
-<script src="js/ui.js?v=40"></script>
-<script src="js/supabase.js?v=40"></script>
-<script src="js/auth.js?v=40"></script>
-<script src="js/library.js?v=40"></script>
-<script src="js/app.js?v=40"></script>
+<script src="js/constants.js?v=41"></script>
+<script src="js/config.js?v=41"></script>
+<script src="js/storage.js?v=41"></script>
+<script src="js/utils.js?v=41"></script>
+<script src="js/movieFactory.js?v=41"></script>
+<script src="js/movies.js?v=41"></script>
+<script src="js/overlays.js?v=41"></script>
+<script src="js/search.js?v=41"></script>
+<script src="js/posterPicker.js?v=41"></script>
+<script src="js/modals.js?v=41"></script>
+<script src="js/ui.js?v=41"></script>
+<script src="js/supabase.js?v=41"></script>
+<script src="js/auth.js?v=41"></script>
+<script src="js/library.js?v=41"></script>
+<script src="js/list.js?v=41"></script>
+<script src="js/app.js?v=41"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Supabase.init();
