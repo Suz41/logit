@@ -253,7 +253,7 @@ body.no-scroll {
 
 .listItem {
   position: relative;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   aspect-ratio: 2/3;
   cursor: pointer;
@@ -263,7 +263,7 @@ body.no-scroll {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 4px;
   display: block;
   border: 0.5px solid rgba(255, 255, 255, 0.05);
 }
