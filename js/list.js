@@ -139,39 +139,35 @@ Logit.ListPage = {
   },
 
   async fetchDriveFile(fileId) {
-    if (Logit.Drive && Logit.Drive.isAuthenticated()) {
-      var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media');
-      return await res.text();
-    }
     var url = 'https://drive.google.com/uc?export=download&id=' + fileId;
     var res = await fetch(url);
     return await res.text();
   },
 
   async fetchFromFolder(folderId) {
-    if (!Logit.Drive || !Logit.Drive.isAuthenticated()) {
-      return new Promise(function(resolve, reject) {
-        Logit.Drive.requestAuth(
-          function() { resolve(Logit.ListPage._fetchMdFromFolder(folderId)); },
-          function(err) { reject(err || new Error('Google auth failed')); }
-        );
-      });
-    }
-    return await this._fetchMdFromFolder(folderId);
-  },
-
-  async _fetchMdFromFolder(folderId) {
+    // Try to get file list from folder via Google Drive API (public access)
+    var apiKey = await this.getGoogleApiKey();
     var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
-    var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)');
+    var url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)&key=' + apiKey;
+    var res = await fetch(url);
     var data = await res.json();
 
     if (!data.files || data.files.length === 0) {
-      throw new Error('No .md files found in folder');
+      throw new Error('No .md files found in folder. Make sure folder is shared "Anyone with the link".');
     }
 
     var mdFile = data.files[0];
-    var contentRes = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + mdFile.id + '?alt=media');
-    return await contentRes.text();
+    return await this.fetchDriveFile(mdFile.id);
+  },
+
+  async getGoogleApiKey() {
+    var key = localStorage.getItem('google_api_key');
+    if (key) return key;
+
+    key = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com\nEnable "Google Drive API" in your project.');
+    if (!key) throw new Error('Google API key required');
+    localStorage.setItem('google_api_key', key);
+    return key;
   },
 
   parseMarkdown(content) {
