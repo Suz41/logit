@@ -738,6 +738,56 @@
     border: 2px solid transparent;
     background-clip: padding-box;
   }
+
+  /* ========= LIST TAB PC OVERRIDES ========= */
+  .listHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+  .listHeader h2 {
+    font-size: 24px;
+    margin-bottom: 0;
+  }
+  .driveConnect {
+    width: auto;
+  }
+  .driveConnect .actionBtn {
+    width: 200px !important;
+  }
+  .listItems {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    gap: 16px !important;
+  }
+  .listItem {
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
+  }
+  .listItem:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+  }
+  .listItemPoster {
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s ease;
+  }
+  .listItem:hover .listItemPoster {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .listItemOverlay {
+    padding: 30px 10px 10px;
+  }
+  .listItemTitle {
+    font-size: 13px;
+  }
+  .listItemMeta {
+    font-size: 11px;
+  }
+  .listImport, .listSkip {
+    height: 32px;
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 1023px) {
