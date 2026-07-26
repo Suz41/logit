@@ -262,13 +262,11 @@ Logit.ListPage = {
       var html = '<div class="listItem" data-index="' + i + '">'
         + '<img class="listItemPoster" src="' + poster + '" alt="">'
         + '<div class="listItemInfo">'
-        + '<div class="listItemTitleAndYear">'
-        + '<span class="listItemTitle">' + Logit.Utils.esc(t.title) + '</span>'
-        + '<span class="listItemYear">' + year + '</span>'
-        + '</div>'
+        + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
         + '<div class="listItemMeta">'
-        + '<span class="listItemRating">★ ' + r.rating + '/5</span>'
-        + '<span class="listItemWatchType">' + r.watch + '</span>'
+        + (year ? year + ' &middot; ' : '')
+        + '★ ' + r.rating
+        + (r.watch === 'Rewatch' ? ' &middot; ' + r.watch : '')
         + '</div>'
         + '<div class="listItemOriginalLine" title="' + Logit.Utils.esc(r.originalLine) + '">'
         + Logit.Utils.esc(r.originalLine)
