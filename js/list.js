@@ -79,6 +79,11 @@ Logit.ListPage = {
     this.navLibrary.classList.remove('on');
     this.navList.classList.add('on');
 
+    // Update desktop header nav active state
+    var pcBtns = document.querySelectorAll('.pcNavBtn');
+    pcBtns.forEach(function(btn) { btn.classList.remove('active'); });
+    if (this.pcListBtn) this.pcListBtn.classList.add('active');
+
     window.location.hash = 'list';
   },
 
@@ -88,6 +93,11 @@ Logit.ListPage = {
 
     this.navLibrary.classList.add('on');
     this.navList.classList.remove('on');
+
+    // Update desktop header nav active state
+    var pcBtns = document.querySelectorAll('.pcNavBtn');
+    pcBtns.forEach(function(btn) { btn.classList.remove('active'); });
+    pcBtns[0].classList.add('active');
 
     window.location.hash = '';
   },
@@ -217,6 +227,15 @@ Logit.ListPage = {
         console.log('[List] Result:', data);
         if (data && data.results && data.results.length > 0) {
           var tmdb = data.results[0];
+          // Prefer exact or close title match
+          for (var j = 0; j < data.results.length; j++) {
+            var rTitle = data.results[j].title.toLowerCase();
+            var sTitle = m.title.toLowerCase();
+            if (rTitle === sTitle || rTitle.startsWith(sTitle) || sTitle.startsWith(rTitle)) {
+              tmdb = data.results[j];
+              break;
+            }
+          }
           results.push({
             tmdb: tmdb,
             rating: m.rating || 3,
@@ -242,24 +261,19 @@ Logit.ListPage = {
       return;
     }
 
-    var statusHtml = '<div class="listStatus">'
-      + '<span class="listStatusText">' + results.length + ' movie' + (results.length > 1 ? 's' : '') + ' found</span>'
-      + '</div>';
-    this.listItems.insertAdjacentHTML('beforeend', statusHtml);
-
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
       var t = r.tmdb;
       var poster = t.poster_path
-        ? 'https://image.tmdb.org/t/p/w92' + t.poster_path
-        : 'https://placehold.co/92x138/1a1a1a/333?text=No+Poster';
+        ? 'https://image.tmdb.org/t/p/w342' + t.poster_path
+        : 'https://placehold.co/342x513/1a1a1a/333?text=No+Poster';
 
       var year = t.release_date ? t.release_date.substring(0, 4) : '';
       var html = '<div class="listItem" data-index="' + i + '">'
         + '<img class="listItemPoster" src="' + poster + '" alt="">'
-        + '<div class="listItemInfo">'
+        + '<div class="listItemOverlay">'
         + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
-        + '<div class="listItemMeta">' + year + ' &middot; ' + r.rating + '/5 &middot; ' + r.watch + '</div>'
+        + '<div class="listItemMeta">' + year + ' &middot; ' + r.rating + '/5</div>'
         + '</div>'
         + '<div class="listItemActions">'
         + '<button class="listAccept" data-action="accept" title="Add to library">&check;</button>'

@@ -263,42 +263,41 @@ body.no-scroll {
 }
 
 .listItems {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(var(--grid, 3), 1fr);
+  gap: 8px;
 }
 
 .listItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface2);
-  transition: background 0.2s;
-}
-
-.listItem:active {
-  background: rgba(255,255,255,0.05);
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 2/3;
+  cursor: pointer;
 }
 
 .listItemPoster {
-  width: 40px;
-  height: 60px;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  background: #1a1a1a;
-  flex-shrink: 0;
+  border-radius: 10px;
 }
 
-.listItemInfo {
-  flex: 1;
-  min-width: 0;
+.listItemOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .listItemTitle {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -306,47 +305,52 @@ body.no-scroll {
 }
 
 .listItemMeta {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
+  font-size: 9px;
+  color: rgba(255,255,255,0.6);
   letter-spacing: 0.2px;
 }
 
 .listItemActions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
   display: flex;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.listItem:hover .listItemActions {
+  opacity: 1;
 }
 
 .listAccept, .listReject {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, opacity 0.15s;
-  font-size: 16px;
+  transition: transform 0.15s ease;
+  font-size: 13px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .listAccept {
-  background: var(--green);
+  background: rgba(48, 209, 88, 0.9);
   color: #000;
 }
 
 .listReject {
-  background: rgba(255,255,255,0.08);
-  color: var(--muted);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .listAccept:active, .listReject:active {
   transform: scale(0.85);
-}
-
-.listAccept:hover, .listReject:hover {
-  opacity: 0.8;
 }
 
 .listMessage {
