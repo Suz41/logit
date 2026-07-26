@@ -151,10 +151,7 @@ Logit.ListPage = {
   async fetchFromFolder(folderId) {
     var apiKey = localStorage.getItem('google_api_key');
     if (!apiKey) {
-      key = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com\nEnable "Google Drive API" in your project.');
-      if (!key) throw new Error('Google API key required');
-      localStorage.setItem('google_api_key', key);
-      apiKey = key;
+      throw new Error('Set your Google API key in About → API Keys first.');
     }
 
     var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
@@ -164,7 +161,7 @@ Logit.ListPage = {
 
     if (data.error) {
       localStorage.removeItem('google_api_key');
-      throw new Error(data.error.message || 'API error');
+      throw new Error(data.error.message || 'API error - check your key');
     }
 
     if (!data.files || data.files.length === 0) {
@@ -187,10 +184,11 @@ Logit.ListPage = {
     }
 
     if (movies.length === 0) {
-      alert('No movies found in file');
+      this.listItems.innerHTML = '<p class="listMessage">No movies found in file</p>';
       return;
     }
 
+    this.listEmpty.style.display = 'none';
     this.pendingMovies = movies;
     this.updateBadge();
     this.searchTMDB(movies);
@@ -234,8 +232,7 @@ Logit.ListPage = {
     this.listItems.innerHTML = '';
 
     if (results.length === 0) {
-      this.listEmpty.style.display = '';
-      this.listItems.innerHTML = '<p style="color:#888;font-size:13px;">No matches found</p>';
+      this.listItems.innerHTML = '<p class="listMessage">No matches found. Check your TMDB API key.</p>';
       return;
     }
 

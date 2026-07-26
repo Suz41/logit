@@ -326,6 +326,13 @@ body.no-scroll {
   transform: scale(0.9);
 }
 
+.listMessage {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 40px 20px;
+}
+
 /* ========= FOOTER ========= */
 .footer {
   text-align: center;

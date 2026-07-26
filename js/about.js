@@ -23,14 +23,18 @@ Logit.AboutPage = {
 
     // Load existing API keys
     if ($('tmdbApiKey')) $('tmdbApiKey').value = Logit.Config.getApiKey() || '';
+    if ($('googleApiKey')) $('googleApiKey').value = localStorage.getItem('google_api_key') || '';
 
-    // Save key
+    // Save keys
     if ($('saveAllKeys')) $('saveAllKeys').addEventListener('click', function() {
       var tmdb = ($('tmdbApiKey') || {}).value.trim();
+      var google = ($('googleApiKey') || {}).value.trim();
 
       if (tmdb) Logit.Config.setApiKey(tmdb);
+      if (google) localStorage.setItem('google_api_key', google);
+      else localStorage.removeItem('google_api_key');
 
-      alert('Key saved!');
+      alert('Keys saved!');
       location.reload();
     });
 
