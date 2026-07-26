@@ -25,6 +25,10 @@ Logit.Drive = {
       this._accessToken = savedToken;
     }
 
+    this._waitForSDK();
+  },
+
+  _waitForSDK() {
     if (window.google && google.accounts && google.accounts.oauth2) {
       this._tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: this._CLIENT_ID,
@@ -39,7 +43,8 @@ Logit.Drive = {
         },
       });
     } else {
-      console.warn('[Drive] Google Accounts OAuth2 library (gsi/client) is not loaded.');
+      console.warn('[Drive] Google SDK not loaded yet, retrying...');
+      setTimeout(() => this._waitForSDK(), 500);
     }
   },
 
