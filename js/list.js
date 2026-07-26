@@ -3,7 +3,8 @@ window.Logit = window.Logit || {};
 Logit.ListPage = {
   pendingMovies: [],
   currentResults: [],
-  currentModalIndex: -1,
+  rawFileContent: '',
+  currentFileId: '',
 
   init: function() {
     this.libraryEl = document.getElementById('library');
@@ -17,19 +18,6 @@ Logit.ListPage = {
     this.listItems = document.getElementById('listItems');
     this.pcListBadge = document.getElementById('pcListBadge');
     this.navListBadge = document.getElementById('navListBadge');
-
-    // Modal elements
-    this.listModal = document.getElementById('listModal');
-    this.listModalClose = document.getElementById('listModalClose');
-    this.listModalImg = document.getElementById('listModalImg');
-    this.listModalTitle = document.getElementById('listModalTitle');
-    this.listModalMeta = document.getElementById('listModalMeta');
-    this.listModalDesc = document.getElementById('listModalDesc');
-    this.listModalRating = document.getElementById('listModalRating');
-    this.listModalSearchInput = document.getElementById('listModalSearchInput');
-    this.listModalResults = document.getElementById('listModalResults');
-    this.listModalAccept = document.getElementById('listModalAccept');
-    this.listModalReject = document.getElementById('listModalReject');
 
     this.bindEvents();
     this.checkUrlHash();
@@ -60,40 +48,6 @@ Logit.ListPage = {
     if (this.driveConnectBtn) {
       this.driveConnectBtn.addEventListener('click', function() {
         self.connectDrive();
-      });
-    }
-
-    if (this.listModalClose) {
-      this.listModalClose.addEventListener('click', function() {
-        self.closeModal();
-      });
-    }
-
-    if (this.listModal) {
-      this.listModal.addEventListener('click', function(e) {
-        if (e.target === self.listModal) self.closeModal();
-      });
-    }
-
-    if (this.listModalAccept) {
-      this.listModalAccept.addEventListener('click', function() {
-        self.acceptCurrentMovie();
-      });
-    }
-
-    if (this.listModalReject) {
-      this.listModalReject.addEventListener('click', function() {
-        self.rejectCurrentMovie();
-      });
-    }
-
-    if (this.listModalSearchInput) {
-      var debounce;
-      this.listModalSearchInput.addEventListener('input', function() {
-        clearTimeout(debounce);
-        debounce = setTimeout(function() {
-          self.searchAlternative();
-        }, 400);
       });
     }
   },
@@ -212,8 +166,7 @@ Logit.ListPage = {
     }
 
     this.currentFileId = data.files[0].id;
-    var mdFile = data.files[0];
-    return await this.fetchDriveFile(mdFile.id);
+    return await this.fetchDriveFile(data.files[0].id);
   },
 
   parseMarkdown(content) {
@@ -317,41 +270,48 @@ Logit.ListPage = {
     this.listItems.querySelectorAll('.listItem').forEach(function(item) {
       item.addEventListener('click', function() {
         var index = parseInt(item.dataset.index);
-        self.openModal(index);
+        self.openMetaForImport(index);
       });
     });
   },
 
-  openModal: function(index) {
+  openMetaForImport: function(index) {
     var r = this.currentResults[index];
     if (!r) return;
 
-    this.currentModalIndex = index;
     var t = r.tmdb;
+    var movie = {
+      id: 'import_' + t.id,
+      t: t.title,
+      sp: t.poster_path || '',
+      yr: t.release_date ? t.release_date.substring(0, 4) : '',
+      r: r.rating,
+      g: t.genre_ids ? this.getGenres(t.genre_ids) : '',
+      rt: t.runtime || 0,
+      dr: '',
+      lg: t.original_language || '',
+      ct: '',
+      w: r.watch,
+      d: r.date || new Date().toISOString().split('T')[0],
+      c: '',
+      sc: '',
+      pc: '',
+      tmdb_id: String(t.id),
+      _importIndex: index,
+      _originalLine: r.originalLine
+    };
 
-    var backdrop = t.backdrop_path
-      ? 'https://image.tmdb.org/t/p/w780' + t.backdrop_path
-      : (t.poster_path ? 'https://image.tmdb.org/t/p/w500' + t.poster_path : '');
+    Logit.Modals.openMeta(movie);
 
-    this.listModalImg.src = backdrop;
-    this.listModalTitle.textContent = t.title;
-
-    var year = t.release_date ? t.release_date.substring(0, 4) : '';
-    var genres = t.genre_ids ? this.getGenres(t.genre_ids) : '';
-    this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
-
-    this.listModalDesc.textContent = t.overview || '';
-    this.listModalRating.textContent = r.rating + '/5';
-
-    this.listModalSearchInput.value = '';
-    this.listModalResults.innerHTML = '';
-
-    this.listModal.style.display = 'flex';
-  },
-
-  closeModal: function() {
-    this.listModal.style.display = 'none';
-    this.currentModalIndex = -1;
+    var self = this;
+    setTimeout(function() {
+      var saveBtn = document.getElementById('saveBtn');
+      if (saveBtn) {
+        saveBtn.onclick = function() {
+          self.acceptImportedMovie(movie);
+        };
+      }
+    }, 100);
   },
 
   getGenres: function(ids) {
@@ -365,116 +325,44 @@ Logit.ListPage = {
     return names.slice(0, 2).join(', ');
   },
 
-  async searchAlternative() {
-    var query = this.listModalSearchInput.value.trim();
-    if (!query || query.length < 2) {
-      this.listModalResults.innerHTML = '';
-      return;
-    }
-
+  async acceptImportedMovie(movie) {
     var API = Logit.Config.getApiKey();
     if (!API) return;
 
-    try {
-      var url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query);
-      var data = await Logit.Search.tmdb(url);
-      if (!data || !data.results) return;
-
-      this.listModalResults.innerHTML = '';
-      for (var i = 0; i < Math.min(data.results.length, 5); i++) {
-        var m = data.results[i];
-        var poster = m.poster_path ? 'https://image.tmdb.org/t/p/w92' + m.poster_path : '';
-        var year = m.release_date ? m.release_date.substring(0, 4) : '';
-        var html = '<div class="listModalResultItem" data-tmdbid="' + m.id + '">'
-          + (poster ? '<img src="' + poster + '" alt="">' : '')
-          + '<div><span>' + Logit.Utils.esc(m.title) + '</span><br><small>' + year + '</small></div>'
-          + '</div>';
-        this.listModalResults.insertAdjacentHTML('beforeend', html);
-      }
-
-      var self = this;
-      this.listModalResults.querySelectorAll('.listModalResultItem').forEach(function(item) {
-        item.addEventListener('click', function() {
-          var tmdbId = item.dataset.tmdbid;
-          self.selectAlternative(tmdbId);
-        });
-      });
-    } catch (e) {
-      console.warn('[List] Search failed:', e);
-    }
-  },
-
-  async selectAlternative(tmdbId) {
-    var API = Logit.Config.getApiKey();
-    try {
-      var url = 'https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API;
-      var detail = await Logit.Search.tmdb(url);
-      if (!detail) return;
-
-      var r = this.currentResults[this.currentModalIndex];
-      this.currentResults[this.currentModalIndex] = {
-        tmdb: detail,
-        rating: r.rating,
-        date: r.date,
-        watch: r.watch,
-        originalLine: r.originalLine
-      };
-
-      var backdrop = detail.backdrop_path
-        ? 'https://image.tmdb.org/t/p/w780' + detail.backdrop_path
-        : (detail.poster_path ? 'https://image.tmdb.org/t/p/w500' + detail.poster_path : '');
-
-      this.listModalImg.src = backdrop;
-      this.listModalTitle.textContent = detail.title;
-      var year = detail.release_date ? detail.release_date.substring(0, 4) : '';
-      var genres = detail.genres ? detail.genres.slice(0, 2).map(function(g) { return g.name; }).join(', ') : '';
-      this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
-      this.listModalDesc.textContent = detail.overview || '';
-
-      this.listModalSearchInput.value = '';
-      this.listModalResults.innerHTML = '';
-    } catch (e) {
-      console.warn('[List] Failed to fetch alternative:', e);
-    }
-  },
-
-  async acceptCurrentMovie() {
-    var r = this.currentResults[this.currentModalIndex];
-    if (!r) return;
-
-    var API = Logit.Config.getApiKey();
-    var t = r.tmdb;
-    var url = 'https://api.themoviedb.org/3/movie/' + t.id + '?api_key=' + API + '&append_to_response=credits,images';
+    var tmdbId = movie.tmdb_id;
+    var url = 'https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images';
     var detail = await Logit.Search.tmdb(url);
-    if (!detail) { alert('Failed to get movie details'); return; }
+    if (!detail) { alert('Failed to get movie details'); return;
 
-    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, r.date || new Date().toISOString().split('T')[0]);
+    }
+
+    var title = (document.getElementById('mTitle') || {}).textContent || movie.t;
+    var rating = movie.r;
+    var logged = (document.getElementById('eLogged') || {}).value || movie.d;
+    var watch = document.getElementById('eWatch') ? (document.getElementById('eWatch').checked ? 'Rewatch' : '1st Watch') : movie.w;
+
+    var newMovie = Logit.MovieFactory.fromTMDB(detail, rating, watch, logged);
     var state = Logit.Storage.load();
-    state.movies.unshift(movie);
+    state.movies.unshift(newMovie);
     Logit.Storage.save(state);
 
-    await this.markAsImported(r.originalLine);
+    var originalLine = movie._originalLine;
+    var newLine = title + ' ' + logged + ' ' + rating;
+    await this.updateObsidianFile(originalLine, '✅ ' + newLine);
 
-    this.currentResults.splice(this.currentModalIndex, 1);
-    this.closeModal();
+    this.currentResults.splice(movie._importIndex, 1);
+    Logit.Modals.closeMeta();
     this.renderList(this.currentResults);
     this.updateBadge();
   },
 
-  rejectCurrentMovie() {
-    this.currentResults.splice(this.currentModalIndex, 1);
-    this.closeModal();
-    this.renderList(this.currentResults);
-    this.updateBadge();
-  },
-
-  async markAsImported(originalLine) {
+  async updateObsidianFile(oldLine, newLine) {
     if (!this.rawFileContent || !this.currentFileId) return;
 
     var apiKey = localStorage.getItem('google_api_key');
     if (!apiKey) return;
 
-    var newContent = this.rawFileContent.replace(originalLine, '✅ ' + originalLine);
+    var newContent = this.rawFileContent.replace(oldLine, newLine);
     this.rawFileContent = newContent;
 
     try {
@@ -485,7 +373,7 @@ Logit.ListPage = {
         body: newContent
       });
     } catch (e) {
-      console.warn('[List] Failed to mark as imported:', e);
+      console.warn('[List] Failed to update Obsidian file:', e);
     }
   },
 

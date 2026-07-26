@@ -143,9 +143,8 @@ body.no-scroll {
 /* ========= LIST BADGE ========= */
 .listBadge {
   position: absolute;
-  top: 4px;
-  right: 50%;
-  transform: translateX(calc(50% + 10px));
+  top: 2px;
+  right: 2px;
   min-width: 16px;
   height: 16px;
   border-radius: 8px;
@@ -195,12 +194,12 @@ body.no-scroll {
 
 /* ========= LIST SECTION ========= */
 .listSection {
-  padding: 76px 14px 80px;
+  padding: 70px 14px 80px;
   min-height: 100vh;
 }
 
 .listHeader {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .listHeader h2 {
