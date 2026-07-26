@@ -92,7 +92,10 @@ Logit.ListPage = {
     window.location.hash = '';
   },
 
-  extractFileId: function(url) {
+  extractId: function(url) {
+    var folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    if (folderMatch) return { type: 'folder', id: folderMatch[1] };
+
     var patterns = [
       /\/file\/d\/([a-zA-Z0-9_-]+)/,
       /\/open\?id=([a-zA-Z0-9_-]+)/,
@@ -101,7 +104,7 @@ Logit.ListPage = {
     ];
     for (var i = 0; i < patterns.length; i++) {
       var match = url.match(patterns[i]);
-      if (match) return match[1];
+      if (match) return { type: 'file', id: match[1] };
     }
     return null;
   },
@@ -110,8 +113,8 @@ Logit.ListPage = {
     var url = this.driveLinkInput.value.trim();
     if (!url) { alert('Paste a Google Drive share link'); return; }
 
-    var fileId = this.extractFileId(url);
-    if (!fileId) { alert('Invalid Google Drive link'); return; }
+    var extracted = this.extractId(url);
+    if (!extracted) { alert('Invalid Google Drive link'); return; }
 
     localStorage.setItem('logit_drive_link', url);
 
@@ -119,7 +122,12 @@ Logit.ListPage = {
     this.driveConnectBtn.disabled = true;
 
     try {
-      var content = await this.fetchDriveFile(fileId);
+      var content;
+      if (extracted.type === 'folder') {
+        content = await this.fetchFromFolder(extracted.id);
+      } else {
+        content = await this.fetchDriveFile(extracted.id);
+      }
       if (!content) throw new Error('Could not fetch file');
       this.parseMarkdown(content);
     } catch (e) {
@@ -138,6 +146,30 @@ Logit.ListPage = {
       res = await fetch(url);
     }
     return await res.text();
+  },
+
+  async fetchFromFolder(folderId) {
+    var url = 'https://www.googleapis.com/drive/v3/files?q=\'' + folderId + '+in+parents+and+mimeType=\'text/markdown\'&fields=files(id,name)&key=';
+    var apiKey = localStorage.getItem('google_api_key') || '';
+
+    if (!apiKey) {
+      apiKey = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com');
+      if (!apiKey) throw new Error('Google API key required');
+      localStorage.setItem('google_api_key', apiKey);
+    }
+
+    url += apiKey;
+    var res = await fetch(url);
+    var data = await res.json();
+
+    if (!data.files || data.files.length === 0) {
+      throw new Error('No .md files found in folder');
+    }
+
+    var mdFile = data.files.find(function(f) { return f.name.endsWith('.md'); });
+    if (!mdFile) throw new Error('No .md files found in folder');
+
+    return await this.fetchDriveFile(mdFile.id);
   },
 
   parseMarkdown(content) {
