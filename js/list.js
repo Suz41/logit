@@ -190,33 +190,59 @@ Logit.ListPage = {
   },
 
   async fetchDriveFile(fileId) {
-    var apiKey = localStorage.getItem('google_api_key');
-    if (apiKey) {
-      var url = 'https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media&key=' + apiKey;
-      var res = await fetch(url);
-      return await res.text();
+    var token = localStorage.getItem('logit_drive_token');
+    var headers = {};
+    var url = 'https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media';
+    
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    } else {
+      var apiKey = localStorage.getItem('google_api_key');
+      if (apiKey) {
+        url += '&key=' + apiKey;
+      } else {
+        throw new Error('No API key or Google account connected');
+      }
     }
-    throw new Error('No API key available');
+    
+    var res = await fetch(url, { headers: headers });
+    if (!res.ok) {
+      if (res.status === 401 && token) {
+        localStorage.removeItem('logit_drive_token');
+        throw new Error('Google Drive session expired. Please reconnect in Profile settings.');
+      }
+      throw new Error('Drive API returned ' + res.status);
+    }
+    return await res.text();
   },
 
   async fetchFromFolder(folderId) {
-    var apiKey = localStorage.getItem('google_api_key');
-    if (!apiKey) {
-      throw new Error('Set your Google API key in About → API Keys first.');
+    var token = localStorage.getItem('logit_drive_token');
+    var headers = {};
+    var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
+    var url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)';
+    
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    } else {
+      var apiKey = localStorage.getItem('google_api_key');
+      if (apiKey) {
+        url += '&key=' + apiKey;
+      } else {
+        throw new Error('Set your Google API key or connect Google Drive in Settings first.');
+      }
     }
 
-    var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
-    var url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)&key=' + apiKey;
-    var res = await fetch(url);
+    var res = await fetch(url, { headers: headers });
+    if (!res.ok) throw new Error('Drive API returned ' + res.status);
     var data = await res.json();
 
     if (data.error) {
-      localStorage.removeItem('google_api_key');
-      throw new Error(data.error.message || 'API error - check your key');
+      throw new Error(data.error.message || 'API error');
     }
 
     if (!data.files || data.files.length === 0) {
-      throw new Error('No .md files found in folder. Make sure folder is shared "Anyone with the link".');
+      throw new Error('No .md files found in folder.');
     }
 
     this.currentFileId = data.files[0].id;
@@ -229,7 +255,7 @@ Logit.ListPage = {
 
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i].trim();
-      if (line.startsWith('✅') || line.startsWith('[x]')) continue;
+      if (line.startsWith('✅') || line.startsWith('[x]') || line.startsWith('{')) continue;
       var parsed = Logit.Import.parseLine(line);
       if (parsed && parsed.title) {
         parsed.originalLine = line;
@@ -468,8 +494,8 @@ Logit.ListPage = {
     var movie = Logit.MovieFactory.fromTMDB(detail, rating, r.watch, date);
     await Logit.Storage.saveMovie(movie, 'create');
 
-    var newLine = t.title + ' ' + (date || '') + ' ' + rating;
-    await this.updateObsidianFile(r.originalLine, '✅ ' + newLine);
+    var newLine = '{' + t.title + '} ' + (date || '') + ' ' + rating;
+    await this.updateObsidianFile(r.originalLine, newLine);
 
     this.currentResults.splice(this.currentModalIndex, 1);
     this.closeModal();
@@ -487,19 +513,34 @@ Logit.ListPage = {
   async updateObsidianFile(oldLine, newLine) {
     if (!this.rawFileContent || !this.currentFileId) return;
 
-    var apiKey = localStorage.getItem('google_api_key');
-    if (!apiKey) return;
+    var token = localStorage.getItem('logit_drive_token');
+    var headers = { 'Content-Type': 'text/markdown' };
+    var url = 'https://www.googleapis.com/upload/drive/v3/files/' + this.currentFileId + '?uploadType=media';
+
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    } else {
+      var apiKey = localStorage.getItem('google_api_key');
+      if (apiKey) {
+        url += '&key=' + apiKey;
+      } else {
+        console.warn('[List] Cannot write to Drive: No access token or API key');
+        return;
+      }
+    }
 
     var newContent = this.rawFileContent.replace(oldLine, newLine);
     this.rawFileContent = newContent;
 
     try {
-      var url = 'https://www.googleapis.com/upload/drive/v3/files/' + this.currentFileId + '?uploadType=media&key=' + apiKey;
-      await fetch(url, {
+      var res = await fetch(url, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'text/markdown' },
+        headers: headers,
         body: newContent
       });
+      if (!res.ok) {
+        console.warn('[List] Drive PATCH failed with status:', res.status);
+      }
     } catch (e) {
       console.warn('[List] Failed to update Obsidian file:', e);
     }
