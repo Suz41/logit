@@ -139,78 +139,40 @@ Logit.ListPage = {
   },
 
   async fetchDriveFile(fileId) {
-    // Try OAuth first
-    if (Logit.Drive && Logit.Drive.isAuthenticated()) {
-      try {
-        var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media');
-        return await res.text();
-      } catch (e) {
-        console.warn('[List] OAuth fetch failed, falling back to public:', e);
-      }
+    var apiKey = localStorage.getItem('google_api_key');
+    if (apiKey) {
+      var url = 'https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media&key=' + apiKey;
+      var res = await fetch(url);
+      return await res.text();
     }
-    // Fallback to public access
-    var url = 'https://drive.google.com/uc?export=download&id=' + fileId;
-    var res = await fetch(url);
-    return await res.text();
+    throw new Error('No API key available');
   },
 
   async fetchFromFolder(folderId) {
-    // Try OAuth first
-    if (Logit.Drive && Logit.Drive.isAuthenticated()) {
-      try {
-        return await this._fetchMdFromFolderOAuth(folderId);
-      } catch (e) {
-        console.warn('[List] OAuth folder fetch failed:', e);
-      }
-    }
-
-    // Try public access with API key
     var apiKey = localStorage.getItem('google_api_key');
-    if (apiKey) {
-      try {
-        return await this._fetchMdFromFolderApiKey(folderId, apiKey);
-      } catch (e) {
-        console.warn('[List] API key fetch failed:', e);
-      }
+    if (!apiKey) {
+      key = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com\nEnable "Google Drive API" in your project.');
+      if (!key) throw new Error('Google API key required');
+      localStorage.setItem('google_api_key', key);
+      apiKey = key;
     }
 
-    // Ask for API key
-    return await this._fetchMdFromFolderWithPrompt(folderId);
-  },
-
-  async _fetchMdFromFolderOAuth(folderId) {
-    var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
-    var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)');
-    var data = await res.json();
-
-    if (!data.files || data.files.length === 0) {
-      throw new Error('No .md files found in folder');
-    }
-
-    var mdFile = data.files[0];
-    var contentRes = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + mdFile.id + '?alt=media');
-    return await contentRes.text();
-  },
-
-  async _fetchMdFromFolderApiKey(folderId, apiKey) {
     var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
     var url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)&key=' + apiKey;
     var res = await fetch(url);
     var data = await res.json();
 
+    if (data.error) {
+      localStorage.removeItem('google_api_key');
+      throw new Error(data.error.message || 'API error');
+    }
+
     if (!data.files || data.files.length === 0) {
-      throw new Error('No .md files found in folder');
+      throw new Error('No .md files found in folder. Make sure folder is shared "Anyone with the link".');
     }
 
     var mdFile = data.files[0];
     return await this.fetchDriveFile(mdFile.id);
-  },
-
-  async _fetchMdFromFolderWithPrompt(folderId) {
-    var key = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com\nEnable "Google Drive API" in your project.');
-    if (!key) throw new Error('Google API key required');
-    localStorage.setItem('google_api_key', key);
-    return await this._fetchMdFromFolderApiKey(folderId, key);
   },
 
   parseMarkdown(content) {
