@@ -92,7 +92,7 @@ Logit.Modals = {
     addBtn.focus();
   },
 
-  openMeta(movie) {
+  async openMeta(movie) {
     var $ = Logit.Utils.byId;
     var metaModal = $('metaModal');
     if (!metaModal) return;
@@ -104,7 +104,42 @@ Logit.Modals = {
     Logit.Overlays.push(function() { Logit.Modals.closeMeta(); });
 
     var posterBg = document.getElementById('posterBgModal');
-    if (posterBg && movie.sp) {
+    if (posterBg) {
+      posterBg.style.backgroundImage = '';
+      posterBg.classList.remove('active');
+    }
+
+    var coverWrap = $('mCoverWrap');
+    var coverImg = $('mCoverImage');
+    if (coverWrap && coverImg) {
+      coverWrap.style.display = 'none';
+      coverImg.src = '';
+    }
+
+    if (movie.tmdb_id) {
+      var API = Logit.Config.getApiKey();
+      if (API) {
+        try {
+          var url = 'https://api.themoviedb.org/3/movie/' + movie.tmdb_id + '?api_key=' + API;
+          var detail = await Logit.Search.tmdb(url);
+          if (detail && detail.backdrop_path) {
+            var backdropUrl = 'https://image.tmdb.org/t/p/w780' + detail.backdrop_path;
+            if (posterBg) {
+              posterBg.style.backgroundImage = 'url(' + backdropUrl + ')';
+              posterBg.classList.add('active');
+            }
+            if (coverWrap && coverImg) {
+              coverImg.src = backdropUrl;
+              coverWrap.style.display = 'block';
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load dynamic backdrop:', e);
+        }
+      }
+    }
+
+    if (posterBg && !posterBg.style.backgroundImage && movie.sp) {
       posterBg.style.backgroundImage = 'url(' + Logit.Utils.img(movie.sp) + ')';
       posterBg.classList.add('active');
     }
