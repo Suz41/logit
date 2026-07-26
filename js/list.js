@@ -258,7 +258,7 @@ Logit.ListPage = {
       if (line.startsWith('✅') || line.startsWith('[x]') || line.startsWith('{')) continue;
       var parsed = Logit.Import.parseLine(line);
       if (parsed && parsed.title) {
-        parsed.originalLine = line;
+        parsed.originalLine = lines[i];
         movies.push(parsed);
       }
     }
@@ -495,6 +495,9 @@ Logit.ListPage = {
     await Logit.Storage.saveMovie(movie, 'create');
 
     var newLine = '{' + t.title + '} ' + (date || '') + ' ' + rating;
+    if (r.originalLine && r.originalLine.endsWith('\r')) {
+      newLine += '\r';
+    }
     await this.updateObsidianFile(r.originalLine, newLine);
 
     this.currentResults.splice(this.currentModalIndex, 1);
