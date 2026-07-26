@@ -27,7 +27,8 @@ Logit.ListPage = {
     this.listModalTitle = document.getElementById('listModalTitle');
     this.listModalMeta = document.getElementById('listModalMeta');
     this.listModalDesc = document.getElementById('listModalDesc');
-    this.listModalRating = document.getElementById('listModalRating');
+    this.listModalRatingInput = document.getElementById('listModalRatingInput');
+    this.listModalDateInput = document.getElementById('listModalDateInput');
     this.listModalOriginalLine = document.getElementById('listModalOriginalLine');
     this.listModalSearchInput = document.getElementById('listModalSearchInput');
     this.listModalResults = document.getElementById('listModalResults');
@@ -347,7 +348,12 @@ Logit.ListPage = {
     this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
 
     this.listModalDesc.textContent = t.overview || '';
-    this.listModalRating.textContent = '★ ' + r.rating + '/5' + (r.watch === 'Rewatch' ? ' (' + r.watch + ')' : '');
+    if (this.listModalRatingInput) {
+      this.listModalRatingInput.value = String(r.rating || 3);
+    }
+    if (this.listModalDateInput) {
+      this.listModalDateInput.value = Logit.Import.normalizeDate(r.date);
+    }
     this.listModalOriginalLine.textContent = 'Obsidian: ' + r.originalLine;
 
     this.listModalSearchInput.value = '';
@@ -456,12 +462,13 @@ Logit.ListPage = {
     var detail = await Logit.Search.tmdb(url);
     if (!detail) { alert('Failed to get movie details'); return; }
 
-    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, Logit.Import.normalizeDate(r.date));
-    var state = Logit.Storage.load();
-    state.movies.unshift(movie);
-    Logit.Storage.save(state);
+    var rating = this.listModalRatingInput ? parseFloat(this.listModalRatingInput.value) : (r.rating || 3);
+    var date = this.listModalDateInput ? this.listModalDateInput.value : Logit.Import.normalizeDate(r.date);
 
-    var newLine = t.title + ' ' + (r.date || '') + ' ' + r.rating;
+    var movie = Logit.MovieFactory.fromTMDB(detail, rating, r.watch, date);
+    await Logit.Storage.saveMovie(movie, 'create');
+
+    var newLine = t.title + ' ' + (date || '') + ' ' + rating;
     await this.updateObsidianFile(r.originalLine, '✅ ' + newLine);
 
     this.currentResults.splice(this.currentModalIndex, 1);

@@ -6,13 +6,13 @@
 <title>Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=46">
-<link rel="stylesheet" href="css/components.css?v=46">
-<link rel="stylesheet" href="css/library.css?v=46">
-<link rel="stylesheet" href="css/modal.css?v=46">
-<link rel="stylesheet" href="css/desktop.css?v=46">
-<link rel="stylesheet" href="css/animations.css?v=46">
-<link rel="stylesheet" href="css/auth.css?v=46">
+<link rel="stylesheet" href="css/main.css?v=47">
+<link rel="stylesheet" href="css/components.css?v=47">
+<link rel="stylesheet" href="css/library.css?v=47">
+<link rel="stylesheet" href="css/modal.css?v=47">
+<link rel="stylesheet" href="css/desktop.css?v=47">
+<link rel="stylesheet" href="css/animations.css?v=47">
+<link rel="stylesheet" href="css/auth.css?v=47">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -95,9 +95,26 @@
       <h3 id="listModalTitle"></h3>
       <div class="listModalMeta" id="listModalMeta"></div>
       <p class="listModalDesc" id="listModalDesc"></p>
-      <div class="listModalRating">
-        <span>Your rating:</span>
-        <span id="listModalRating"></span>
+      <div class="listModalEditRow">
+        <div class="listModalInputGroup">
+          <label for="listModalRatingInput">Rating</label>
+          <select id="listModalRatingInput" class="listModalSelect">
+            <option value="5">★★★★★ (5/5)</option>
+            <option value="4.5">★★★★½ (4.5/5)</option>
+            <option value="4">★★★★ (4/5)</option>
+            <option value="3.5">★★★½ (3.5/5)</option>
+            <option value="3">★★★ (3/5)</option>
+            <option value="2.5">★★½ (2.5/5)</option>
+            <option value="2">★★ (2/5)</option>
+            <option value="1.5">★½ (1.5/5)</option>
+            <option value="1">★ (1/5)</option>
+            <option value="0.5">½ (0.5/5)</option>
+          </select>
+        </div>
+        <div class="listModalInputGroup">
+          <label for="listModalDateInput">Watch Date</label>
+          <input type="date" id="listModalDateInput" class="listModalDate">
+        </div>
       </div>
       <div id="listModalOriginalLine" style="font-size: 11px; font-family: monospace; color: rgba(255,255,255,0.4); margin-top: 8px; border-top: 0.5px solid rgba(255,255,255,0.08); padding-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
     </div>
@@ -227,24 +244,24 @@
   </div>
 </section>
 
-<script src="js/constants.js?v=46"></script>
-<script src="js/config.js?v=46"></script>
-<script src="js/storage.js?v=46"></script>
-<script src="js/utils.js?v=46"></script>
-<script src="js/movieFactory.js?v=46"></script>
-<script src="js/movies.js?v=46"></script>
-<script src="js/overlays.js?v=46"></script>
-<script src="js/search.js?v=46"></script>
-<script src="js/posterPicker.js?v=46"></script>
-<script src="js/modals.js?v=46"></script>
-<script src="js/import.js?v=46"></script>
-<script src="js/ui.js?v=46"></script>
-<script src="js/supabase.js?v=46"></script>
-<script src="js/auth.js?v=46"></script>
-<script src="js/drive.js?v=46"></script>
-<script src="js/library.js?v=46"></script>
-<script src="js/list.js?v=46"></script>
-<script src="js/app.js?v=46"></script>
+<script src="js/constants.js?v=47"></script>
+<script src="js/config.js?v=47"></script>
+<script src="js/storage.js?v=47"></script>
+<script src="js/utils.js?v=47"></script>
+<script src="js/movieFactory.js?v=47"></script>
+<script src="js/movies.js?v=47"></script>
+<script src="js/overlays.js?v=47"></script>
+<script src="js/search.js?v=47"></script>
+<script src="js/posterPicker.js?v=47"></script>
+<script src="js/modals.js?v=47"></script>
+<script src="js/import.js?v=47"></script>
+<script src="js/ui.js?v=47"></script>
+<script src="js/supabase.js?v=47"></script>
+<script src="js/auth.js?v=47"></script>
+<script src="js/drive.js?v=47"></script>
+<script src="js/library.js?v=47"></script>
+<script src="js/list.js?v=47"></script>
+<script src="js/app.js?v=47"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Supabase.init();
