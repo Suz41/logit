@@ -2,6 +2,8 @@ window.Logit = window.Logit || {};
 
 Logit.ListPage = {
   pendingMovies: [],
+  currentResults: [],
+  currentModalIndex: -1,
 
   init: function() {
     this.libraryEl = document.getElementById('library');
@@ -15,6 +17,19 @@ Logit.ListPage = {
     this.listItems = document.getElementById('listItems');
     this.pcListBadge = document.getElementById('pcListBadge');
     this.navListBadge = document.getElementById('navListBadge');
+
+    // Modal elements
+    this.listModal = document.getElementById('listModal');
+    this.listModalClose = document.getElementById('listModalClose');
+    this.listModalImg = document.getElementById('listModalImg');
+    this.listModalTitle = document.getElementById('listModalTitle');
+    this.listModalMeta = document.getElementById('listModalMeta');
+    this.listModalDesc = document.getElementById('listModalDesc');
+    this.listModalRating = document.getElementById('listModalRating');
+    this.listModalSearchInput = document.getElementById('listModalSearchInput');
+    this.listModalResults = document.getElementById('listModalResults');
+    this.listModalAccept = document.getElementById('listModalAccept');
+    this.listModalReject = document.getElementById('listModalReject');
 
     this.bindEvents();
     this.checkUrlHash();
@@ -47,6 +62,40 @@ Logit.ListPage = {
         self.connectDrive();
       });
     }
+
+    if (this.listModalClose) {
+      this.listModalClose.addEventListener('click', function() {
+        self.closeModal();
+      });
+    }
+
+    if (this.listModal) {
+      this.listModal.addEventListener('click', function(e) {
+        if (e.target === self.listModal) self.closeModal();
+      });
+    }
+
+    if (this.listModalAccept) {
+      this.listModalAccept.addEventListener('click', function() {
+        self.acceptCurrentMovie();
+      });
+    }
+
+    if (this.listModalReject) {
+      this.listModalReject.addEventListener('click', function() {
+        self.rejectCurrentMovie();
+      });
+    }
+
+    if (this.listModalSearchInput) {
+      var debounce;
+      this.listModalSearchInput.addEventListener('input', function() {
+        clearTimeout(debounce);
+        debounce = setTimeout(function() {
+          self.searchAlternative();
+        }, 400);
+      });
+    }
   },
 
   checkUrlHash: function() {
@@ -63,7 +112,6 @@ Logit.ListPage = {
     this.navLibrary.classList.remove('on');
     this.navList.classList.add('on');
 
-    // Update desktop header nav active state
     var pcBtns = document.querySelectorAll('.pcNavBtn');
     pcBtns.forEach(function(btn) { btn.classList.remove('active'); });
     if (this.pcListBtn) this.pcListBtn.classList.add('active');
@@ -78,7 +126,6 @@ Logit.ListPage = {
     this.navLibrary.classList.add('on');
     this.navList.classList.remove('on');
 
-    // Update desktop header nav active state
     var pcBtns = document.querySelectorAll('.pcNavBtn');
     pcBtns.forEach(function(btn) { btn.classList.remove('active'); });
     pcBtns[0].classList.add('active');
@@ -124,6 +171,7 @@ Logit.ListPage = {
         content = await this.fetchDriveFile(extracted.id);
       }
       if (!content) throw new Error('Could not fetch file');
+      this.rawFileContent = content;
       this.parseMarkdown(content);
     } catch (e) {
       alert('Failed to load: ' + e.message);
@@ -163,6 +211,7 @@ Logit.ListPage = {
       throw new Error('No .md files found in folder. Make sure folder is shared "Anyone with the link".');
     }
 
+    this.currentFileId = data.files[0].id;
     var mdFile = data.files[0];
     return await this.fetchDriveFile(mdFile.id);
   },
@@ -172,14 +221,18 @@ Logit.ListPage = {
     var movies = [];
 
     for (var i = 0; i < lines.length; i++) {
-      var parsed = Logit.Import.parseLine(lines[i]);
+      var line = lines[i].trim();
+      if (line.startsWith('✅') || line.startsWith('[x]')) continue;
+      var parsed = Logit.Import.parseLine(line);
       if (parsed && parsed.title) {
+        parsed.originalLine = line;
         movies.push(parsed);
       }
     }
 
     if (movies.length === 0) {
-      this.listItems.innerHTML = '<p class="listMessage">No movies found in file</p>';
+      this.listItems.innerHTML = '<p class="listMessage">All movies imported or no movies found</p>';
+      this.listEmpty.style.display = 'none';
       return;
     }
 
@@ -196,10 +249,7 @@ Logit.ListPage = {
       return;
     }
 
-    this.listEmpty.style.display = 'none';
     this.listItems.innerHTML = '<p class="listMessage">Searching ' + movies.length + ' movies...</p>';
-
-    console.log('[List] Parsing movies:', movies);
 
     var results = [];
     for (var i = 0; i < movies.length; i++) {
@@ -207,12 +257,9 @@ Logit.ListPage = {
       try {
         var url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(m.title);
         if (m.year) url += '&year=' + m.year;
-        console.log('[List] Searching:', m.title, 'year:', m.year);
         var data = await Logit.Search.tmdb(url);
-        console.log('[List] Result:', data);
         if (data && data.results && data.results.length > 0) {
           var tmdb = data.results[0];
-          // Prefer exact or close title match
           for (var j = 0; j < data.results.length; j++) {
             var rTitle = data.results[j].title.toLowerCase();
             var sTitle = m.title.toLowerCase();
@@ -225,7 +272,8 @@ Logit.ListPage = {
             tmdb: tmdb,
             rating: m.rating || 3,
             date: m.date || '',
-            watch: m.rewatch ? 'Rewatch' : '1st Watch'
+            watch: m.rewatch ? 'Rewatch' : '1st Watch',
+            originalLine: m.originalLine
           });
         }
       } catch (e) {
@@ -233,7 +281,7 @@ Logit.ListPage = {
       }
     }
 
-    console.log('[List] Final results:', results);
+    this.currentResults = results;
     this.renderList(results);
   },
 
@@ -242,7 +290,7 @@ Logit.ListPage = {
     this.listEmpty.style.display = 'none';
 
     if (results.length === 0) {
-      this.listItems.innerHTML = '<p class="listMessage">No matches found. Check your TMDB API key.</p>';
+      this.listItems.innerHTML = '<p class="listMessage">No matches found</p>';
       return;
     }
 
@@ -260,50 +308,189 @@ Logit.ListPage = {
         + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
         + '<div class="listItemMeta">' + year + ' &middot; ' + r.rating + '/5</div>'
         + '</div>'
-        + '<div class="listItemActions">'
-        + '<button class="listAccept" data-action="accept" title="Add to library">&check;</button>'
-        + '<button class="listReject" data-action="reject" title="Skip">&times;</button>'
-        + '</div>'
         + '</div>';
 
       this.listItems.insertAdjacentHTML('beforeend', html);
     }
 
-    this.bindItemEvents(results);
-  },
-
-  bindItemEvents: function(results) {
     var self = this;
-    this.listItems.addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      var item = btn.closest('.listItem');
-      var index = parseInt(item.dataset.index);
-      var action = btn.dataset.action;
-
-      if (action === 'accept') {
-        self.acceptMovie(results[index]);
-      }
-      item.remove();
-      self.updateBadge();
+    this.listItems.querySelectorAll('.listItem').forEach(function(item) {
+      item.addEventListener('click', function() {
+        var index = parseInt(item.dataset.index);
+        self.openModal(index);
+      });
     });
   },
 
-  async acceptMovie(result) {
+  openModal: function(index) {
+    var r = this.currentResults[index];
+    if (!r) return;
+
+    this.currentModalIndex = index;
+    var t = r.tmdb;
+
+    var backdrop = t.backdrop_path
+      ? 'https://image.tmdb.org/t/p/w780' + t.backdrop_path
+      : (t.poster_path ? 'https://image.tmdb.org/t/p/w500' + t.poster_path : '');
+
+    this.listModalImg.src = backdrop;
+    this.listModalTitle.textContent = t.title;
+
+    var year = t.release_date ? t.release_date.substring(0, 4) : '';
+    var genres = t.genre_ids ? this.getGenres(t.genre_ids) : '';
+    this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
+
+    this.listModalDesc.textContent = t.overview || '';
+    this.listModalRating.textContent = r.rating + '/5';
+
+    this.listModalSearchInput.value = '';
+    this.listModalResults.innerHTML = '';
+
+    this.listModal.style.display = 'flex';
+  },
+
+  closeModal: function() {
+    this.listModal.style.display = 'none';
+    this.currentModalIndex = -1;
+  },
+
+  getGenres: function(ids) {
+    var genreMap = {28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',
+      18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',
+      9648:'Mystery',10749:'Romance',878:'Sci-Fi',10770:'TV Movie',53:'Thriller',10752:'War',37:'Western'};
+    var names = [];
+    for (var i = 0; i < ids.length; i++) {
+      if (genreMap[ids[i]]) names.push(genreMap[ids[i]]);
+    }
+    return names.slice(0, 2).join(', ');
+  },
+
+  async searchAlternative() {
+    var query = this.listModalSearchInput.value.trim();
+    if (!query || query.length < 2) {
+      this.listModalResults.innerHTML = '';
+      return;
+    }
+
     var API = Logit.Config.getApiKey();
-    var t = result.tmdb;
+    if (!API) return;
+
+    try {
+      var url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API + '&query=' + encodeURIComponent(query);
+      var data = await Logit.Search.tmdb(url);
+      if (!data || !data.results) return;
+
+      this.listModalResults.innerHTML = '';
+      for (var i = 0; i < Math.min(data.results.length, 5); i++) {
+        var m = data.results[i];
+        var poster = m.poster_path ? 'https://image.tmdb.org/t/p/w92' + m.poster_path : '';
+        var year = m.release_date ? m.release_date.substring(0, 4) : '';
+        var html = '<div class="listModalResultItem" data-tmdbid="' + m.id + '">'
+          + (poster ? '<img src="' + poster + '" alt="">' : '')
+          + '<div><span>' + Logit.Utils.esc(m.title) + '</span><br><small>' + year + '</small></div>'
+          + '</div>';
+        this.listModalResults.insertAdjacentHTML('beforeend', html);
+      }
+
+      var self = this;
+      this.listModalResults.querySelectorAll('.listModalResultItem').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var tmdbId = item.dataset.tmdbid;
+          self.selectAlternative(tmdbId);
+        });
+      });
+    } catch (e) {
+      console.warn('[List] Search failed:', e);
+    }
+  },
+
+  async selectAlternative(tmdbId) {
+    var API = Logit.Config.getApiKey();
+    try {
+      var url = 'https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API;
+      var detail = await Logit.Search.tmdb(url);
+      if (!detail) return;
+
+      var r = this.currentResults[this.currentModalIndex];
+      this.currentResults[this.currentModalIndex] = {
+        tmdb: detail,
+        rating: r.rating,
+        date: r.date,
+        watch: r.watch,
+        originalLine: r.originalLine
+      };
+
+      var backdrop = detail.backdrop_path
+        ? 'https://image.tmdb.org/t/p/w780' + detail.backdrop_path
+        : (detail.poster_path ? 'https://image.tmdb.org/t/p/w500' + detail.poster_path : '');
+
+      this.listModalImg.src = backdrop;
+      this.listModalTitle.textContent = detail.title;
+      var year = detail.release_date ? detail.release_date.substring(0, 4) : '';
+      var genres = detail.genres ? detail.genres.slice(0, 2).map(function(g) { return g.name; }).join(', ') : '';
+      this.listModalMeta.textContent = [year, genres].filter(Boolean).join(' · ');
+      this.listModalDesc.textContent = detail.overview || '';
+
+      this.listModalSearchInput.value = '';
+      this.listModalResults.innerHTML = '';
+    } catch (e) {
+      console.warn('[List] Failed to fetch alternative:', e);
+    }
+  },
+
+  async acceptCurrentMovie() {
+    var r = this.currentResults[this.currentModalIndex];
+    if (!r) return;
+
+    var API = Logit.Config.getApiKey();
+    var t = r.tmdb;
     var url = 'https://api.themoviedb.org/3/movie/' + t.id + '?api_key=' + API + '&append_to_response=credits,images';
     var detail = await Logit.Search.tmdb(url);
     if (!detail) { alert('Failed to get movie details'); return; }
 
-    var movie = Logit.MovieFactory.fromTMDB(detail, result.rating, result.watch, result.date || new Date().toISOString().split('T')[0]);
+    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, r.date || new Date().toISOString().split('T')[0]);
     var state = Logit.Storage.load();
     state.movies.unshift(movie);
     Logit.Storage.save(state);
+
+    await this.markAsImported(r.originalLine);
+
+    this.currentResults.splice(this.currentModalIndex, 1);
+    this.closeModal();
+    this.renderList(this.currentResults);
+    this.updateBadge();
+  },
+
+  rejectCurrentMovie() {
+    this.currentResults.splice(this.currentModalIndex, 1);
+    this.closeModal();
+    this.renderList(this.currentResults);
+    this.updateBadge();
+  },
+
+  async markAsImported(originalLine) {
+    if (!this.rawFileContent || !this.currentFileId) return;
+
+    var apiKey = localStorage.getItem('google_api_key');
+    if (!apiKey) return;
+
+    var newContent = this.rawFileContent.replace(originalLine, '✅ ' + originalLine);
+    this.rawFileContent = newContent;
+
+    try {
+      var url = 'https://www.googleapis.com/upload/drive/v3/files/' + this.currentFileId + '?uploadType=media&key=' + apiKey;
+      await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'text/markdown' },
+        body: newContent
+      });
+    } catch (e) {
+      console.warn('[List] Failed to mark as imported:', e);
+    }
   },
 
   updateBadge: function() {
-    var count = this.listItems.querySelectorAll('.listItem').length;
+    var count = this.currentResults ? this.currentResults.length : 0;
     if (count > 0) {
       this.pcListBadge.textContent = count;
       this.pcListBadge.style.display = '';
