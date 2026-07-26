@@ -139,37 +139,39 @@ Logit.ListPage = {
   },
 
   async fetchDriveFile(fileId) {
-    var url = 'https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media';
-    var res = await fetch(url);
-    if (!res.ok) {
-      url = 'https://drive.google.com/uc?export=download&id=' + fileId;
-      res = await fetch(url);
+    if (Logit.Drive && Logit.Drive.isAuthenticated()) {
+      var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media');
+      return await res.text();
     }
+    var url = 'https://drive.google.com/uc?export=download&id=' + fileId;
+    var res = await fetch(url);
     return await res.text();
   },
 
   async fetchFromFolder(folderId) {
-    var url = 'https://www.googleapis.com/drive/v3/files?q=\'' + folderId + '+in+parents+and+mimeType=\'text/markdown\'&fields=files(id,name)&key=';
-    var apiKey = localStorage.getItem('google_api_key') || '';
-
-    if (!apiKey) {
-      apiKey = prompt('Enter your Google API key to access Drive folders.\n\nGet one at: console.cloud.google.com');
-      if (!apiKey) throw new Error('Google API key required');
-      localStorage.setItem('google_api_key', apiKey);
+    if (!Logit.Drive || !Logit.Drive.isAuthenticated()) {
+      return new Promise(function(resolve, reject) {
+        Logit.Drive.requestAuth(
+          function() { resolve(Logit.ListPage._fetchMdFromFolder(folderId)); },
+          function(err) { reject(err || new Error('Google auth failed')); }
+        );
+      });
     }
+    return await this._fetchMdFromFolder(folderId);
+  },
 
-    url += apiKey;
-    var res = await fetch(url);
+  async _fetchMdFromFolder(folderId) {
+    var q = encodeURIComponent("'" + folderId + "' in parents and mimeType = 'text/markdown' and trashed = false");
+    var res = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)');
     var data = await res.json();
 
     if (!data.files || data.files.length === 0) {
       throw new Error('No .md files found in folder');
     }
 
-    var mdFile = data.files.find(function(f) { return f.name.endsWith('.md'); });
-    if (!mdFile) throw new Error('No .md files found in folder');
-
-    return await this.fetchDriveFile(mdFile.id);
+    var mdFile = data.files[0];
+    var contentRes = await Logit.Drive._apiFetch('https://www.googleapis.com/drive/v3/files/' + mdFile.id + '?alt=media');
+    return await contentRes.text();
   },
 
   parseMarkdown(content) {
