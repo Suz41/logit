@@ -743,24 +743,6 @@ body.no-scroll {
   border-color: rgba(255,255,255,0.25);
 }
 
-/* ========= META COVER IMAGE ========= */
-.metaCoverWrap {
-  width: 100%;
-  aspect-ratio: 16/9;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 18px;
-}
-
-.metaCoverImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 /* ========= FOOTER ========= */
 .footer {
   text-align: center;
