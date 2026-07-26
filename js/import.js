@@ -61,13 +61,13 @@ Logit.Import = {
     if (dateMatch) { date = dateMatch[1]; title = title.replace(dateMatch[0], ''); }
 
     let ratingMatch = title.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
-    if (!ratingMatch) ratingMatch = title.match(/(?:rating[:\s]*)?(\d(?:\.\d)?)(?!\s*[\/\d])/i);
+    if (!ratingMatch) ratingMatch = title.match(/(?:rating[:\s]*)?\b(\d(?:\.\d)?)\b(?!\s*[\/\d])/i);
     if (ratingMatch) {
       const r = parseFloat(ratingMatch[1]);
       if (r >= 0.5 && r <= 5) { rating = r; title = title.replace(ratingMatch[0], ''); }
     }
 
-    const yearMatch = title.match(/(?:[\(\[]\s*)?\b(19\d{2}|20\d{2})\b(?:\s*[\)\]])?$/);
+    const yearMatch = title.match(/(?:[\(\[]\s*)?\b(19\d{2}|20\d{2})\b(?:\s*[\)\]])?\s*$/);
     if (yearMatch) {
       const tempTitle = title.replace(yearMatch[0], '').trim();
       if (tempTitle.length > 0) {
@@ -93,7 +93,12 @@ Logit.Import = {
       const p = d.split(/[-\/]/);
       return p[2] + '-' + p[0].padStart(2, '0') + '-' + p[1].padStart(2, '0');
     }
-    const parsed = new Date(d);
+    let parseString = d;
+    if (!/\b(19\d{2}|20\d{2})\b/.test(d)) {
+      parseString = d + ' ' + new Date().getFullYear();
+    }
+
+    const parsed = new Date(parseString);
     if (!isNaN(parsed.getTime())) {
       return parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
     }
