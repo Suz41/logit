@@ -84,6 +84,34 @@
   <div class="listItems" id="listItems"></div>
 </section>
 
+<!-- ========= LIST MOVIE MODAL ========= -->
+<div class="listModal" id="listModal" style="display:none;">
+  <div class="listModalContent">
+    <button class="listModalClose" id="listModalClose">&times;</button>
+    <div class="listModalPoster">
+      <img id="listModalImg" src="" alt="">
+    </div>
+    <div class="listModalInfo">
+      <h3 id="listModalTitle"></h3>
+      <div class="listModalMeta" id="listModalMeta"></div>
+      <p class="listModalDesc" id="listModalDesc"></p>
+      <div class="listModalRating">
+        <span>Your rating:</span>
+        <span id="listModalRating"></span>
+      </div>
+      <div id="listModalOriginalLine" style="font-size: 11px; font-family: monospace; color: rgba(255,255,255,0.4); margin-top: 8px; border-top: 0.5px solid rgba(255,255,255,0.08); padding-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+    </div>
+    <div class="listModalSearch">
+      <input type="text" placeholder="Search different movie..." id="listModalSearchInput">
+      <div class="listModalResults" id="listModalResults"></div>
+    </div>
+    <div class="listModalActions">
+      <button class="listModalAccept" id="listModalAccept">Accept</button>
+      <button class="listModalReject" id="listModalReject">Skip</button>
+    </div>
+  </div>
+</div>
+
 <nav class="bottomNav" id="bottomNav">
   <button class="navItem on" id="navLibrary">
     <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
