@@ -6,13 +6,13 @@
 <title>Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=57">
-<link rel="stylesheet" href="css/components.css?v=57">
-<link rel="stylesheet" href="css/library.css?v=57">
-<link rel="stylesheet" href="css/modal.css?v=57">
-<link rel="stylesheet" href="css/desktop.css?v=57">
-<link rel="stylesheet" href="css/animations.css?v=57">
-<link rel="stylesheet" href="css/auth.css?v=57">
+<link rel="stylesheet" href="css/main.css?v=58">
+<link rel="stylesheet" href="css/components.css?v=58">
+<link rel="stylesheet" href="css/library.css?v=58">
+<link rel="stylesheet" href="css/modal.css?v=58">
+<link rel="stylesheet" href="css/desktop.css?v=58">
+<link rel="stylesheet" href="css/animations.css?v=58">
+<link rel="stylesheet" href="css/auth.css?v=58">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -81,7 +81,13 @@
     <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
     <p>Set up your Drive folder in About → Obsidian Sync</p>
   </div>
-  <div class="listItems" id="listItems"></div>
+  <div class="listContentWrap" id="listContentWrap" style="display:none;">
+    <div class="listItems" id="listItems"></div>
+    <div class="listSidePanel" id="listSidePanel">
+      <div class="sidePanelHeader">Obsidian Line View</div>
+      <div class="sidePanelList" id="sidePanelList"></div>
+    </div>
+  </div>
 </section>
 
 <!-- ========= LIST MOVIE MODAL ========= -->
@@ -244,24 +250,24 @@
   </div>
 </section>
 
-<script src="js/constants.js?v=57"></script>
-<script src="js/config.js?v=57"></script>
-<script src="js/storage.js?v=57"></script>
-<script src="js/utils.js?v=57"></script>
-<script src="js/movieFactory.js?v=57"></script>
-<script src="js/movies.js?v=57"></script>
-<script src="js/overlays.js?v=57"></script>
-<script src="js/search.js?v=57"></script>
-<script src="js/posterPicker.js?v=57"></script>
-<script src="js/modals.js?v=57"></script>
-<script src="js/import.js?v=57"></script>
-<script src="js/ui.js?v=57"></script>
-<script src="js/supabase.js?v=57"></script>
-<script src="js/auth.js?v=57"></script>
-<script src="js/drive.js?v=57"></script>
-<script src="js/library.js?v=57"></script>
-<script src="js/list.js?v=57"></script>
-<script src="js/app.js?v=57"></script>
+<script src="js/constants.js?v=58"></script>
+<script src="js/config.js?v=58"></script>
+<script src="js/storage.js?v=58"></script>
+<script src="js/utils.js?v=58"></script>
+<script src="js/movieFactory.js?v=58"></script>
+<script src="js/movies.js?v=58"></script>
+<script src="js/overlays.js?v=58"></script>
+<script src="js/search.js?v=58"></script>
+<script src="js/posterPicker.js?v=58"></script>
+<script src="js/modals.js?v=58"></script>
+<script src="js/import.js?v=58"></script>
+<script src="js/ui.js?v=58"></script>
+<script src="js/supabase.js?v=58"></script>
+<script src="js/auth.js?v=58"></script>
+<script src="js/drive.js?v=58"></script>
+<script src="js/library.js?v=58"></script>
+<script src="js/list.js?v=58"></script>
+<script src="js/app.js?v=58"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Supabase.init();

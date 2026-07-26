@@ -781,3 +781,117 @@ body.no-scroll {
 .posterBgName.active { opacity: 1; }
 .posterBgTitle { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); }
 .posterBgMeta { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.25); }
+
+/* ========= LIST SIDE PANEL ========= */
+.listContentWrap {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.listItems {
+  flex: 1;
+}
+
+.listSidePanel {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 180px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.sidePanelHeader {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.sidePanelList {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.sidePanelList::-webkit-scrollbar {
+  display: none !important;
+}
+
+.sidePanelItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 0.5px solid rgba(255, 255, 255, 0.04);
+  font-family: monospace;
+  font-size: 11px;
+  color: #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.sidePanelItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.sidePanelItem.no-match {
+  border-left: 3px solid #ff453a;
+}
+
+.sidePanelItem.matched {
+  border-left: 3px solid #30d158;
+}
+
+.sidePanelStatus {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.sidePanelStatus.no-match {
+  background: rgba(255, 69, 58, 0.15);
+  color: #ff453a;
+}
+
+.sidePanelStatus.matched {
+  background: rgba(48, 209, 88, 0.15);
+  color: #30d158;
+}
+
+@media (max-width: 768px) {
+  .listContentWrap {
+    flex-direction: column;
+  }
+  .listSidePanel {
+    width: 100%;
+    position: relative;
+    top: 0;
+    max-height: 400px;
+    margin-top: 24px;
+  }
+}

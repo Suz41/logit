@@ -266,6 +266,8 @@ Logit.ListPage = {
     if (movies.length === 0) {
       this.listItems.innerHTML = '<p class="listMessage">All movies imported or no movies found</p>';
       this.listEmpty.style.display = 'none';
+      var wrap = document.getElementById('listContentWrap');
+      if (wrap) wrap.style.display = 'none';
       return;
     }
 
@@ -339,8 +341,14 @@ Logit.ListPage = {
     this.listItems.innerHTML = '';
     this.listEmpty.style.display = 'none';
 
+    var wrap = document.getElementById('listContentWrap');
+    if (wrap) {
+      wrap.style.display = results.length > 0 ? 'flex' : 'none';
+    }
+
     if (results.length === 0) {
       this.listItems.innerHTML = '<p class="listMessage">No matches found</p>';
+      if (wrap) wrap.style.display = 'none';
       return;
     }
 
@@ -369,6 +377,34 @@ Logit.ListPage = {
         + '</div>';
 
       this.listItems.insertAdjacentHTML('beforeend', html);
+    }
+
+    // Render raw line side panel items
+    var panelList = document.getElementById('sidePanelList');
+    if (panelList) {
+      panelList.innerHTML = '';
+      for (var i = 0; i < results.length; i++) {
+        var r = results[i];
+        var isMatched = !!r.tmdb;
+        var rawText = r.originalLine ? r.originalLine.trim() : (r.title || 'Unknown');
+        
+        var itemHtml = '<div class="sidePanelItem ' + (isMatched ? 'matched' : 'no-match') + '" data-index="' + i + '" title="' + Logit.Utils.esc(rawText) + '">'
+          + '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">' + Logit.Utils.esc(rawText) + '</span>'
+          + '<span class="sidePanelStatus ' + (isMatched ? 'matched' : 'no-match') + '">'
+          + (isMatched ? 'Match' : 'No Match')
+          + '</span>'
+          + '</div>';
+        
+        panelList.insertAdjacentHTML('beforeend', itemHtml);
+      }
+      
+      var self = this;
+      panelList.querySelectorAll('.sidePanelItem').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var index = parseInt(item.dataset.index);
+          self.openModal(index);
+        });
+      });
     }
 
     var self = this;
