@@ -235,11 +235,17 @@ Logit.ListPage = {
 
   renderList(results) {
     this.listItems.innerHTML = '';
+    this.listEmpty.style.display = 'none';
 
     if (results.length === 0) {
       this.listItems.innerHTML = '<p class="listMessage">No matches found. Check your TMDB API key.</p>';
       return;
     }
+
+    var statusHtml = '<div class="listStatus">'
+      + '<span class="listStatusText">' + results.length + ' movie' + (results.length > 1 ? 's' : '') + ' found</span>'
+      + '</div>';
+    this.listItems.insertAdjacentHTML('beforeend', statusHtml);
 
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
