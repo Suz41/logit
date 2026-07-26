@@ -261,97 +261,55 @@ Logit.ListPage = {
         + '<div class="listItemTitle">' + Logit.Utils.esc(t.title) + '</div>'
         + '<div class="listItemMeta">' + year + ' &middot; ' + r.rating + '/5</div>'
         + '</div>'
+        + '<div class="listItemActions">'
+        + '<button class="listImport" data-action="import">Import</button>'
+        + '<button class="listSkip" data-action="skip">Skip</button>'
+        + '</div>'
         + '</div>';
 
       this.listItems.insertAdjacentHTML('beforeend', html);
     }
 
     var self = this;
-    this.listItems.querySelectorAll('.listItem').forEach(function(item) {
-      item.addEventListener('click', function() {
+    this.listItems.querySelectorAll('[data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var item = btn.closest('.listItem');
         var index = parseInt(item.dataset.index);
-        self.openMetaForImport(index);
+        var action = btn.dataset.action;
+        if (action === 'import') self.importMovie(index);
+        else if (action === 'skip') self.skipMovie(index);
       });
     });
   },
 
-  openMetaForImport: function(index) {
+  async importMovie(index) {
     var r = this.currentResults[index];
     if (!r) return;
 
-    var t = r.tmdb;
-    var movie = {
-      id: 'import_' + t.id,
-      t: t.title,
-      sp: t.poster_path || '',
-      yr: t.release_date ? t.release_date.substring(0, 4) : '',
-      r: r.rating,
-      g: t.genre_ids ? this.getGenres(t.genre_ids) : '',
-      rt: t.runtime || 0,
-      dr: '',
-      lg: t.original_language || '',
-      ct: '',
-      w: r.watch,
-      d: r.date || new Date().toISOString().split('T')[0],
-      c: '',
-      sc: '',
-      pc: '',
-      tmdb_id: String(t.id),
-      _importIndex: index,
-      _originalLine: r.originalLine
-    };
-
-    Logit.Modals.openMeta(movie);
-
-    var self = this;
-    setTimeout(function() {
-      var saveBtn = document.getElementById('saveBtn');
-      if (saveBtn) {
-        saveBtn.onclick = function() {
-          self.acceptImportedMovie(movie);
-        };
-      }
-    }, 100);
-  },
-
-  getGenres: function(ids) {
-    var genreMap = {28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',
-      18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',
-      9648:'Mystery',10749:'Romance',878:'Sci-Fi',10770:'TV Movie',53:'Thriller',10752:'War',37:'Western'};
-    var names = [];
-    for (var i = 0; i < ids.length; i++) {
-      if (genreMap[ids[i]]) names.push(genreMap[ids[i]]);
-    }
-    return names.slice(0, 2).join(', ');
-  },
-
-  async acceptImportedMovie(movie) {
     var API = Logit.Config.getApiKey();
-    if (!API) return;
+    if (!API) { alert('TMDB API key not set'); return; }
 
-    var tmdbId = movie.tmdb_id;
-    var url = 'https://api.themoviedb.org/3/movie/' + tmdbId + '?api_key=' + API + '&append_to_response=credits,images';
+    var t = r.tmdb;
+    var url = 'https://api.themoviedb.org/3/movie/' + t.id + '?api_key=' + API + '&append_to_response=credits,images';
     var detail = await Logit.Search.tmdb(url);
-    if (!detail) { alert('Failed to get movie details'); return;
+    if (!detail) { alert('Failed to get movie details'); return; }
 
-    }
-
-    var title = (document.getElementById('mTitle') || {}).textContent || movie.t;
-    var rating = movie.r;
-    var logged = (document.getElementById('eLogged') || {}).value || movie.d;
-    var watch = document.getElementById('eWatch') ? (document.getElementById('eWatch').checked ? 'Rewatch' : '1st Watch') : movie.w;
-
-    var newMovie = Logit.MovieFactory.fromTMDB(detail, rating, watch, logged);
+    var movie = Logit.MovieFactory.fromTMDB(detail, r.rating, r.watch, r.date || new Date().toISOString().split('T')[0]);
     var state = Logit.Storage.load();
-    state.movies.unshift(newMovie);
+    state.movies.unshift(movie);
     Logit.Storage.save(state);
 
-    var originalLine = movie._originalLine;
-    var newLine = title + ' ' + logged + ' ' + rating;
-    await this.updateObsidianFile(originalLine, '✅ ' + newLine);
+    var newLine = t.title + ' ' + (r.date || '') + ' ' + r.rating;
+    await this.updateObsidianFile(r.originalLine, '✅ ' + newLine);
 
-    this.currentResults.splice(movie._importIndex, 1);
-    Logit.Modals.closeMeta();
+    this.currentResults.splice(index, 1);
+    this.renderList(this.currentResults);
+    this.updateBadge();
+  },
+
+  skipMovie(index) {
+    this.currentResults.splice(index, 1);
     this.renderList(this.currentResults);
     this.updateBadge();
   },

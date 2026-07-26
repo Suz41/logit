@@ -294,10 +294,11 @@ body.no-scroll {
 
 .listItemActions {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  gap: 4px;
+  gap: 0;
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -306,33 +307,32 @@ body.no-scroll {
   opacity: 1;
 }
 
-.listAccept, .listReject {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+.listImport, .listSkip {
+  flex: 1;
+  height: 28px;
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s ease;
-  font-size: 12px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: transform 0.1s;
 }
 
-.listAccept {
-  background: rgba(48, 209, 88, 0.9);
+.listImport {
+  background: var(--green);
   color: #000;
+  border-radius: 0 0 0 8px;
 }
 
-.listReject {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+.listSkip {
+  background: rgba(0,0,0,0.6);
+  color: rgba(255,255,255,0.6);
+  border-radius: 0 0 8px 0;
+  backdrop-filter: blur(4px);
 }
 
-.listAccept:active, .listReject:active {
-  transform: scale(0.85);
+.listImport:active, .listSkip:active {
+  transform: scale(0.95);
 }
 
 .listMessage {
