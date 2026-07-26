@@ -10,7 +10,6 @@ Logit.ListPage = {
     this.navList = document.getElementById('navList');
     this.pcListBtn = document.getElementById('pcListBtn');
     this.posterBg = document.getElementById('posterBg');
-    this.driveLinkInput = document.getElementById('driveLinkInput');
     this.driveConnectBtn = document.getElementById('driveConnectBtn');
     this.listEmpty = document.getElementById('listEmpty');
     this.listItems = document.getElementById('listItems');
@@ -19,7 +18,6 @@ Logit.ListPage = {
 
     this.bindEvents();
     this.checkUrlHash();
-    this.loadSavedLink();
   },
 
   bindEvents: function() {
@@ -49,25 +47,11 @@ Logit.ListPage = {
         self.connectDrive();
       });
     }
-
-    if (this.driveLinkInput) {
-      this.driveLinkInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') self.connectDrive();
-      });
-    }
   },
 
   checkUrlHash: function() {
     if (window.location.hash === '#list') {
       this.showList();
-    }
-  },
-
-  loadSavedLink: function() {
-    var saved = localStorage.getItem('logit_drive_link');
-    if (saved && this.driveLinkInput) {
-      this.driveLinkInput.value = saved;
-      this.connectDrive();
     }
   },
 
@@ -120,15 +104,16 @@ Logit.ListPage = {
   },
 
   async connectDrive() {
-    var url = this.driveLinkInput.value.trim();
-    if (!url) { alert('Paste a Google Drive share link'); return; }
+    var url = localStorage.getItem('logit_drive_link');
+    if (!url) {
+      alert('Set your Drive folder link in About → Obsidian Sync first.');
+      return;
+    }
 
     var extracted = this.extractId(url);
-    if (!extracted) { alert('Invalid Google Drive link'); return; }
+    if (!extracted) { alert('Invalid Google Drive link. Check your link in About.'); return; }
 
-    localStorage.setItem('logit_drive_link', url);
-
-    this.driveConnectBtn.textContent = 'Loading...';
+    this.driveConnectBtn.textContent = 'Syncing...';
     this.driveConnectBtn.disabled = true;
 
     try {
@@ -143,7 +128,7 @@ Logit.ListPage = {
     } catch (e) {
       alert('Failed to load: ' + e.message);
     } finally {
-      this.driveConnectBtn.textContent = 'Connect';
+      this.driveConnectBtn.textContent = 'Sync from Drive';
       this.driveConnectBtn.disabled = false;
     }
   },
