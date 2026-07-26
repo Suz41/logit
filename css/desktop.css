@@ -45,6 +45,7 @@
   }
 
   .pcNavBtn {
+    position: relative;
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.45);
@@ -54,6 +55,10 @@
     border-radius: 99px;
     cursor: pointer;
     font-family: inherit;
+  }
+  .pcNavBtn .listBadge {
+    top: -4px;
+    right: -4px;
   }
 
   .pcNavBtn:hover {
@@ -81,7 +86,7 @@
   .listSection {
     max-width: 800px !important;
     margin: 0 auto !important;
-    padding: 80px 24px !important;
+    padding: 24px 24px 80px !important;
   }
 
   /* Centered and scaled modals on PC */
