@@ -72,7 +72,7 @@
     margin-right: 16px;
   }
 
-  .library, .searchResults {
+  .library, .searchResults, .listSection {
     max-width: none !important;
     margin: 0 !important;
     padding: 24px 30px !important;
