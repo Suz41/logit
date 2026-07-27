@@ -49,7 +49,7 @@ TMDB API is blocked in India. You need a VPN to search and add movies. Once adde
 logit/
 ├── index.html          # Library (home)
 ├── profile.html        # User profile & settings
-├── PS.html             # Stats dashboard
+├── stats.html          # Stats dashboard
 ├── about.html          # About page
 ├── welcome.html        # Auth page
 ├── reset.html          # Password reset

@@ -55,13 +55,13 @@ Logit.LibraryPage = {
       return missing;
     }
 
-    function buildMovieCard(movie) {
+    function buildMovieCard(movie, cachedMissing) {
       var date = new Date(movie.d);
       var formatted = Logit.Utils.formatDateShort(date);
       var rewatchBadge = Logit.Utils.isRewatch(movie)
         ? ' <span class="rewatch">R</span>'
         : '';
-      var missing = getMissingFields(movie);
+      var missing = cachedMissing || getMissingFields(movie);
       var missingBadge =
         missing.length > 0 ? ' <span class="missingDot"></span>' : '';
       var card = document.createElement('div');
@@ -168,19 +168,22 @@ Logit.LibraryPage = {
         section.className =
           'monthSection' + (state.openMonths.has(key) ? ' active' : '');
 
-        var hasMissing = group.movies.some(function (m) {
-          return getMissingFields(m).length > 0;
+        var movieMissingCache = new Map();
+        var hasMissing = false;
+        var missingFieldCounts = {};
+
+        group.movies.forEach(function (m) {
+          var missing = getMissingFields(m);
+          movieMissingCache.set(m, missing);
+          if (missing.length > 0) hasMissing = true;
+          missing.forEach(function (f) {
+            missingFieldCounts[f] = (missingFieldCounts[f] || 0) + 1;
+          });
         });
 
         var head = document.createElement('div');
         head.className = 'monthHead';
         if (hasMissing) {
-          var missingFieldCounts = {};
-          group.movies.forEach(function (m) {
-            getMissingFields(m).forEach(function (f) {
-              missingFieldCounts[f] = (missingFieldCounts[f] || 0) + 1;
-            });
-          });
           var tooltipParts = [];
           for (var field in missingFieldCounts) {
             tooltipParts.push(field + ': ' + missingFieldCounts[field]);
@@ -213,7 +216,7 @@ Logit.LibraryPage = {
         grid.className = 'moviesGrid';
 
         group.movies.forEach(function (movie) {
-          grid.append(buildMovieCard(movie));
+          grid.append(buildMovieCard(movie, movieMissingCache.get(movie)));
         });
 
         gridWrap.append(grid);
@@ -494,17 +497,28 @@ Logit.LibraryPage = {
         }
       }
 
-      var url =
-        'https://api.themoviedb.org/3/search/movie?api_key=' +
-        API +
-        '&query=' +
-        encodeURIComponent(q);
-      if (yearInput.value) url += '&year=' + yearInput.value;
-      var data = await Logit.Search.tmdb(url);
-      if (!data) {
+      var data;
+      try {
+        var url =
+          'https://api.themoviedb.org/3/search/movie?api_key=' +
+          API +
+          '&query=' +
+          encodeURIComponent(q);
+        if (yearInput.value) url += '&year=' + yearInput.value;
+        data = await Logit.Search.tmdb(url);
+        if (!data) {
+          Logit.UI.showError(
+            results,
+            'Could not reach TMDB. Check your connection.',
+            esc
+          );
+          return;
+        }
+      } catch (err) {
+        console.error('TMDB search error:', err);
         Logit.UI.showError(
           results,
-          'Could not reach TMDB. Check your connection.',
+          'An error occurred while searching. Please try again.',
           esc
         );
         return;
@@ -557,9 +571,6 @@ Logit.LibraryPage = {
     async function addMovieToDB(d, rating, isRewatch) {
       if (state._addDebounce) return;
       state._addDebounce = true;
-      setTimeout(function () {
-        state._addDebounce = false;
-      }, 2000);
 
       // Check for duplicates by tmdb_id
       var existing = state.movies.find(function (m) {
@@ -602,6 +613,7 @@ Logit.LibraryPage = {
       Logit.Modals.closeAdd(modal, queryInput);
       Logit.Overlays.clear();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      state._addDebounce = false;
     }
 
     // ========= EDIT & META ACTIONS =========
@@ -695,7 +707,7 @@ Logit.LibraryPage = {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     $('navStats').onclick = function () {
-      window.location.href = 'PS.html';
+      window.location.href = 'stats.html';
     };
   }
 };

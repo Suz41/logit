@@ -6,9 +6,10 @@
 
 <meta
 name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-<title>Log!t - About</title>
+<meta name="description" content="Log!t - Your movie journal.">
+    <title>Log!t - About</title>
 
 <link
 rel="preconnect"
@@ -22,7 +23,7 @@ rel="stylesheet">
 <link rel="stylesheet" href="css/components.css?v=58">
 <link rel="stylesheet" href="css/about.css?v=58">
 <link rel="stylesheet" href="css/desktop.css?v=58">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 </head>
 
@@ -41,10 +42,10 @@ rel="stylesheet">
 <div class="pcHeaderNav">
   <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>
   <button class="pcNavBtn" onclick="location.href='index.html?add=true'">Add Movie</button>
-  <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
+  <button class="pcNavBtn" onclick="location.href='stats.html'">Stats</button>
 </div>
 <div style="display:flex;gap:6px;" class="mobileSpacer">
-<button class="settingsIcon" id="profileBtn" title="Profile" onclick="location.href='profile.html'">
+<button class="settingsIcon" id="profileBtn" title="Profile" onclick="location.href='profile.html'" aria-label="Profile">
 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
 </button>
 </div>
@@ -69,15 +70,15 @@ rel="stylesheet">
     </div>
     <div class="infoRow">
       <span class="infoLabel">Creator</span>
-      <span class="infoValue"><a href="https://github.com/Suz41" target="_blank">Suz41</a></span>
+      <span class="infoValue"><a href="https://github.com/Suz41" target="_blank" rel="noopener">Suz41</a></span>
     </div>
     <div class="infoRow">
       <span class="infoLabel">Live</span>
-      <span class="infoValue"><a href="https://suz41.github.io/logit" target="_blank">suz41.github.io/logit</a></span>
+      <span class="infoValue"><a href="https://suz41.github.io/logit" target="_blank" rel="noopener">suz41.github.io/logit</a></span>
     </div>
     <div class="infoRow">
       <span class="infoLabel">Source</span>
-      <span class="infoValue"><a href="https://github.com/Suz41/logit" target="_blank">GitHub</a></span>
+      <span class="infoValue"><a href="https://github.com/Suz41/logit" target="_blank" rel="noopener">GitHub</a></span>
     </div>
   </div>
 </div>
@@ -270,8 +271,8 @@ rel="stylesheet">
         <div class="apiName">TMDB</div>
         <div class="apiDesc">Movie search & metadata</div>
       </div>
-      <input type="text" id="tmdbApiKey" class="apiInput" placeholder="Enter key">
-      <a href="https://www.themoviedb.org/settings/api" target="_blank" class="apiLink">Get Key</a>
+      <input type="text" id="tmdbApiKey" class="apiInput" placeholder="Enter key" aria-label="TMDB API key">
+      <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" class="apiLink">Get Key</a>
     </div>
   </div>
   <button class="saveAllBtn" id="saveAllKeys">Save Keys</button>
@@ -287,16 +288,16 @@ rel="stylesheet">
 <div class="footer">
   <p>Built with vanilla HTML, CSS & JS</p>
   <p>No frameworks. No build tools. No dependencies.</p>
-  <div class="creatorTag">Created by&nbsp;<a href="https://github.com/Suz41" target="_blank">Suz41</a></div>
+  <div class="creatorTag">Created by&nbsp;<a href="https://github.com/Suz41" target="_blank" rel="noopener">Suz41</a></div>
 </div>
 
-<script src="js/config.js?v=58"></script>
-<script src="js/supabase.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/storage.js?v=58"></script>
-<script src="js/utils.js?v=58"></script>
-<script src="js/posterCycle.js?v=58"></script>
-<script src="js/about.js?v=58"></script>
-<script src="js/app.js?v=58"></script>
+<script defer src="js/config.js?v=58"></script>
+<script defer src="js/supabase.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/storage.js?v=58"></script>
+<script defer src="js/utils.js?v=58"></script>
+<script defer src="js/posterCycle.js?v=58"></script>
+<script defer src="js/about.js?v=58"></script>
+<script defer src="js/app.js?v=58"></script>
 </body>
 </html>

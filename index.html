@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Log!t</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Log!t - Your movie journal.">
+    <title>Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css?v=58">
@@ -13,8 +14,8 @@
 <link rel="stylesheet" href="css/desktop.css?v=58">
 <link rel="stylesheet" href="css/animations.css?v=58">
 <link rel="stylesheet" href="css/auth.css?v=58">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -24,20 +25,20 @@
       <a href="index.html" class="logo">Log!t</a>
       <div class="pcSearchBar" id="pcSearchBar">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search library..." id="pcLibSearch">
-        <button class="clearBtn" id="pcClearSearch">&times;</button>
+        <input type="text" placeholder="Search library..." id="pcLibSearch" aria-label="Search library">
+        <button class="clearBtn" id="pcClearSearch" aria-label="Clear search">&times;</button>
       </div>
     </div>
     <div class="pcHeaderNav">
       <button class="pcNavBtn active" onclick="location.href='index.html'">Library</button>
       <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
-      <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
+      <button class="pcNavBtn" onclick="location.href='stats.html'">Stats</button>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
-      <button class="settingsIcon" id="profileBtn" title="Profile">
+      <button class="settingsIcon" id="profileBtn" title="Profile" aria-label="Profile">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
-      <button class="settingsIcon" id="settingsBtn">
+      <button class="settingsIcon" id="settingsBtn" aria-label="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
@@ -45,17 +46,17 @@
   <div class="settingsPanel" id="settingsPanel">
     <div class="settingsRow">
       <span class="settingsLabel">Dates</span>
-      <button class="settingsToggle" id="dateToggle"></button>
+      <button class="settingsToggle" id="dateToggle" aria-label="Toggle dates"></button>
       <span class="settingsLabel" style="margin-left:14px;">Cols</span>
       <div class="gridSlider">
         <div class="gridTicks"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-        <input type="range" id="gridSlider" min="4" max="10" step="any" value="3">
+        <input type="range" id="gridSlider" min="4" max="10" step="any" value="3" aria-label="Grid size">
         <span class="gridValue" id="gridValue">3</span>
       </div>
       <div class="searchBar" id="searchBar">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search" id="libSearch">
-        <button class="clearBtn" id="clearSearch">&times;</button>
+        <input type="text" placeholder="Search" id="libSearch" aria-label="Search library">
+        <button class="clearBtn" id="clearSearch" aria-label="Clear search">&times;</button>
       </div>
     </div>
   </div>
@@ -68,10 +69,10 @@
     <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
     <span class="navLabel">Library</span>
   </button>
-  <button class="navAdd" id="navAdd">
+  <button class="navAdd" id="navAdd" aria-label="Add movie">
     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
-  <button class="navItem" id="navStats" onclick="location.href='PS.html'">
+  <button class="navItem" id="navStats" onclick="location.href='stats.html'">
     <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
     <span class="navLabel">Stats</span>
   </button>
@@ -82,15 +83,15 @@
   <div class="modal-content">
     <div class="top">
       <h3>Add Movie</h3>
-      <button class="close" id="closeBtn">&times;</button>
+      <button class="close" id="closeBtn" aria-label="Close">&times;</button>
     </div>
     <div class="searchBox">
-      <input type="text" placeholder="Movie name" id="query">
-      <button class="clearBtn" id="clearQuery">&times;</button>
+      <input type="text" placeholder="Movie name" id="query" aria-label="Search movies">
+      <button class="clearBtn" id="clearQuery" aria-label="Clear search">&times;</button>
     </div>
     <div class="searchRow">
-      <input type="number" placeholder="Year" id="year">
-      <input type="date" id="watchDate">
+      <input type="number" placeholder="Year" id="year" aria-label="Year filter">
+      <input type="date" id="watchDate" aria-label="Watch date">
     </div>
     <div class="results" id="results"></div>
   </div>
@@ -105,7 +106,7 @@
     <div class="metaHeader">
       <div class="posterWrap">
         <img class="poster" id="mPoster">
-        <button class="posterBtn" id="changePoster"></button>
+        <button class="posterBtn" id="changePoster" aria-label="Change poster"></button>
       </div>
       <div class="metaInfo">
         <div class="topRow">
@@ -178,23 +179,23 @@
   </div>
 </section>
 
-<script src="js/constants.js?v=58"></script>
-<script src="js/config.js?v=58"></script>
-<script src="js/storage.js?v=58"></script>
-<script src="js/utils.js?v=58"></script>
-<script src="js/movieFactory.js?v=58"></script>
-<script src="js/movies.js?v=58"></script>
-<script src="js/overlays.js?v=58"></script>
-<script src="js/search.js?v=58"></script>
-<script src="js/posterPicker.js?v=58"></script>
-<script src="js/modals.js?v=58"></script>
-<script src="js/import.js?v=58"></script>
-<script src="js/ui.js?v=58"></script>
-<script src="js/supabase.js?v=58"></script>
-<script src="js/auth.js?v=58"></script>
-<script src="js/drive.js?v=58"></script>
-<script src="js/library.js?v=58"></script>
-<script src="js/app.js?v=58"></script>
+<script defer src="js/constants.js?v=58"></script>
+<script defer src="js/config.js?v=58"></script>
+<script defer src="js/storage.js?v=58"></script>
+<script defer src="js/utils.js?v=58"></script>
+<script defer src="js/movieFactory.js?v=58"></script>
+<script defer src="js/movies.js?v=58"></script>
+<script defer src="js/overlays.js?v=58"></script>
+<script defer src="js/search.js?v=58"></script>
+<script defer src="js/posterPicker.js?v=58"></script>
+<script defer src="js/modals.js?v=58"></script>
+<script defer src="js/import.js?v=58"></script>
+<script defer src="js/ui.js?v=58"></script>
+<script defer src="js/supabase.js?v=58"></script>
+<script defer src="js/auth.js?v=58"></script>
+<script defer src="js/drive.js?v=58"></script>
+<script defer src="js/library.js?v=58"></script>
+<script defer src="js/app.js?v=58"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Supabase.init();

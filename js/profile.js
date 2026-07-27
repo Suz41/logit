@@ -81,7 +81,9 @@ Logit.ProfilePage = {
         localStorage.setItem(this._LAST_BACKUP_KEY, String(driveTime));
         this.showLastBackup();
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error('Drive backup refresh failed:', e);
+    }
   },
 
   updateLastBackup() {
@@ -140,7 +142,9 @@ Logit.ProfilePage = {
       var usageEl = document.getElementById('cloudStorageUsage');
       if (countEl) countEl.textContent = usage.count;
       if (usageEl) usageEl.textContent = usage.formatted + ' / 500 MB';
-    } catch (e) {}
+    } catch (e) {
+      console.error('Storage info update failed:', e);
+    }
   },
 
   async loadStats() {
@@ -315,6 +319,9 @@ Logit.ProfilePage = {
   },
 
   async searchFavMovies(query) {
+    if (this._favSearchController) this._favSearchController.abort();
+    this._favSearchController = new AbortController();
+
     var API = Logit.Config.getApiKey();
     var results = document.getElementById('favSearchResults');
     if (!results || !API || !query) {
@@ -327,7 +334,8 @@ Logit.ProfilePage = {
         'https://api.themoviedb.org/3/search/movie?api_key=' +
           API +
           '&query=' +
-          encodeURIComponent(query)
+          encodeURIComponent(query),
+        { signal: this._favSearchController.signal }
       );
       if (!data || !data.results) return;
       var self = this;
@@ -374,7 +382,10 @@ Logit.ProfilePage = {
       });
       results.textContent = '';
       results.append(fragment);
-    } catch (e) {}
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      console.error('TMDB search error:', e);
+    }
   },
 
   async addFavorite() {
@@ -974,10 +985,6 @@ Logit.ProfilePage = {
       };
 
     // Account
-    var EYE_OPEN_SVG =
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>';
-    var EYE_CLOSED_SVG =
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg>';
 
     if ($('changePasswordBtn'))
       $('changePasswordBtn').addEventListener('click', function () {
@@ -988,9 +995,9 @@ Logit.ProfilePage = {
         $('changeCurrentPassword').type = 'password';
         $('changeNewPassword').type = 'password';
         $('changeConfirmPassword').type = 'password';
-        $('toggleCurrentPasswordBtn').innerHTML = EYE_CLOSED_SVG;
-        $('toggleNewPasswordBtn').innerHTML = EYE_CLOSED_SVG;
-        $('toggleConfirmPasswordBtn').innerHTML = EYE_CLOSED_SVG;
+        $('toggleCurrentPasswordBtn').innerHTML = Logit.EYE_CLOSED_SVG;
+        $('toggleNewPasswordBtn').innerHTML = Logit.EYE_CLOSED_SVG;
+        $('toggleConfirmPasswordBtn').innerHTML = Logit.EYE_CLOSED_SVG;
         $('changePasswordStatus').textContent = '';
         $('changeCurrentPassword').focus();
       });
@@ -1002,10 +1009,10 @@ Logit.ProfilePage = {
       toggle.addEventListener('click', function () {
         if (input.type === 'password') {
           input.type = 'text';
-          toggle.innerHTML = EYE_OPEN_SVG;
+          toggle.innerHTML = Logit.EYE_OPEN_SVG;
         } else {
           input.type = 'password';
-          toggle.innerHTML = EYE_CLOSED_SVG;
+          toggle.innerHTML = Logit.EYE_CLOSED_SVG;
         }
       });
     }
@@ -1152,12 +1159,12 @@ Logit.ProfilePage = {
         self.closeFavModal();
       });
     if ($('favSearchInput'))
-      $('favSearchInput').addEventListener('input', function (e) {
-        clearTimeout(self._favSearchTimeout);
-        self._favSearchTimeout = setTimeout(function () {
+      $('favSearchInput').addEventListener(
+        'input',
+        Logit.Utils.debounce(function (e) {
           self.searchFavMovies(e.target.value);
-        }, 300);
-      });
+        }, 300)
+      );
     if ($('favConfirmBtn'))
       $('favConfirmBtn').addEventListener('click', function () {
         self.addFavorite();
@@ -1177,12 +1184,12 @@ Logit.ProfilePage = {
         self.closeDirectorModal();
       });
     if ($('directorSearchInput'))
-      $('directorSearchInput').addEventListener('input', function (e) {
-        clearTimeout(self._directorSearchTimeout);
-        self._directorSearchTimeout = setTimeout(function () {
+      $('directorSearchInput').addEventListener(
+        'input',
+        Logit.Utils.debounce(function (e) {
           self.searchDirectors(e.target.value);
-        }, 300);
-      });
+        }, 300)
+      );
     var directorResults = $('directorResults');
     if (directorResults) {
       directorResults.addEventListener('click', function (e) {
@@ -1215,6 +1222,9 @@ Logit.ProfilePage = {
   },
 
   async searchDirectors(query) {
+    if (this._dirSearchController) this._dirSearchController.abort();
+    this._dirSearchController = new AbortController();
+
     var API = Logit.Config.getApiKey();
     var results = document.getElementById('directorResults');
     if (!results || !API || !query || query.length < 2) {
@@ -1227,7 +1237,8 @@ Logit.ProfilePage = {
         'https://api.themoviedb.org/3/search/person?api_key=' +
           API +
           '&query=' +
-          encodeURIComponent(query)
+          encodeURIComponent(query),
+        { signal: this._dirSearchController.signal }
       );
       if (!data || !data.results) return;
       var directors = data.results.filter(function (p) {
@@ -1260,7 +1271,10 @@ Logit.ProfilePage = {
       } else {
         results.append(fragment);
       }
-    } catch (e) {}
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      console.error('TMDB director search error:', e);
+    }
   },
 
   async setDirectorAvatar(imgUrl) {

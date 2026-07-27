@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Profile - Log!t</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Log!t - Your movie journal.">
+    <title>Profile - Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css?v=58">
@@ -11,8 +12,8 @@
 <link rel="stylesheet" href="css/profile.css?v=58">
 <link rel="stylesheet" href="css/modal.css?v=58">
 <link rel="stylesheet" href="css/desktop.css?v=58">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="posterBg" id="posterBg"></div>
@@ -24,10 +25,10 @@
     </div>
     <div class="pcHeaderNav">
       <button class="pcNavBtn" onclick="location.href='index.html'">Library</button>
-      <button class="pcNavBtn" onclick="location.href='PS.html'">Stats</button>
+      <button class="pcNavBtn" onclick="location.href='stats.html'">Stats</button>
     </div>
     <div style="display:flex;gap:6px;">
-      <button class="settingsIcon" id="backBtn" title="Back">
+      <button class="settingsIcon" id="backBtn" title="Back" aria-label="Go back">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
     </div>
@@ -42,10 +43,10 @@
       <!-- Avatar -->
       <div class="avatarWrap" id="avatarWrap">
         <div class="avatar" id="profileAvatar">S</div>
-        <button class="avatarEdit" id="editAvatarBtn" title="Change avatar">
+        <button class="avatarEdit" id="editAvatarBtn" title="Change avatar" aria-label="Change avatar">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </button>
-        <button class="avatarClear" id="clearAvatarBtn" title="Clear avatar">
+        <button class="avatarClear" id="clearAvatarBtn" title="Clear avatar" aria-label="Clear avatar">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <input type="file" id="avatarInput" accept="image/*" style="display:none;">
@@ -55,7 +56,7 @@
       <div class="profileIdentity">
         <div class="profileNameRow">
           <h1 class="profileName" id="profileName">Loading...</h1>
-          <button class="editNameBtn" id="editUsernameBtn" title="Edit username">
+          <button class="editNameBtn" id="editUsernameBtn" title="Edit username" aria-label="Edit username">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
           </button>
         </div>
@@ -236,7 +237,7 @@
         <input type="file" id="fileInput" accept=".json,.txt" style="display:none;">
       </label>
     </div>
-    <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..."></textarea>
+    <textarea class="importTextarea" id="importText" placeholder="Paste text or upload a file..." aria-label="Import data"></textarea>
     <button class="importBtn" id="importStartBtn">Import</button>
     <div class="importStatus" id="importStatus"></div>
   </div>
@@ -251,16 +252,16 @@
     </div>
     <div class="authForm modalAuthForm">
       <div class="passwordInputWrap">
-        <input type="password" id="changeCurrentPassword" class="authInput modalInput" placeholder="Current Password">
-        <button type="button" class="modalPasswordToggle" id="toggleCurrentPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+        <input type="password" id="changeCurrentPassword" class="authInput modalInput" placeholder="Current Password" aria-label="Current password">
+        <button type="button" class="modalPasswordToggle" id="toggleCurrentPasswordBtn" aria-label="Toggle password visibility"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
       </div>
       <div class="passwordInputWrap">
-        <input type="password" id="changeNewPassword" class="authInput modalInput" placeholder="New Password (6+ characters)">
-        <button type="button" class="modalPasswordToggle" id="toggleNewPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+        <input type="password" id="changeNewPassword" class="authInput modalInput" placeholder="New Password (6+ characters)" aria-label="New password">
+        <button type="button" class="modalPasswordToggle" id="toggleNewPasswordBtn" aria-label="Toggle password visibility"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
       </div>
       <div class="passwordInputWrap">
-        <input type="password" id="changeConfirmPassword" class="authInput modalInput" placeholder="Confirm New Password">
-        <button type="button" class="modalPasswordToggle" id="toggleConfirmPasswordBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+        <input type="password" id="changeConfirmPassword" class="authInput modalInput" placeholder="Confirm New Password" aria-label="Confirm password">
+        <button type="button" class="modalPasswordToggle" id="toggleConfirmPasswordBtn" aria-label="Toggle password visibility"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
       </div>
       <div class="forgotPasswordContainer">
         <button type="button" id="modalForgotPasswordBtn" class="modalForgotLink">Forgot Password?</button>
@@ -290,7 +291,7 @@
       <h3>Add Favorite Film</h3>
       <button class="modalClose" id="favModalClose">&times;</button>
     </div>
-    <input type="text" class="favSearchInput" id="favSearchInput" placeholder="Search movie title...">
+    <input type="text" class="favSearchInput" id="favSearchInput" placeholder="Search movie title..." aria-label="Search favorite movies">
     <div class="favSearchResults" id="favSearchResults"></div>
     <div class="favSelected" id="favSelected" style="display:none;">
       <img id="favSelectedPoster" src="" alt="">
@@ -310,29 +311,29 @@
       <h3>Choose Director Avatar</h3>
       <button class="modalClose" id="directorModalClose">&times;</button>
     </div>
-    <input type="text" class="directorSearchInput" id="directorSearchInput" placeholder="Search director name...">
+    <input type="text" class="directorSearchInput" id="directorSearchInput" placeholder="Search director name..." aria-label="Search directors">
     <div class="directorResults" id="directorResults"></div>
   </div>
 </div>
 
-<script src="js/config.js?v=58"></script>
-<script src="js/constants.js?v=58"></script>
-<script src="js/storage.js?v=58"></script>
-<script src="js/utils.js?v=58"></script>
-<script src="js/supabase.js?v=58"></script>
-<script src="js/auth.js?v=58"></script>
-<script src="js/ui.js?v=58"></script>
-<script src="js/import.js?v=58"></script>
-<script src="js/search.js?v=58"></script>
-<script src="js/movieFactory.js?v=58"></script>
-<script src="js/movies.js?v=58"></script>
-<script src="js/statutils.js?v=58"></script>
-<script src="js/export.js?v=58"></script>
-<script src="js/overlays.js?v=58"></script>
-<script src="js/posterPicker.js?v=58"></script>
-<script src="js/drive.js?v=58"></script>
-<script src="js/posterCycle.js?v=58"></script>
-<script src="js/profile.js?v=58"></script>
+<script defer src="js/config.js?v=58"></script>
+<script defer src="js/constants.js?v=58"></script>
+<script defer src="js/storage.js?v=58"></script>
+<script defer src="js/utils.js?v=58"></script>
+<script defer src="js/supabase.js?v=58"></script>
+<script defer src="js/auth.js?v=58"></script>
+<script defer src="js/ui.js?v=58"></script>
+<script defer src="js/import.js?v=58"></script>
+<script defer src="js/search.js?v=58"></script>
+<script defer src="js/movieFactory.js?v=58"></script>
+<script defer src="js/movies.js?v=58"></script>
+<script defer src="js/statutils.js?v=58"></script>
+<script defer src="js/export.js?v=58"></script>
+<script defer src="js/overlays.js?v=58"></script>
+<script defer src="js/posterPicker.js?v=58"></script>
+<script defer src="js/drive.js?v=58"></script>
+<script defer src="js/posterCycle.js?v=58"></script>
+<script defer src="js/profile.js?v=58"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.ProfilePage.init();

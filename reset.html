@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Reset Password - Log!t</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Log!t - Your movie journal.">
+    <title>Reset Password - Log!t</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css?v=31">
 <link rel="stylesheet" href="css/auth.css?v=31">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/supabase.js"></script>
 </head>
 <body class="welcomePage">
 
@@ -21,8 +24,8 @@
 
     <div class="authCard">
       <div class="authForm">
-        <input type="password" placeholder="New password" id="newPassword" class="authInput">
-        <input type="password" placeholder="Confirm password" id="confirmPassword" class="authInput">
+        <input type="password" placeholder="New password" id="newPassword" class="authInput" aria-label="New password">
+        <input type="password" placeholder="Confirm password" id="confirmPassword" class="authInput" aria-label="Confirm password">
         <div class="authActions">
           <button class="btnPrimary" id="resetBtn">Reset Password</button>
         </div>
@@ -42,10 +45,7 @@
     if (newPass.length < 6) { msg.textContent = 'Password must be 6+ characters'; return; }
     if (newPass !== confirmPass) { msg.textContent = 'Passwords do not match'; return; }
 
-    const client = window.supabase.createClient(
-      'https://rxhkexxpsfaxctmkrlyl.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4aGtleHhwc2ZheGN0bWtybHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzE3MjgsImV4cCI6MjA5OTM0NzcyOH0.KohaWfHtwhsDA0FJ1kHCliWU1_2nZ5Ihany_2v3TkIE'
-    );
+    const client = Logit.Supabase.getClient();
 
     try {
       const { error } = await client.auth.updateUser({ password: newPass });

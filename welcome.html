@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Log!t - Welcome</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Log!t - Your movie journal.">
+    <title>Log!t - Welcome</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css?v=36">
 <link rel="stylesheet" href="css/auth.css?v=36">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body class="welcomePage">
 
@@ -24,13 +25,13 @@
     </div>
 
     <div class="authCard">
-      <div class="authForm">
+      <form class="authForm" onsubmit="return false;">
         <button type="button" class="backBtn" id="backToSignIn" style="display:none;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Sign In</button>
-        <input type="text" placeholder="Username" id="authUsername" class="authInput" style="display:none;">
-        <input type="text" placeholder="Email or Username" id="authEmail" class="authInput">
+        <input type="text" placeholder="Username" id="authUsername" class="authInput" style="display:none;" aria-label="Username">
+        <input type="text" placeholder="Email or Username" id="authEmail" class="authInput" aria-label="Email">
         <div class="passwordWrap">
-          <input type="password" placeholder="Password" id="authPassword" class="authInput">
-          <button type="button" id="togglePassword" class="passwordToggle"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
+          <input type="password" placeholder="Password" id="authPassword" class="authInput" aria-label="Password">
+          <button type="button" id="togglePassword" class="passwordToggle" aria-label="Toggle password visibility"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg></button>
         </div>
         <button class="authLink forgotLink" id="forgotPasswordBtn">Forgot Password?</button>
         <div class="authActions">
@@ -40,14 +41,15 @@
         </div>
         <span class="authMessage" id="authMessage"></span>
       </div>
+    </form>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<script src="js/config.js?v=36"></script>
-<script src="js/constants.js?v=36"></script>
-<script src="js/supabase.js?v=36"></script>
-<script src="js/auth.js?v=36"></script>
+    <script defer src="js/config.js?v=36"></script>
+<script defer src="js/constants.js?v=36"></script>
+<script defer src="js/supabase.js?v=36"></script>
+<script defer src="js/auth.js?v=36"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     Logit.Auth.initWelcomePage();

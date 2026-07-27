@@ -5,8 +5,6 @@ Logit.Auth = {
   _mode: 'signin',
   _SESSION_TIMEOUT_KEY: 'logit_session_timeout',
   _SESSION_TIMEOUT: 60 * 60 * 1000, // 60 minutes
-  _EYE_OPEN_SVG: `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>`,
-  _EYE_CLOSED_SVG: `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.388 4.178 5.325 7.178 9.963 7.178.932 0 1.838-.12 2.7-.348M21.934 12c-1.388-4.178-5.325-7.178-9.963-7.178a10.478 10.478 0 0 0-2.7.348m8.05 13.05L19 19m-4.5-4.5a3 3 0 0 1-4.5-4.5m0 0L8 8m-4 4 1.5 1.5M20 12l-1.5 1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" /></svg>`,
 
   initWelcomePage() {
     this.checkExistingSession();
@@ -125,10 +123,10 @@ Logit.Auth = {
     if (!input || !btn) return;
     if (input.type === 'password') {
       input.type = 'text';
-      btn.innerHTML = this._EYE_OPEN_SVG;
+      btn.innerHTML = Logit.EYE_OPEN_SVG;
     } else {
       input.type = 'password';
-      btn.innerHTML = this._EYE_CLOSED_SVG;
+      btn.innerHTML = Logit.EYE_CLOSED_SVG;
     }
   },
 

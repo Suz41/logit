@@ -6,12 +6,18 @@
   --surface: #000000;
   --surface2: #111111;
   --text: #ffffff;
-  --muted: #8e8e93;
+  --muted: #a1a1a6;
   --accent: #ffffff;
   --green: #30d158;
   --red: #ff453a;
   --pink: #ff375f;
   --border: rgba(255,255,255,0.08);
+}
+
+
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
 }
 
 * {
@@ -517,192 +523,6 @@ body.no-scroll {
   font-family: inherit;
 }
 
-/* ========= LIST MOVIE MODAL ========= */
-.listModal {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-.listModalContent {
-  background: #1a1a1a;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 360px;
-  overflow: hidden;
-  position: relative;
-  border: 0.5px solid var(--border);
-}
-
-.listModalClose {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.listModalPoster {
-  width: 100%;
-  aspect-ratio: 16/9;
-  overflow: hidden;
-  background: #111;
-}
-
-.listModalPoster img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.listModalInfo {
-  padding: 14px 16px 8px;
-}
-
-.listModalInfo h3 {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.listModalMeta {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.listModalDesc {
-  font-size: 12px;
-  color: rgba(255,255,255,0.6);
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.listModalRating {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-.listModalRating span:last-child {
-  color: #fff;
-  font-weight: 600;
-}
-
-.listModalSearch {
-  padding: 0 16px 10px;
-}
-
-.listModalSearch input {
-  width: 100%;
-  height: 36px;
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  background: #222;
-  color: #fff;
-  padding: 0 10px;
-  font-size: 12px;
-  font-family: inherit;
-}
-
-.listModalSearch input::placeholder {
-  color: #666;
-}
-
-.listModalResults {
-  max-height: 120px;
-  overflow-y: auto;
-  margin-top: 6px;
-}
-
-.listModalResultItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.listModalResultItem:hover {
-  background: rgba(255,255,255,0.05);
-}
-
-.listModalResultItem img {
-  width: 28px;
-  height: 42px;
-  border-radius: 4px;
-  object-fit: cover;
-  background: #111;
-}
-
-.listModalResultItem span {
-  font-size: 12px;
-  color: #ddd;
-}
-
-.listModalResultItem small {
-  font-size: 10px;
-  color: #888;
-}
-
-.listModalActions {
-  display: flex;
-  gap: 8px;
-  padding: 10px 16px 16px;
-}
-
-.listModalAccept, .listModalReject {
-  flex: 1;
-  height: 40px;
-  border-radius: 10px;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.15s;
-}
-
-.listModalAccept {
-  background: var(--green);
-  color: #000;
-}
-
-.listModalReject {
-  background: rgba(255,255,255,0.08);
-  color: var(--muted);
-}
-
-.listModalAccept:active, .listModalReject:active {
-  transform: scale(0.96);
-}
-
 /* ========= LIST MODAL EDIT ROW ========= */
 .listModalEditRow {
   display: flex;
@@ -893,5 +713,16 @@ body.no-scroll {
     top: 0;
     max-height: 400px;
     margin-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
