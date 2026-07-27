@@ -1,0 +1,40 @@
+{
+  "name": "logit",
+  "version": "1.0.0",
+  "description": "<h1 align=\"center\">Log!t</h1>",
+  "main": "backfill.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "node ./node_modules/eslint/bin/eslint.js \"js/**/*.js\"",
+    "format:check": "node ./node_modules/prettier/bin/prettier.cjs --check \"js/**/*.js\"",
+    "format": "node ./node_modules/prettier/bin/prettier.cjs --write \"js/**/*.js\"",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Suz41/Logit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Suz41/Logit/issues"
+  },
+  "homepage": "https://github.com/Suz41/Logit#readme",
+  "lint-staged": {
+    "**/*.js": [
+      "node ./node_modules/prettier/bin/prettier.cjs --write",
+      "node ./node_modules/eslint/bin/eslint.js"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^10.8.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
+    "prettier": "^3.9.6"
+  }
+}

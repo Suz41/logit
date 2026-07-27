@@ -18,7 +18,9 @@ Logit.Overlays = {
     if (history.state && history.state.overlay) {
       history.back();
     }
-    setTimeout(function() { Logit.Overlays._closing = false; }, 50);
+    setTimeout(function () {
+      Logit.Overlays._closing = false;
+    }, 50);
   },
 
   popAndClose() {
@@ -38,11 +40,11 @@ Logit.Overlays = {
       history.replaceState(null, '');
     }
 
-    window.addEventListener('popstate', function() {
+    window.addEventListener('popstate', function () {
       Logit.Overlays.popAndClose();
     });
 
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         Logit.Overlays.closeTop();
       }

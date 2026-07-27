@@ -3,7 +3,8 @@ window.Logit = window.Logit || {};
 Logit.UI = {
   /** @param {HTMLElement} container */
   showLoading(container) {
-    container.innerHTML = '<div class="loading"><div class="loadingDot"></div><div class="loadingDot"></div><div class="loadingDot"></div></div>';
+    container.innerHTML =
+      '<div class="loading"><div class="loadingDot"></div><div class="loadingDot"></div><div class="loadingDot"></div></div>';
   },
 
   /** @param {HTMLElement} container @param {string} msg @param {Function} escHelper */
@@ -19,19 +20,23 @@ Logit.UI = {
     let lastScroll = 0;
     let ticking = false;
 
-    window.addEventListener('scroll', function() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function() {
-        const st = window.scrollY;
-        if (st > lastScroll && st > 100) {
-          navBar.classList.add('hidden');
-        } else {
-          navBar.classList.remove('hidden');
-        }
-        lastScroll = st;
-        ticking = false;
-      });
-    }, { passive: true });
+    window.addEventListener(
+      'scroll',
+      function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          const st = window.scrollY;
+          if (st > lastScroll && st > 100) {
+            navBar.classList.add('hidden');
+          } else {
+            navBar.classList.remove('hidden');
+          }
+          lastScroll = st;
+          ticking = false;
+        });
+      },
+      { passive: true }
+    );
   }
 };

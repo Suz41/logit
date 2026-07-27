@@ -21,12 +21,12 @@ Logit.StatUtils = {
       rewatchMap: {}
     };
 
-    movies.forEach(movie => {
+    movies.forEach((movie) => {
       /* COUNTRY */
       if (movie.ct) {
         let country = movie.ct;
-        if (country === "United States of America") {
-          country = "United States";
+        if (country === 'United States of America') {
+          country = 'United States';
         }
         data.countryCount[country] = (data.countryCount[country] || 0) + 1;
         if (!data.regionMovies[country]) data.regionMovies[country] = [];
@@ -35,7 +35,7 @@ Logit.StatUtils = {
 
       /* GENRES */
       if (movie.g) {
-        movie.g.split(',').forEach(g => {
+        movie.g.split(',').forEach((g) => {
           const genre = g.trim();
           if (!genre) return;
           data.genreCount[genre] = (data.genreCount[genre] || 0) + 1;
@@ -46,7 +46,7 @@ Logit.StatUtils = {
 
       /* LANGUAGES */
       if (movie.lg) {
-        movie.lg.split(',').forEach(l => {
+        movie.lg.split(',').forEach((l) => {
           const lang = l.trim();
           if (!lang) return;
           data.langCount[lang] = (data.langCount[lang] || 0) + 1;
@@ -66,7 +66,7 @@ Logit.StatUtils = {
 
       /* ACTORS — split main vs supporting */
       if (movie.c) {
-        movie.c.split(',').forEach(actor => {
+        movie.c.split(',').forEach((actor) => {
           const name = actor.trim();
           if (!name) return;
           if (!data.mainActorCount[name]) {
@@ -80,7 +80,7 @@ Logit.StatUtils = {
         });
       }
       if (movie.sc) {
-        movie.sc.split(',').forEach(actor => {
+        movie.sc.split(',').forEach((actor) => {
           const name = actor.trim();
           if (!name) return;
           if (!data.supportActorCount[name]) {
@@ -115,7 +115,8 @@ Logit.StatUtils = {
       /* REWATCHES */
       const title = movie.t || '';
       if (title) {
-        if (!data.rewatchMap[title]) data.rewatchMap[title] = { count: 0, dates: [] };
+        if (!data.rewatchMap[title])
+          data.rewatchMap[title] = { count: 0, dates: [] };
         data.rewatchMap[title].count++;
         if (movie.d) data.rewatchMap[title].dates.push(movie.d);
       }
@@ -128,8 +129,8 @@ Logit.StatUtils = {
   formatTime(mins) {
     if (!mins) {
       return {
-        main: "0h",
-        sub: "0 min · 0 days · 0 months"
+        main: '0h',
+        sub: '0 min · 0 days · 0 months'
       };
     }
     const hours = Math.floor(mins / 60);

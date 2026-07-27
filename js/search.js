@@ -27,7 +27,7 @@ Logit.Search = {
       // Rate limit
       const now = Date.now();
       const wait = this._MIN_INTERVAL - (now - this._lastRequest);
-      if (wait > 0) await new Promise(r => setTimeout(r, wait));
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
       this._lastRequest = Date.now();
 
       const result = await this._fetchWithRetry(url, retries);
@@ -50,7 +50,7 @@ Logit.Search = {
           const retryAfter = r.headers.get('Retry-After');
           const waitMs = retryAfter ? parseInt(retryAfter) * 1000 : 2000;
           console.warn(`TMDB rate limited. Waiting ${waitMs}ms`);
-          await new Promise(resolve => setTimeout(resolve, waitMs));
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
           continue;
         }
 
@@ -61,7 +61,8 @@ Logit.Search = {
         return data;
       } catch (e) {
         console.error('TMDB fetch attempt ' + (i + 1) + ' failed:', e);
-        if (i < retries) await new Promise(resolve => setTimeout(resolve, 1000));
+        if (i < retries)
+          await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
     return null;
@@ -71,7 +72,7 @@ Logit.Search = {
   filterLibrary(moviesList, query) {
     const q = query.trim().toLowerCase();
     if (q.length < 2) return null;
-    return moviesList.filter(function(m) {
+    return moviesList.filter(function (m) {
       return (m.t || '').toLowerCase().indexOf(q) !== -1;
     });
   }

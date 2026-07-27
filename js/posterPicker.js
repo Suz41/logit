@@ -10,25 +10,39 @@ Logit.PosterPicker = {
     picker.className = 'posterPicker';
     picker.setAttribute('role', 'dialog');
     picker.setAttribute('aria-label', 'Choose poster');
-    picker.innerHTML = '<div class="posterBg" aria-hidden="true"></div>'
-      + '<div class="posterSheet">'
-      + '<button class="posterCloseBtn" aria-label="Close modal">&times;</button>'
-      + '<div class="posterSheetHandle"></div>'
-      + '<div class="posterGrid" style="text-align:center;padding:20px;color:var(--muted);">Loading posters...</div>'
-      + '</div>';
+    picker.innerHTML =
+      '<div class="posterBg" aria-hidden="true"></div>' +
+      '<div class="posterSheet">' +
+      '<button class="posterCloseBtn" aria-label="Close modal">&times;</button>' +
+      '<div class="posterSheetHandle"></div>' +
+      '<div class="posterGrid" style="text-align:center;padding:20px;color:var(--muted);">Loading posters...</div>' +
+      '</div>';
 
     document.body.append(picker);
-    requestAnimationFrame(function() { picker.classList.add('active'); });
-    Logit.Overlays.push(function() { picker.remove(); });
+    requestAnimationFrame(function () {
+      picker.classList.add('active');
+    });
+    Logit.Overlays.push(function () {
+      picker.remove();
+    });
 
-    picker.querySelector('.posterCloseBtn').onclick = function() { Logit.Overlays.closeTop(); };
+    picker.querySelector('.posterCloseBtn').onclick = function () {
+      Logit.Overlays.closeTop();
+    };
 
     var tmdbId = movie.tmdb_id;
     var posters = [];
     if (tmdbId) {
-      var d = await Logit.Search.tmdb('https://api.themoviedb.org/3/movie/' + tmdbId + '/images?api_key=' + apiKey);
+      var d = await Logit.Search.tmdb(
+        'https://api.themoviedb.org/3/movie/' +
+          tmdbId +
+          '/images?api_key=' +
+          apiKey
+      );
       if (d && d.posters) {
-        posters = d.posters.map(function(p) { return { u: p.file_path, l: p.iso_639_1 || 'N/A' }; });
+        posters = d.posters.map(function (p) {
+          return { u: p.file_path, l: p.iso_639_1 || 'N/A' };
+        });
       }
     }
 
@@ -41,7 +55,7 @@ Logit.PosterPicker = {
     }
 
     var fragment = document.createDocumentFragment();
-    posters.forEach(function(p, i) {
+    posters.forEach(function (p, i) {
       var card = document.createElement('div');
       card.className = 'posterItem' + (movie.sp === p.u ? ' active' : '');
       card.dataset.i = i;
@@ -52,7 +66,10 @@ Logit.PosterPicker = {
       var imgEl = document.createElement('img');
       imgEl.src = Logit.Utils.esc(Logit.Utils.img(p.u, 'w780'));
       imgEl.loading = 'lazy';
-      imgEl.onerror = function() { this.onerror = null; this.src = Logit.POSTER_FALLBACK; };
+      imgEl.onerror = function () {
+        this.onerror = null;
+        this.src = Logit.POSTER_FALLBACK;
+      };
 
       var langEl = document.createElement('div');
       langEl.className = 'posterLang';
@@ -65,8 +82,11 @@ Logit.PosterPicker = {
         Logit.Overlays.closeTop();
       }
       card.addEventListener('click', select);
-      card.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); }
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          select();
+        }
       });
 
       fragment.append(card);
@@ -75,6 +95,8 @@ Logit.PosterPicker = {
     grid.textContent = '';
     grid.append(fragment);
 
-    picker.querySelector('.posterBg').onclick = function() { Logit.Overlays.closeTop(); };
+    picker.querySelector('.posterBg').onclick = function () {
+      Logit.Overlays.closeTop();
+    };
   }
 };

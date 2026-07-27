@@ -17,7 +17,10 @@ Logit.Auth = {
     try {
       // Check session timeout
       var lastActivity = localStorage.getItem(this._SESSION_TIMEOUT_KEY);
-      if (lastActivity && Date.now() - parseInt(lastActivity) > this._SESSION_TIMEOUT) {
+      if (
+        lastActivity &&
+        Date.now() - parseInt(lastActivity) > this._SESSION_TIMEOUT
+      ) {
         localStorage.removeItem(this._SESSION_TIMEOUT_KEY);
         return; // Session expired
       }
@@ -30,7 +33,9 @@ Logit.Auth = {
         this.redirectToLibrary();
         return;
       }
-    } catch (e) { /* silent */ }
+    } catch (e) {
+      /* silent */
+    }
   },
 
   updateActivity() {
@@ -53,18 +58,31 @@ Logit.Auth = {
     var forgotBtn = document.getElementById('forgotPasswordBtn');
     var backBtn = document.getElementById('backToSignIn');
 
-    if (signInBtn) signInBtn.addEventListener('click', function() { self.handleSignIn(); });
-    if (createBtn) createBtn.addEventListener('click', function() {
-      if (self._mode === 'signin') self.toggleMode();
-      else self.handleCreateAccount();
-    });
-    if (backBtn) backBtn.addEventListener('click', function() { self.toggleMode(); });
-    if (toggleBtn) toggleBtn.addEventListener('click', function() { self.togglePassword(); });
-    if (forgotBtn) forgotBtn.addEventListener('click', function() { self.handleForgotPassword(); });
+    if (signInBtn)
+      signInBtn.addEventListener('click', function () {
+        self.handleSignIn();
+      });
+    if (createBtn)
+      createBtn.addEventListener('click', function () {
+        if (self._mode === 'signin') self.toggleMode();
+        else self.handleCreateAccount();
+      });
+    if (backBtn)
+      backBtn.addEventListener('click', function () {
+        self.toggleMode();
+      });
+    if (toggleBtn)
+      toggleBtn.addEventListener('click', function () {
+        self.togglePassword();
+      });
+    if (forgotBtn)
+      forgotBtn.addEventListener('click', function () {
+        self.handleForgotPassword();
+      });
 
     var passwordInput = document.getElementById('authPassword');
     if (passwordInput) {
-      passwordInput.addEventListener('keydown', function(e) {
+      passwordInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
           if (self._mode === 'signin') self.handleSignIn();
           else self.handleCreateAccount();
@@ -122,7 +140,10 @@ Logit.Auth = {
   async handleSignIn() {
     var input = (document.getElementById('authEmail') || {}).value;
     var password = (document.getElementById('authPassword') || {}).value;
-    if (!input || !password) { this.setMessage('Enter email/username and password'); return; }
+    if (!input || !password) {
+      this.setMessage('Enter email/username and password');
+      return;
+    }
 
     var email = input.trim();
     // If input doesn't look like an email, look up by username
@@ -130,7 +151,11 @@ Logit.Auth = {
       var client = Logit.Supabase.getClient();
       if (client) {
         try {
-          var { data } = await client.from('users').select('email').eq('username', email).maybeSingle();
+          var { data } = await client
+            .from('users')
+            .select('email')
+            .eq('username', email)
+            .maybeSingle();
           if (data && data.email) {
             email = data.email;
           } else {
@@ -151,22 +176,40 @@ Logit.Auth = {
     var username = (document.getElementById('authUsername') || {}).value;
     var email = (document.getElementById('authEmail') || {}).value;
     var password = (document.getElementById('authPassword') || {}).value;
-    if (!username || !email || !password) { this.setMessage('Fill all fields'); return; }
-    if (!email.includes('@')) { this.setMessage('Enter a valid email'); return; }
-    if (password.length < 6) { this.setMessage('Password must be 6+ characters'); return; }
+    if (!username || !email || !password) {
+      this.setMessage('Fill all fields');
+      return;
+    }
+    if (!email.includes('@')) {
+      this.setMessage('Enter a valid email');
+      return;
+    }
+    if (password.length < 6) {
+      this.setMessage('Password must be 6+ characters');
+      return;
+    }
     await this.signUpWithEmail(email.trim(), password.trim(), username.trim());
   },
 
   async handleForgotPassword() {
     var email = (document.getElementById('authEmail') || {}).value;
-    if (!email) { this.setMessage('Enter your email first'); return; }
+    if (!email) {
+      this.setMessage('Enter your email first');
+      return;
+    }
     var client = Logit.Supabase.getClient();
-    if (!client) { this.setMessage('Cloud not configured'); return; }
+    if (!client) {
+      this.setMessage('Cloud not configured');
+      return;
+    }
     try {
       var { error } = await client.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: window.location.origin + '/reset.html'
       });
-      if (error) { this.setMessage(error.message); return; }
+      if (error) {
+        this.setMessage(error.message);
+        return;
+      }
       this.setMessage('Reset link sent! Check your email.');
     } catch (e) {
       this.setMessage('Failed to send reset link');
@@ -175,10 +218,19 @@ Logit.Auth = {
 
   async signInWithEmail(email, password) {
     var client = Logit.Supabase.getClient();
-    if (!client) { this.setMessage('Cloud not configured'); return; }
+    if (!client) {
+      this.setMessage('Cloud not configured');
+      return;
+    }
     try {
-      var { data, error } = await client.auth.signInWithPassword({ email: email, password: password });
-      if (error) { this.setMessage(error.message); return; }
+      var { data, error } = await client.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+      if (error) {
+        this.setMessage(error.message);
+        return;
+      }
       this._currentUser = data.user;
       localStorage.setItem('logit_user_id', data.user.id);
       await this.initializeCloudUser();
@@ -190,7 +242,10 @@ Logit.Auth = {
 
   async signUpWithEmail(email, password, username) {
     var client = Logit.Supabase.getClient();
-    if (!client) { this.setMessage('Cloud not configured'); return; }
+    if (!client) {
+      this.setMessage('Cloud not configured');
+      return;
+    }
 
     try {
       var { data: existing } = await client
@@ -202,7 +257,9 @@ Logit.Auth = {
         this.setMessage('Username already taken');
         return;
       }
-    } catch (e) { /* table might not exist yet */ }
+    } catch (e) {
+      /* table might not exist yet */
+    }
 
     try {
       var { data, error } = await client.auth.signUp({
@@ -239,18 +296,29 @@ Logit.Auth = {
     var client = Logit.Supabase.getClient();
     if (!client) return;
     try {
-      var username = this._currentUser.user_metadata && this._currentUser.user_metadata.username || (this._currentUser.email || '').split('@')[0] || 'User';
-      await client.from('users').upsert({
-        id: this._currentUser.id,
-        email: this._currentUser.email,
-        username: username,
-        created_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+      var username =
+        (this._currentUser.user_metadata &&
+          this._currentUser.user_metadata.username) ||
+        (this._currentUser.email || '').split('@')[0] ||
+        'User';
+      await client.from('users').upsert(
+        {
+          id: this._currentUser.id,
+          email: this._currentUser.email,
+          username: username,
+          created_at: new Date().toISOString()
+        },
+        { onConflict: 'id' }
+      );
       localStorage.setItem('logit_user_id', this._currentUser.id);
-    } catch (e) { /* silent */ }
+    } catch (e) {
+      /* silent */
+    }
   },
 
   redirectToLibrary() {
-    setTimeout(function() { window.location.href = 'index.html'; }, 300);
+    setTimeout(function () {
+      window.location.href = 'index.html';
+    }, 300);
   }
 };

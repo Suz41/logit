@@ -9,7 +9,7 @@ Logit.Modals = {
   _renderChips(el, text) {
     el.textContent = '';
     if (!text) return;
-    text.split(',').forEach(function(name) {
+    text.split(',').forEach(function (name) {
       name = name.trim();
       if (!name) return;
       var chip = document.createElement('span');
@@ -29,52 +29,78 @@ Logit.Modals = {
     sheet.setAttribute('aria-label', 'Rate movie');
 
     var ratesHtml = '';
-    Logit.RATINGS.forEach(function(v) {
-      ratesHtml += '<button aria-label="Rate ' + v + ' stars">' + v + '</button>';
+    Logit.RATINGS.forEach(function (v) {
+      ratesHtml +=
+        '<button aria-label="Rate ' + v + ' stars">' + v + '</button>';
     });
 
-    sheet.innerHTML = '<div class="sheetBg" aria-hidden="true"></div>'
-      + '<div class="sheet">'
-      + '<img src="' + Logit.Utils.esc(Logit.Utils.img(movie.poster_path)) + '" onerror="this.onerror=null;this.src=\'' + Logit.POSTER_FALLBACK + '\'" alt="' + Logit.Utils.esc(movie.title) + ' poster">'
-      + '<h3>' + Logit.Utils.esc(movie.title) + '</h3>'
-      + '<div class="rates">' + ratesHtml + '</div>'
-      + '<label class="sheetToggle">'
-      + '<input type="checkbox" id="rewatchToggle">'
-      + '<div class="toggle-track"></div>'
-      + 'Rewatch</label>'
-      + '<button class="sheetAdd" aria-label="Add movie to library">Add Movie</button>'
-      + '</div>';
+    sheet.innerHTML =
+      '<div class="sheetBg" aria-hidden="true"></div>' +
+      '<div class="sheet">' +
+      '<img src="' +
+      Logit.Utils.esc(Logit.Utils.img(movie.poster_path)) +
+      '" onerror="this.onerror=null;this.src=\'' +
+      Logit.POSTER_FALLBACK +
+      '\'" alt="' +
+      Logit.Utils.esc(movie.title) +
+      ' poster">' +
+      '<h3>' +
+      Logit.Utils.esc(movie.title) +
+      '</h3>' +
+      '<div class="rates">' +
+      ratesHtml +
+      '</div>' +
+      '<label class="sheetToggle">' +
+      '<input type="checkbox" id="rewatchToggle">' +
+      '<div class="toggle-track"></div>' +
+      'Rewatch</label>' +
+      '<button class="sheetAdd" aria-label="Add movie to library">Add Movie</button>' +
+      '</div>';
 
     document.body.append(sheet);
 
     var rating = null;
     var addBtn = sheet.querySelector('.sheetAdd');
 
-    Logit.Overlays.push(function() { sheet.remove(); });
+    Logit.Overlays.push(function () {
+      sheet.remove();
+    });
 
-    sheet.querySelectorAll('.rates button').forEach(function(btn) {
-      btn.onclick = function() {
-        sheet.querySelectorAll('.rates button').forEach(function(b) { b.classList.remove('active'); });
+    sheet.querySelectorAll('.rates button').forEach(function (btn) {
+      btn.onclick = function () {
+        sheet.querySelectorAll('.rates button').forEach(function (b) {
+          b.classList.remove('active');
+        });
         btn.classList.add('active');
         rating = btn.textContent;
         addBtn.classList.add('enabled');
       };
     });
 
-    sheet.querySelector('.sheetBg').onclick = function() { Logit.Overlays.closeTop(); };
-    sheet.addEventListener('keydown', function(e) { if (e.key === 'Escape') Logit.Overlays.closeTop(); });
+    sheet.querySelector('.sheetBg').onclick = function () {
+      Logit.Overlays.closeTop();
+    };
+    sheet.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') Logit.Overlays.closeTop();
+    });
 
-    addBtn.onclick = async function() {
+    addBtn.onclick = async function () {
       if (!rating) return;
       addBtn.textContent = 'Adding...';
       addBtn.disabled = true;
 
       try {
         var d = await Logit.Search.tmdb(
-          'https://api.themoviedb.org/3/movie/' + movie.id + '?api_key=' + apiKey + '&append_to_response=credits,images'
+          'https://api.themoviedb.org/3/movie/' +
+            movie.id +
+            '?api_key=' +
+            apiKey +
+            '&append_to_response=credits,images'
         );
         if (!d) {
-          alert('Failed to fetch movie details from TMDB. Please check your connection.');
+          alert(
+            'Failed to fetch movie details from TMDB. Please check your connection.'
+          );
           addBtn.textContent = 'Add Movie';
           addBtn.disabled = false;
           return;
@@ -101,7 +127,9 @@ Logit.Modals = {
     metaModal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('no-scroll');
     document.querySelector('.meta').classList.remove('editing');
-    Logit.Overlays.push(function() { Logit.Modals.closeMeta(); });
+    Logit.Overlays.push(function () {
+      Logit.Modals.closeMeta();
+    });
 
     var posterBg = document.getElementById('posterBgModal');
     if (posterBg && movie.sp) {
@@ -126,7 +154,9 @@ Logit.Modals = {
     this._renderChips($('mSupporting'), movie.sc);
     this._renderChips($('mProduction'), movie.pc);
 
-    var prodWrap = document.querySelector('#mProduction').closest('.metaSection');
+    var prodWrap = document
+      .querySelector('#mProduction')
+      .closest('.metaSection');
     if (prodWrap) prodWrap.style.display = movie.pc ? '' : 'none';
 
     var supWrap = $('supportingWrap');
@@ -159,7 +189,9 @@ Logit.Modals = {
     modalElement.setAttribute('aria-hidden', 'false');
     document.body.classList.add('no-scroll');
     queryInput.focus();
-    Logit.Overlays.push(function() { Logit.Modals.closeAdd(modalElement, queryInput); });
+    Logit.Overlays.push(function () {
+      Logit.Modals.closeAdd(modalElement, queryInput);
+    });
   },
 
   closeAdd(modalElement, queryInput) {

@@ -8,7 +8,12 @@ Logit.Utils = {
 
   /** @param {string} s @returns {string} */
   esc(s) {
-    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   },
 
   /** @param {string} path @param {string} [size] @returns {string} */
@@ -32,12 +37,20 @@ Logit.Utils = {
 
   /** @param {string[]} items @returns {string} */
   renderMetaMovies(items) {
-    return items.map(function(m) { return '<span class="metaMovie">' + Logit.Utils.esc(m) + '</span>'; }).join('');
+    return items
+      .map(function (m) {
+        return '<span class="metaMovie">' + Logit.Utils.esc(m) + '</span>';
+      })
+      .join('');
   },
 
   /** @param {string[]} names @returns {string} */
   renderMovieChips(names) {
-    return names.map(function(n) { return '<span class="movieChip">' + Logit.Utils.esc(n) + '</span>'; }).join('');
+    return names
+      .map(function (n) {
+        return '<span class="movieChip">' + Logit.Utils.esc(n) + '</span>';
+      })
+      .join('');
   },
 
   /**
@@ -53,9 +66,14 @@ Logit.Utils = {
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', name + ', ' + count + ' films');
-    card.addEventListener('click', function() { card.classList.toggle('active'); });
-    card.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('active'); }
+    card.addEventListener('click', function () {
+      card.classList.toggle('active');
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.toggle('active');
+      }
     });
 
     var top = document.createElement('div');
@@ -64,7 +82,14 @@ Logit.Utils = {
     var imgEl = document.createElement('img');
     imgEl.src = imgUrl;
     imgEl.alt = name;
-    imgEl.onerror = function() { this.onerror = null; this.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="%23111"><rect width="80" height="80"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">?</text></svg>'); };
+    imgEl.onerror = function () {
+      this.onerror = null;
+      this.src =
+        'data:image/svg+xml,' +
+        encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="%23111"><rect width="80" height="80"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">?</text></svg>'
+        );
+    };
 
     var info = document.createElement('div');
     info.className = 'personInfo';
@@ -98,9 +123,14 @@ Logit.Utils = {
     item.setAttribute('role', 'button');
     item.setAttribute('tabindex', '0');
     item.setAttribute('aria-label', name + ', ' + count);
-    item.addEventListener('click', function() { item.classList.toggle('active'); });
-    item.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.classList.toggle('active'); }
+    item.addEventListener('click', function () {
+      item.classList.toggle('active');
+    });
+    item.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.classList.toggle('active');
+      }
     });
 
     var row = document.createElement('div');
@@ -142,11 +172,11 @@ Logit.Utils = {
    */
   debounce(fn, ms) {
     var timer;
-    return function() {
+    return function () {
       var context = this;
       var args = arguments;
       clearTimeout(timer);
-      timer = setTimeout(function() {
+      timer = setTimeout(function () {
         fn.apply(context, args);
       }, ms);
     };

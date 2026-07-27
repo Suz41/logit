@@ -3,7 +3,7 @@ window.Logit = window.Logit || {};
 /**
  * Supabase Client Configuration
  * Initialize the Supabase client with environment variables
- * 
+ *
  * Required environment variables (set via config.html or environment):
  * - SUPABASE_URL
  * - SUPABASE_ANON_KEY
@@ -28,7 +28,9 @@ Logit.Supabase = {
     const key = localStorage.getItem('supabase_anon_key') || this._defaults.key;
 
     if (!url || !key) {
-      console.warn('Supabase credentials not configured. Cloud features disabled.');
+      console.warn(
+        'Supabase credentials not configured. Cloud features disabled.'
+      );
       return null;
     }
 
@@ -60,7 +62,9 @@ Logit.Supabase = {
     if (!client) return null;
 
     try {
-      const { data: { user } } = await client.auth.getUser();
+      const {
+        data: { user }
+      } = await client.auth.getUser();
       return user;
     } catch (e) {
       console.error('Failed to get user:', e);
@@ -77,7 +81,9 @@ Logit.Supabase = {
     if (!client) return null;
 
     try {
-      const { data: { session } } = await client.auth.getSession();
+      const {
+        data: { session }
+      } = await client.auth.getSession();
       return session;
     } catch (e) {
       console.error('Failed to get session:', e);

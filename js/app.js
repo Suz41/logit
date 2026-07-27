@@ -1,6 +1,6 @@
 window.Logit = window.Logit || {};
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   if (document.getElementById('library')) {
     Logit.LibraryPage.init();
   } else if (document.getElementById('directorList')) {

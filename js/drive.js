@@ -5,8 +5,10 @@ window.Logit = window.Logit || {};
  * Provides authentication, automated backup, restore, and profile info capabilities.
  */
 Logit.Drive = {
-  _CLIENT_ID: '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
-  _SCOPE: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+  _CLIENT_ID:
+    '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
+  _SCOPE:
+    'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
   _FOLDER_NAME: 'Logit',
   _FOLDER_KEY: 'logit_drive_folder_id',
   _TOKEN_KEY: 'logit_drive_token',
@@ -40,7 +42,7 @@ Logit.Drive = {
           }
           this._accessToken = response.access_token;
           localStorage.setItem(this._TOKEN_KEY, response.access_token);
-        },
+        }
       });
     } else {
       console.warn('[Drive] Google SDK not loaded yet, retrying...');
@@ -91,7 +93,9 @@ Logit.Drive = {
       if (onSuccess) onSuccess(response);
     };
 
-    this._tokenClient.requestAccessToken(forcePrompt ? { prompt: 'consent' } : {});
+    this._tokenClient.requestAccessToken(
+      forcePrompt ? { prompt: 'consent' } : {}
+    );
   },
 
   /**
@@ -112,7 +116,7 @@ Logit.Drive = {
     // 1. Try Google UserInfo API endpoint
     try {
       const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { 'Authorization': `Bearer ${this._accessToken}` }
+        headers: { Authorization: `Bearer ${this._accessToken}` }
       });
 
       if (res.status === 401) {
@@ -128,7 +132,8 @@ Logit.Drive = {
             name: data.name || '',
             picture: data.picture || ''
           };
-          if (info.email) localStorage.setItem(this._USER_EMAIL_KEY, info.email);
+          if (info.email)
+            localStorage.setItem(this._USER_EMAIL_KEY, info.email);
           if (info.name) localStorage.setItem(this._USER_NAME_KEY, info.name);
           return info;
         }
@@ -139,7 +144,9 @@ Logit.Drive = {
 
     // 2. Fallback to Drive API about endpoint
     try {
-      const res = await this._apiFetch('https://www.googleapis.com/drive/v3/about?fields=user');
+      const res = await this._apiFetch(
+        'https://www.googleapis.com/drive/v3/about?fields=user'
+      );
       const data = await res.json();
       if (data && data.user) {
         const info = {
@@ -208,8 +215,11 @@ Logit.Drive = {
 
       const content = JSON.stringify(backupData, null, 2);
       const now = new Date();
-      const dateStr = now.getFullYear() + '-' +
-        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      const dateStr =
+        now.getFullYear() +
+        '-' +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        '-' +
         String(now.getDate()).padStart(2, '0');
       const fileName = `logit-${movies.length}-movies-${dateStr}.json`;
 
@@ -218,15 +228,27 @@ Logit.Drive = {
 
       console.log('[Drive] Target backup filename:', fileName);
       if (existingFile) {
-        console.log('[Drive] Found existing backup file to update & rename:', existingFile.name, '->', fileName);
+        console.log(
+          '[Drive] Found existing backup file to update & rename:',
+          existingFile.name,
+          '->',
+          fileName
+        );
         await this._updateAndRenameFile(existingFile.id, fileName, content);
       } else {
-        console.log('[Drive] No existing backup found. Creating new file:', fileName);
+        console.log(
+          '[Drive] No existing backup found. Creating new file:',
+          fileName
+        );
         await this._createFile(fileName, content, folderId);
       }
 
       const backupTime = Date.now();
-      return { success: true, message: `Backup saved: ${fileName}`, backupTime: backupTime };
+      return {
+        success: true,
+        message: `Backup saved: ${fileName}`,
+        backupTime: backupTime
+      };
     } catch (err) {
       console.error('[Drive] Backup failed:', err);
       return { success: false, message: `Backup failed: ${err.message}` };
@@ -247,7 +269,10 @@ Logit.Drive = {
       const files = await this._listBackupFiles(folderId);
 
       if (!files || files.length === 0) {
-        return { success: false, message: 'No backup files found in Logit folder' };
+        return {
+          success: false,
+          message: 'No backup files found in Logit folder'
+        };
       }
 
       files.sort((a, b) => {
@@ -299,7 +324,9 @@ Logit.Drive = {
 
     if (response.status === 401) {
       this.clearToken();
-      throw new Error('Google Drive authorization expired. Please connect to Google Drive again.');
+      throw new Error(
+        'Google Drive authorization expired. Please connect to Google Drive again.'
+      );
     }
 
     if (!response.ok) {
@@ -322,7 +349,11 @@ Logit.Drive = {
     const userId = Logit.Auth.getUserId();
     if (!client || !userId) return {};
     try {
-      const { data } = await client.from('settings').select('*').eq('user_id', userId).single();
+      const { data } = await client
+        .from('settings')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
       return data || {};
     } catch (e) {
       return {};
@@ -333,19 +364,27 @@ Logit.Drive = {
     const cachedId = localStorage.getItem(this._FOLDER_KEY);
     if (cachedId) {
       try {
-        const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${cachedId}?fields=id,trashed`);
+        const res = await this._apiFetch(
+          `https://www.googleapis.com/drive/v3/files/${cachedId}?fields=id,trashed`
+        );
         const folder = await res.json();
         if (folder && !folder.trashed) {
           return cachedId;
         }
       } catch (e) {
-        console.warn('[Drive] Cached folder invalid or deleted, searching again...');
+        console.warn(
+          '[Drive] Cached folder invalid or deleted, searching again...'
+        );
         localStorage.removeItem(this._FOLDER_KEY);
       }
     }
 
-    const q = encodeURIComponent(`mimeType = 'application/vnd.google-apps.folder' and name = '${this._FOLDER_NAME}' and trashed = false`);
-    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    const q = encodeURIComponent(
+      `mimeType = 'application/vnd.google-apps.folder' and name = '${this._FOLDER_NAME}' and trashed = false`
+    );
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`
+    );
     const data = await res.json();
 
     if (data.files && data.files.length > 0) {
@@ -354,33 +393,46 @@ Logit.Drive = {
       return folderId;
     }
 
-    const createRes = await this._apiFetch('https://www.googleapis.com/drive/v3/files', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-      body: JSON.stringify({
-        name: this._FOLDER_NAME,
-        mimeType: 'application/vnd.google-apps.folder'
-      })
-    });
+    const createRes = await this._apiFetch(
+      'https://www.googleapis.com/drive/v3/files',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+        body: JSON.stringify({
+          name: this._FOLDER_NAME,
+          mimeType: 'application/vnd.google-apps.folder'
+        })
+      }
+    );
     const newFolder = await createRes.json();
     localStorage.setItem(this._FOLDER_KEY, newFolder.id);
     return newFolder.id;
   },
 
   async _findFileByName(fileName, folderId) {
-    const q = encodeURIComponent(`'${folderId}' in parents and name = '${fileName}' and trashed = false`);
-    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    const q = encodeURIComponent(
+      `'${folderId}' in parents and name = '${fileName}' and trashed = false`
+    );
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`
+    );
     const data = await res.json();
     return data.files && data.files.length > 0 ? data.files[0].id : null;
   },
 
   async _listBackupFiles(folderId) {
-    const q = encodeURIComponent(`'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`);
-    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,createdTime,modifiedTime)`);
+    const q = encodeURIComponent(
+      `'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+    );
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,createdTime,modifiedTime)`
+    );
     const data = await res.json();
     if (!data.files) return [];
 
-    return data.files.filter(f => f.name && (f.name.startsWith('logit-') || f.name.endsWith('.json')));
+    return data.files.filter(
+      (f) => f.name && (f.name.startsWith('logit-') || f.name.endsWith('.json'))
+    );
   },
 
   /**
@@ -393,8 +445,12 @@ Logit.Drive = {
       const folderId = await this._getOrCreateFolder();
       const files = await this._listBackupFiles(folderId);
       if (!files || files.length === 0) return null;
-      files.sort((a, b) => (b.modifiedTime || '').localeCompare(a.modifiedTime || ''));
-      return files[0].modifiedTime ? new Date(files[0].modifiedTime).getTime() : null;
+      files.sort((a, b) =>
+        (b.modifiedTime || '').localeCompare(a.modifiedTime || '')
+      );
+      return files[0].modifiedTime
+        ? new Date(files[0].modifiedTime).getTime()
+        : null;
     } catch (e) {
       return null;
     }
@@ -411,7 +467,8 @@ Logit.Drive = {
     const delimiter = `\r\n--${boundary}\r\n`;
     const closeDelimiter = `\r\n--${boundary}--`;
 
-    const body = delimiter +
+    const body =
+      delimiter +
       'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
       JSON.stringify(metadata) +
       delimiter +
@@ -419,45 +476,61 @@ Logit.Drive = {
       contentText +
       closeDelimiter;
 
-    const res = await this._apiFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-      method: 'POST',
-      headers: {
-        'Content-Type': `multipart/related; boundary=${boundary}`
-      },
-      body: body
-    });
+    const res = await this._apiFetch(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': `multipart/related; boundary=${boundary}`
+        },
+        body: body
+      }
+    );
 
     return await res.json();
   },
 
   async _updateFileContent(fileId, contentText) {
-    const res = await this._apiFetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body: contentText
-    });
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: contentText
+      }
+    );
 
     return await res.json();
   },
 
   async _downloadFileContent(fileId) {
-    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
+    );
     return await res.text();
   },
 
   async _findAndCleanBackupFiles(folderId) {
-    const q = encodeURIComponent(`'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`);
-    const res = await this._apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,createdTime)`);
+    const q = encodeURIComponent(
+      `'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+    );
+    const res = await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,createdTime)`
+    );
     const data = await res.json();
     if (!data.files) return null;
 
-    const backups = data.files.filter(f => f.name && (f.name.startsWith('logit-') && f.name.endsWith('.json')));
+    const backups = data.files.filter(
+      (f) => f.name && f.name.startsWith('logit-') && f.name.endsWith('.json')
+    );
     if (backups.length === 0) return null;
 
     // Sort so the newest is first
-    backups.sort((a, b) => (b.createdTime || '').localeCompare(a.createdTime || ''));
+    backups.sort((a, b) =>
+      (b.createdTime || '').localeCompare(a.createdTime || '')
+    );
 
     // The first one is the one we will keep and update
     const targetFile = backups[0];
@@ -466,7 +539,9 @@ Logit.Drive = {
     for (let i = 1; i < backups.length; i++) {
       try {
         await this._deleteFile(backups[i].id);
-        console.log(`[Drive] Cleaned up legacy backup file: ${backups[i].name}`);
+        console.log(
+          `[Drive] Cleaned up legacy backup file: ${backups[i].name}`
+        );
       } catch (e) {
         console.warn('[Drive] Failed to delete old backup file:', e);
       }
@@ -477,23 +552,32 @@ Logit.Drive = {
 
   async _updateAndRenameFile(fileId, newName, contentText) {
     // 1. Update metadata (rename)
-    await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-      body: JSON.stringify({ name: newName })
-    });
+    await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+        body: JSON.stringify({ name: newName })
+      }
+    );
 
     // 2. Update media content
-    await this._apiFetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-      body: contentText
-    });
+    await this._apiFetch(
+      `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+        body: contentText
+      }
+    );
   },
 
   async _deleteFile(fileId) {
-    return await this._apiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-      method: 'DELETE'
-    });
+    return await this._apiFetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}`,
+      {
+        method: 'DELETE'
+      }
+    );
   }
 };

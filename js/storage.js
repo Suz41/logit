@@ -36,7 +36,8 @@ Logit.Storage = {
       console.error('Failed to load movies:', e);
       var msg = 'Failed to load movies';
       if (!navigator.onLine) msg = 'You are offline';
-      else if (e.message.includes('Failed to fetch')) msg = 'Unable to connect to cloud';
+      else if (e.message.includes('Failed to fetch'))
+        msg = 'Unable to connect to cloud';
       return { movies: [], error: msg };
     }
   },
@@ -65,8 +66,11 @@ Logit.Storage = {
       var { error } = await client.from('movies').insert([record]);
       if (error) throw new Error(error.message);
     } else {
-      var { error: updErr } = await client.from('movies').update(record)
-        .eq('id', movie.id).eq('user_id', userId);
+      var { error: updErr } = await client
+        .from('movies')
+        .update(record)
+        .eq('id', movie.id)
+        .eq('user_id', userId);
       if (updErr) throw new Error(updErr.message);
     }
 
@@ -84,8 +88,11 @@ Logit.Storage = {
     var userId = Logit.Auth.getUserId();
     if (!client || !userId) throw new Error('Not authenticated');
 
-    var { error } = await client.from('movies').delete()
-      .eq('id', movieId).eq('user_id', userId);
+    var { error } = await client
+      .from('movies')
+      .delete()
+      .eq('id', movieId)
+      .eq('user_id', userId);
     if (error) throw new Error(error.message);
 
     this._scheduleAutoBackup();
@@ -96,7 +103,7 @@ Logit.Storage = {
    */
   _scheduleAutoBackup() {
     if (this._autoBackupTimer) clearTimeout(this._autoBackupTimer);
-    this._autoBackupTimer = setTimeout(async function() {
+    this._autoBackupTimer = setTimeout(async function () {
       if (Logit.Drive && Logit.Drive._accessToken) {
         await Logit.Drive.backup();
       }
@@ -113,13 +120,20 @@ Logit.Storage = {
     if (!client || !userId) return { count: 0, bytes: 0, formatted: '0 B' };
 
     try {
-      var { data } = await client.from('movies')
-        .select('id, t, sp, g, c, sc, pc, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id')
+      var { data } = await client
+        .from('movies')
+        .select(
+          'id, t, sp, g, c, sc, pc, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id'
+        )
         .eq('user_id', userId);
       if (!data) return { count: 0, bytes: 0, formatted: '0 B' };
       var bytes = new TextEncoder().encode(JSON.stringify(data)).length;
       var fmt = this.formatBytes(bytes);
-      return { count: data.length, bytes: bytes, formatted: fmt.val + ' ' + fmt.unit };
+      return {
+        count: data.length,
+        bytes: bytes,
+        formatted: fmt.val + ' ' + fmt.unit
+      };
     } catch (e) {
       return { count: 0, bytes: 0, formatted: '0 B' };
     }

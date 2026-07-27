@@ -8,7 +8,9 @@ Logit.Import = {
 
     // Pipe-delimited format: Movie Name | Rating | IMDb/TMDb_ID | Date | RewatchStatus
     if (line.includes('|')) {
-      const parts = line.split('|').map(function(p) { return p.trim(); });
+      const parts = line.split('|').map(function (p) {
+        return p.trim();
+      });
       if (parts.length >= 3) {
         const title = parts[0] || '';
         const rating = parts[1] ? parseFloat(parts[1]) : null;
@@ -26,17 +28,35 @@ Logit.Import = {
         if (!tmdbId && !imdbId && /^\d+$/.test(idField)) tmdbId = idField;
 
         let year = null;
-        if (date) { const dp = date.match(/\d{4}/); if (dp) year = dp[0]; }
+        if (date) {
+          const dp = date.match(/\d{4}/);
+          if (dp) year = dp[0];
+        }
 
         if (!title && !tmdbId && !imdbId) return null;
 
         let isRewatch = false;
         if (rewatch) {
           const rw = rewatch.toLowerCase();
-          if (rw === 'rewatch' || rw === 're' || rw === 'rw' || rw === 'yes' || rw === 'y') isRewatch = true;
+          if (
+            rw === 'rewatch' ||
+            rw === 're' ||
+            rw === 'rw' ||
+            rw === 'yes' ||
+            rw === 'y'
+          )
+            isRewatch = true;
         }
 
-        return { title: title, rating: rating, date: date, year: year, tmdbId: tmdbId, imdbId: imdbId, rewatch: isRewatch };
+        return {
+          title: title,
+          rating: rating,
+          date: date,
+          year: year,
+          tmdbId: tmdbId,
+          imdbId: imdbId,
+          rewatch: isRewatch
+        };
       }
     }
 
@@ -55,26 +75,53 @@ Logit.Import = {
     }
 
     const imdbMatch = title.match(/\b(tt\d{7,8})\b/i);
-    if (imdbMatch) { imdbId = imdbMatch[1]; title = title.replace(imdbMatch[0], ''); }
-
-    const tmdbMatch = title.match(/\b(?:tmdb[:\s]*|#)(\d{2,})\b/i);
-    if (tmdbMatch) { tmdbId = tmdbMatch[1]; title = title.replace(tmdbMatch[0], ''); }
-
-    let dateMatch = line.match(/\b(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})\b/);
-    if (!dateMatch) dateMatch = line.match(/\b(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})\b/);
-    if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}[,\s]*\d{4})\b/i);
-    if (!dateMatch) dateMatch = line.match(/\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*)\b/i);
-    if (!dateMatch) dateMatch = line.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2})\b/i);
-    if (dateMatch) { date = dateMatch[1]; title = title.replace(dateMatch[0], ''); }
-
-    let ratingMatch = title.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
-    if (!ratingMatch) ratingMatch = title.match(/(?:rating[:\s]*)?\b(\d(?:\.\d)?)\b(?!\s*[\/\d])/i);
-    if (ratingMatch) {
-      const r = parseFloat(ratingMatch[1]);
-      if (r >= 0.5 && r <= 5) { rating = r; title = title.replace(ratingMatch[0], ''); }
+    if (imdbMatch) {
+      imdbId = imdbMatch[1];
+      title = title.replace(imdbMatch[0], '');
     }
 
-    const yearMatch = title.match(/(?:[\(\[]\s*)?\b(19\d{2}|20\d{2})\b(?:\s*[\)\]])?\s*$/);
+    const tmdbMatch = title.match(/\b(?:tmdb[:\s]*|#)(\d{2,})\b/i);
+    if (tmdbMatch) {
+      tmdbId = tmdbMatch[1];
+      title = title.replace(tmdbMatch[0], '');
+    }
+
+    let dateMatch = line.match(/\b(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})\b/);
+    if (!dateMatch)
+      dateMatch = line.match(/\b(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})\b/);
+    if (!dateMatch)
+      dateMatch = line.match(
+        /\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}[,\s]*\d{4})\b/i
+      );
+    if (!dateMatch)
+      dateMatch = line.match(
+        /\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*)\b/i
+      );
+    if (!dateMatch)
+      dateMatch = line.match(
+        /\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2})\b/i
+      );
+    if (dateMatch) {
+      date = dateMatch[1];
+      title = title.replace(dateMatch[0], '');
+    }
+
+    let ratingMatch = title.match(/(?:★\s*)?(\d(?:\.\d)?)\s*\/\s*5/);
+    if (!ratingMatch)
+      ratingMatch = title.match(
+        /(?:rating[:\s]*)?\b(\d(?:\.\d)?)\b(?!\s*[\/\d])/i
+      );
+    if (ratingMatch) {
+      const r = parseFloat(ratingMatch[1]);
+      if (r >= 0.5 && r <= 5) {
+        rating = r;
+        title = title.replace(ratingMatch[0], '');
+      }
+    }
+
+    const yearMatch = title.match(
+      /(?:[\(\[]\s*)?\b(19\d{2}|20\d{2})\b(?:\s*[\)\]])?\s*$/
+    );
     if (yearMatch) {
       const tempTitle = title.replace(yearMatch[0], '').trim();
       if (tempTitle.length > 0) {
@@ -83,19 +130,37 @@ Logit.Import = {
       }
     }
 
-    title = title.replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '').replace(/\s{2,}/g, ' ').trim();
+    title = title
+      .replace(/^[\s,;:\-–—|]+|[\s,;:\-–—|]+$/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
     if (!title && !tmdbId && !imdbId) return null;
 
-    return { title: title, rating: rating, date: date, year: year, tmdbId: tmdbId, imdbId: imdbId, rewatch: rewatch };
+    return {
+      title: title,
+      rating: rating,
+      date: date,
+      year: year,
+      tmdbId: tmdbId,
+      imdbId: imdbId,
+      rewatch: rewatch
+    };
   },
 
   /** @param {string|null} d @returns {string} YYYY-MM-DD */
   normalizeDate(d) {
     if (!d) {
       const t = new Date();
-      return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
+      return (
+        t.getFullYear() +
+        '-' +
+        String(t.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(t.getDate()).padStart(2, '0')
+      );
     }
-    if (d.match(/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/)) return d.replace(/\//g, '-');
+    if (d.match(/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/))
+      return d.replace(/\//g, '-');
     if (d.match(/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}$/)) {
       const p = d.split(/[-\/]/);
       return p[2] + '-' + p[0].padStart(2, '0') + '-' + p[1].padStart(2, '0');
@@ -107,14 +172,31 @@ Logit.Import = {
 
     const parsed = new Date(parseString);
     if (!isNaN(parsed.getTime())) {
-      return parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
+      return (
+        parsed.getFullYear() +
+        '-' +
+        String(parsed.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(parsed.getDate()).padStart(2, '0')
+      );
     }
     const t2 = new Date();
-    return t2.getFullYear() + '-' + String(t2.getMonth() + 1).padStart(2, '0') + '-' + String(t2.getDate()).padStart(2, '0');
+    return (
+      t2.getFullYear() +
+      '-' +
+      String(t2.getMonth() + 1).padStart(2, '0') +
+      '-' +
+      String(t2.getDate()).padStart(2, '0')
+    );
   },
 
   /** @param {Array} parsed @returns {boolean} */
   isSlimExport(parsed) {
-    return parsed.length > 0 && parsed[0].tmdb_id !== undefined && !parsed[0].p && !parsed[0].g;
+    return (
+      parsed.length > 0 &&
+      parsed[0].tmdb_id !== undefined &&
+      !parsed[0].p &&
+      !parsed[0].g
+    );
   }
 };

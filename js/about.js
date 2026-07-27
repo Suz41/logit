@@ -25,19 +25,21 @@ Logit.AboutPage = {
     if ($('tmdbApiKey')) $('tmdbApiKey').value = Logit.Config.getApiKey() || '';
 
     // Save keys
-    if ($('saveAllKeys')) $('saveAllKeys').addEventListener('click', function() {
-      var tmdb = ($('tmdbApiKey') || {}).value.trim();
+    if ($('saveAllKeys'))
+      $('saveAllKeys').addEventListener('click', function () {
+        var tmdb = ($('tmdbApiKey') || {}).value.trim();
 
-      if (tmdb) Logit.Config.setApiKey(tmdb);
+        if (tmdb) Logit.Config.setApiKey(tmdb);
 
-      alert('Settings saved!');
-      location.reload();
-    });
+        alert('Settings saved!');
+        location.reload();
+      });
 
     var clearBtn = document.querySelector('[data-action="clearAllData"]');
     if (clearBtn) {
-      clearBtn.addEventListener('click', async function() {
-        if (!confirm('Clear all movie data from cloud? This cannot be undone.')) return;
+      clearBtn.addEventListener('click', async function () {
+        if (!confirm('Clear all movie data from cloud? This cannot be undone.'))
+          return;
         var client = Logit.Supabase.getClient();
         var userId = Logit.Auth.getUserId();
         if (client && userId) {
