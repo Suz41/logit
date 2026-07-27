@@ -2,7 +2,7 @@
   "name": "logit",
   "version": "1.0.0",
   "description": "<h1 align=\"center\">Log!t</h1>",
-  "main": "backfill.js",
+  "main": "scripts/backfill.js",
   "directories": {
     "doc": "docs"
   },
