@@ -46,8 +46,8 @@ Click the <strong>+</strong> button, search by title, select the result, rate it
 </details>
 
 <details>
-<summary><strong>Can I rate half stars?</strong></summary>
-Yes. Log!t supports half-star ratings from 0.5 to 5.
+<summary><strong>Can I rate with half-points or decimals?</strong></summary>
+Yes. Log!t supports ratings from 0.5 to 5.0 in half-point increments.
 </details>
 
 <details>

@@ -27,7 +27,7 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 - Click the **+** button (bottom nav on mobile, header on desktop)
 - Search for a movie by title
 - Select the correct result
-- Rate it (1-5 stars, supports half stars)
+- Rate it (0.5 to 5.0, in half-point increments)
 - Click **Add**
 
 ### 5. View Your Library
@@ -56,8 +56,8 @@ Visit [suz41.github.io/logit](https://suz41.github.io/logit)
 ## Features
 
 ### Rating Movies
-- Tap the star icon on any movie
-- Rate from 1 to 5 stars (supports half stars)
+- Choose a rating when logging a new movie from the search results
+- Select a rating from 0.5 to 5.0 (in half-point increments)
 
 ### Rewatches
 - Mark movies as "Rewatch" when adding

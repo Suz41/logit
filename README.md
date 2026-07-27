@@ -1,6 +1,6 @@
 # 🎬 Log!t
 
-A gorgeous, framework-free movie tracker. Search via TMDB, rate with half-star precision, sync to the cloud, and track your watch statistics.
+A gorgeous, framework-free movie tracker. Search via TMDB, rate with half-point precision, sync to the cloud, and track your watch statistics.
 
 [**Live Demo**](https://suz41.github.io/logit) &bull; [**Setup Guide**](docs/SETUP.md) &bull; [**FAQs**](docs/FAQ.md)
 
@@ -8,7 +8,7 @@ A gorgeous, framework-free movie tracker. Search via TMDB, rate with half-star p
 
 ### Key Features
 * 🔍 **Search & Metadata**: Instantly fetch movie posters and crew details via TMDB API.
-* ⭐ **Precision Ratings**: Log your viewings with half-star ratings.
+* 🔢 **Precision Ratings**: Log your viewings with half-point numeric ratings (0.5 to 5.0).
 * 🔄 **Watch tracking**: Track first watches, rewatches, and total runtime.
 * 📈 **Stats Dashboard**: Beautiful charts for genres, directors, countries, and decades.
 * ☁️ **Cloud Sync**: Fast, secure database synchronization using Supabase.
