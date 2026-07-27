@@ -3,7 +3,6 @@ window.Logit = window.Logit || {};
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('library')) {
     Logit.LibraryPage.init();
-    Logit.ListPage.init();
   } else if (document.getElementById('directorList')) {
     Logit.StatsPage.init();
   } else if (document.getElementById('storageTotal')) {
