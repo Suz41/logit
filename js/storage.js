@@ -79,6 +79,38 @@ Logit.Storage = {
   },
 
   /**
+   * Save multiple movies in bulk (insert only).
+   * @param {Array} movies
+   * @returns {Promise<number>} the number of saved movies
+   */
+  async saveMoviesBulk(movies) {
+    var client = Logit.Supabase.getClient();
+    var userId = Logit.Auth.getUserId();
+    if (!client || !userId) throw new Error('Not authenticated');
+
+    var now = new Date().toISOString();
+    var records = movies.map(function (movie) {
+      var record = Object.assign({}, movie, {
+        user_id: userId,
+        updated_at: now
+      });
+      if (!record.id) record.id = Logit.MovieFactory.generateUUID();
+      if (!record.created_at) record.created_at = now;
+      return record;
+    });
+
+    var chunkSize = 100;
+    for (var i = 0; i < records.length; i += chunkSize) {
+      var chunk = records.slice(i, i + chunkSize);
+      var { error } = await client.from('movies').insert(chunk);
+      if (error) throw new Error(error.message);
+    }
+
+    this._scheduleAutoBackup();
+    return records.length;
+  },
+
+  /**
    * Delete a movie from Supabase.
    * @param {string} movieId
    * @returns {Promise<void>}

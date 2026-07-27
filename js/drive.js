@@ -30,7 +30,7 @@ Logit.Drive = {
     this._waitForSDK();
   },
 
-  _waitForSDK() {
+  _waitForSDK(retries = 0) {
     if (window.google && google.accounts && google.accounts.oauth2) {
       this._tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: this._CLIENT_ID,
@@ -44,9 +44,11 @@ Logit.Drive = {
           localStorage.setItem(this._TOKEN_KEY, response.access_token);
         }
       });
-    } else {
+    } else if (retries < 10) {
       console.warn('[Drive] Google SDK not loaded yet, retrying...');
-      setTimeout(() => this._waitForSDK(), 500);
+      setTimeout(() => this._waitForSDK(retries + 1), 500);
+    } else {
+      console.error('[Drive] Google SDK failed to load after 10 attempts.');
     }
   },
 
@@ -289,13 +291,10 @@ Logit.Drive = {
         return { success: false, message: 'Invalid backup file format' };
       }
 
-      let restoredCount = 0;
-      for (const movie of backupData.movies) {
-        if (movie && (movie.id || movie.t)) {
-          await Logit.Storage.saveMovie(movie, 'create');
-          restoredCount++;
-        }
-      }
+      const validMovies = backupData.movies.filter(function (movie) {
+        return movie && (movie.id || movie.t);
+      });
+      let restoredCount = await Logit.Storage.saveMoviesBulk(validMovies);
 
       return {
         success: true,
