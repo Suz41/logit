@@ -2,6 +2,26 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.8.0] - 2026-07-27
+
+### Added
+- Standardized focus ring styles globally via `:focus-visible`.
+- Prefers-reduced-motion CSS support to respect system animation preferences.
+- AbortController cancellation for favorite movies and director search inputs to prevent race conditions.
+- Error handling wrappers with visual feedback overlays on TMDB search API failures.
+- Caching logic for `getMissingFields` within movie rendering loops to minimize computations.
+
+### Fixed
+- Fixed hardcoded Supabase credentials leak in `reset.html` (now loads dynamically from the database client).
+- Fixed double-submit/double-click race condition when logging a movie using dynamic debouncing.
+- Fixed CSS performance thrashing on movie posters by limiting `will-change: transform` to `:hover` only.
+- Fixed accessibility contrast of `--muted` text variables to satisfy WCAG AA requirements.
+- Fixed hidden toggle checkbox accessibility tree omission via a visually-hidden CSS pattern.
+- Fixed empty JavaScript catch blocks in storage and drive sync functions to output console errors.
+
+### Changed
+- Renamed `PS.html` page to `stats.html` for clean URLs.
+
 ## [3.7.0] - 2026-07-27
 
 ### Added
