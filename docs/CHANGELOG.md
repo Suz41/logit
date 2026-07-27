@@ -2,6 +2,20 @@
 
 All notable changes to Log!t will be documented in this file.
 
+## [3.7.0] - 2026-07-27
+
+### Added
+- ESLint and Prettier local configurations for vanilla JS browser codebase
+- Git pre-commit auto-formatting workflow (Husky + lint-staged) pre-configured and optimized for Termux path layout
+- Bulk upsert support (`saveMoviesBulk`) to speed up database imports and prevent duplicate key violations
+
+### Fixed
+- Fixed Google Drive `restore` crash due to `movies_pkey` unique constraint violations by switching bulk inserts to upserts
+- Fixed infinite console warning loop when Google Identity Services SDK fails to load or is blocked (capped at 10 retries)
+
+### Removed
+- Removed Google Drive folder link settings, the List tab UI, and all Obsidian import/sync parsing and UI controller code
+
 ## [3.6.0] - 2026-07-26
 
 ### Added
