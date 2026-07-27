@@ -102,7 +102,7 @@ Logit.Storage = {
     var chunkSize = 100;
     for (var i = 0; i < records.length; i += chunkSize) {
       var chunk = records.slice(i, i + chunkSize);
-      var { error } = await client.from('movies').insert(chunk);
+      var { error } = await client.from('movies').upsert(chunk);
       if (error) throw new Error(error.message);
     }
 
