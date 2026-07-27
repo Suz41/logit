@@ -68,7 +68,7 @@ logit/
 ├── about.html          # App Metadata & Detailed Changelog
 ├── welcome.html        # Authentication Page (Sign-in / Sign-up)
 ├── reset.html          # Supabase Password Reset Flow
-├── migrations.sql      # Database schema migrations
+├── supabase/           # Supabase database setup & SQL scripts
 ├── css/                # Sleek stylesheets (components, modal, stats)
 ├── js/                 # Vanilla JS logical modules
 └── docs/               # Technical Guides and Setup Documentation

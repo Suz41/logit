@@ -53,7 +53,7 @@ logit/
 ├── about.html          # About page
 ├── welcome.html        # Auth page
 ├── reset.html          # Password reset
-├── migrations.sql      # Database setup SQL
+├── supabase/           # Database setup SQL scripts
 ├── css/                # Stylesheets (10 files)
 ├── js/                 # JavaScript modules (21 files)
 └── docs/               # Documentation
