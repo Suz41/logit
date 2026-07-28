@@ -109,8 +109,15 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-bottom: 30px;
+}
+
+@media (max-width: 600px) {
+  .results {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .result {

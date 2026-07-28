@@ -785,13 +785,16 @@
   }
 
   .settingsPanel.open {
-    max-height: 90px;
+    max-height: 160px;
   }
 
   .settingsRow {
     flex-wrap: wrap;
     row-gap: 8px;
     padding: 8px 14px;
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .settingsRow #searchBar {
