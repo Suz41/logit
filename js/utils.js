@@ -184,15 +184,10 @@ Logit.Utils = {
 
   /** @param {string} targetPage @returns {string} */
   getPageUrl(targetPage) {
-    var inPagesDir = window.location.pathname.indexOf('/pages/') !== -1;
-    if (targetPage === 'index.html' || targetPage === '../index.html') {
-      return inPagesDir ? '../index.html' : 'index.html';
-    }
-    var cleanPage = targetPage
+    return targetPage
       .replace(/^pages\//, '')
       .replace(/^\.\.\/pages\//, '')
       .replace(/^\.\.\//, '');
-    return inPagesDir ? cleanPage : 'pages/' + cleanPage;
   },
 
   /** @param {string} targetPage */
