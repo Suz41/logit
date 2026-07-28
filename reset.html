@@ -1,66 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="Log!t - Your movie journal.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="description" content="Log!t - Your movie journal." />
     <title>Reset Password - Log!t</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=31">
-<link rel="stylesheet" href="css/auth.css?v=31">
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css?v=31" />
+    <link rel="stylesheet" href="css/auth.css?v=31" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ></script>
     <script defer src="js/config.js"></script>
     <script defer src="js/supabase.js"></script>
-</head>
-<body class="welcomePage">
-
-<div class="welcomeContainer">
-  <div class="welcomeContent">
-    <div class="welcomeLogo">
-      <h1>Log<span class="logo-accent">!</span>t</h1>
-      <p class="welcomeTagline">Reset your password</p>
-    </div>
-
-    <div class="authCard">
-      <div class="authForm">
-        <input type="password" placeholder="New password" id="newPassword" class="authInput" aria-label="New password">
-        <input type="password" placeholder="Confirm password" id="confirmPassword" class="authInput" aria-label="Confirm password">
-        <div class="authActions">
-          <button class="btnPrimary" id="resetBtn">Reset Password</button>
+  </head>
+  <body class="welcomePage">
+    <div class="welcomeContainer">
+      <div class="welcomeContent">
+        <div class="welcomeLogo">
+          <h1>Log<span class="logo-accent">!</span>t</h1>
+          <p class="welcomeTagline">Reset your password</p>
         </div>
-        <span class="authMessage" id="authMessage"></span>
+
+        <div class="authCard">
+          <div class="authForm">
+            <input
+              type="password"
+              placeholder="New password"
+              id="newPassword"
+              class="authInput"
+              aria-label="New password"
+            />
+            <input
+              type="password"
+              placeholder="Confirm password"
+              id="confirmPassword"
+              class="authInput"
+              aria-label="Confirm password"
+            />
+            <div class="authActions">
+              <button class="btnPrimary" id="resetBtn">Reset Password</button>
+            </div>
+            <span class="authMessage" id="authMessage"></span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<script>
-  document.getElementById('resetBtn').addEventListener('click', async () => {
-    const msg = document.getElementById('authMessage');
-    const newPass = document.getElementById('newPassword').value;
-    const confirmPass = document.getElementById('confirmPassword').value;
+    <script>
+      document
+        .getElementById('resetBtn')
+        .addEventListener('click', async () => {
+          const msg = document.getElementById('authMessage');
+          const newPass = document.getElementById('newPassword').value;
+          const confirmPass = document.getElementById('confirmPassword').value;
 
-    if (!newPass || !confirmPass) { msg.textContent = 'Fill all fields'; return; }
-    if (newPass.length < 6) { msg.textContent = 'Password must be 6+ characters'; return; }
-    if (newPass !== confirmPass) { msg.textContent = 'Passwords do not match'; return; }
+          if (!newPass || !confirmPass) {
+            msg.textContent = 'Fill all fields';
+            return;
+          }
+          if (newPass.length < 6) {
+            msg.textContent = 'Password must be 6+ characters';
+            return;
+          }
+          if (newPass !== confirmPass) {
+            msg.textContent = 'Passwords do not match';
+            return;
+          }
 
-    const client = Logit.Supabase.getClient();
+          const client = Logit.Supabase.getClient();
 
-    try {
-      const { error } = await client.auth.updateUser({ password: newPass });
-      if (error) { msg.textContent = error.message; return; }
-      msg.textContent = 'Password updated! Redirecting...';
-      setTimeout(() => { window.location.href = 'welcome.html'; }, 1500);
-    } catch (e) {
-      msg.textContent = 'Failed to reset password';
-    }
-  });
-</script>
-</body>
+          try {
+            const { error } = await client.auth.updateUser({
+              password: newPass
+            });
+            if (error) {
+              msg.textContent = error.message;
+              return;
+            }
+            msg.textContent = 'Password updated! Redirecting...';
+            setTimeout(() => {
+              window.location.href = 'welcome.html';
+            }, 1500);
+          } catch (e) {
+            msg.textContent = 'Failed to reset password';
+          }
+        });
+    </script>
+  </body>
 </html>

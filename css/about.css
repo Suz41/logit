@@ -4,7 +4,7 @@
   --text: #e5e5e5;
   --muted: #636366;
   --dim: #48484a;
-  --border: rgba(255,255,255,0.06);
+  --border: rgba(255, 255, 255, 0.06);
 }
 
 @media (max-width: 1023px) {
@@ -12,7 +12,6 @@
     display: none !important;
   }
 }
-
 
 .wrap {
   padding: 12px 14px;
@@ -77,7 +76,7 @@
   color: var(--muted);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
 }
 
 .infoValue {
@@ -318,7 +317,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 0.5px solid var(--border);
   border-radius: 10px;
 }
@@ -342,7 +341,7 @@
 .apiInput {
   width: 120px;
   padding: 8px 10px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 0.5px solid var(--border);
   border-radius: 8px;
   color: var(--text);
@@ -356,7 +355,7 @@
 
 .apiInput:focus {
   outline: none;
-  border-color: rgba(255,255,255,0.15);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .apiLink {

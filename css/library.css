@@ -70,20 +70,7 @@ body {
   position: relative;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 @media (max-width: 1023px) {
-  
 }
 
 .monthSection {
@@ -178,7 +165,7 @@ body {
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   background: transparent;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   content-visibility: auto;
 }
 

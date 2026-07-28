@@ -7,16 +7,19 @@ A gorgeous, framework-free movie tracker. Search via TMDB, rate with half-point 
 ---
 
 ### Key Features
-* 🔍 **Search & Metadata**: Instantly fetch movie posters and crew details via TMDB API.
-* 🔢 **Precision Ratings**: Log your viewings with half-point numeric ratings (0.5 to 5.0).
-* 🔄 **Watch tracking**: Track first watches, rewatches, and total runtime.
-* 📈 **Stats Dashboard**: Beautiful charts for genres, directors, countries, and decades.
-* ☁️ **Cloud Sync**: Fast, secure database synchronization using Supabase.
+
+- 🔍 **Search & Metadata**: Instantly fetch movie posters and crew details via TMDB API.
+- 🔢 **Precision Ratings**: Log your viewings with half-point numeric ratings (0.5 to 5.0).
+- 🔄 **Watch tracking**: Track first watches, rewatches, and total runtime.
+- 📈 **Stats Dashboard**: Beautiful charts for genres, directors, countries, and decades.
+- ☁️ **Cloud Sync**: Fast, secure database synchronization using Supabase.
 
 ### Technical Stack
-* **Frontend**: Vanilla HTML5 / CSS3 / ES6 Javascript (no build tools)
-* **Database & Auth**: Supabase (PostgreSQL)
-* **Data Source**: TMDB API
+
+- **Frontend**: Vanilla HTML5 / CSS3 / ES6 Javascript (no build tools)
+- **Database & Auth**: Supabase (PostgreSQL)
+- **Data Source**: TMDB API
 
 ---
+
 Built with vanilla web technologies &middot; Created by [Suz41](https://github.com/Suz41)

@@ -77,7 +77,11 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 15px;
 }
 
@@ -109,7 +113,11 @@
   border-radius: 12px;
   background: #fff;
   color: #000;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -142,7 +150,11 @@
   border-radius: 12px;
   background: transparent;
   color: var(--text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;

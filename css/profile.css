@@ -28,7 +28,11 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--surface2) 0%, rgba(255,255,255,0.08) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--surface2) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
   border: 3px solid var(--border);
   display: flex;
   align-items: center;
@@ -121,7 +125,9 @@
   cursor: pointer;
   padding: 4px;
   opacity: 0.6;
-  transition: opacity 0.2s, color 0.2s;
+  transition:
+    opacity 0.2s,
+    color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,7 +196,9 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
   white-space: nowrap;
 }
 
@@ -223,7 +231,8 @@
   gap: 32px;
 }
 
-.colLeft, .colRight {
+.colLeft,
+.colRight {
   min-width: 0;
 }
 
@@ -263,18 +272,20 @@
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: 0.5px solid var(--border);
   color: var(--muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .addFavBtn:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text);
 }
 
@@ -291,13 +302,15 @@
   background: var(--surface2);
   position: relative;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   flex-shrink: 0;
 }
 
 .favPoster:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
 }
 
 .favPoster img {
@@ -320,7 +333,9 @@
   color: var(--muted);
   font-size: 11px;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
   flex-shrink: 0;
 }
 
@@ -336,7 +351,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   border: none;
   color: #fff;
   font-size: 12px;
@@ -371,7 +386,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .storageRow:last-child {
@@ -408,17 +423,19 @@
   color: var(--text);
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
   text-align: left;
 }
 
 .settingsItem:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .settingsItem:active {
   transform: scale(0.98);
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .settingsItem + .settingsItem {
@@ -485,7 +502,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   z-index: 200;
   align-items: center;
@@ -508,7 +525,7 @@
 .favSearchInput {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 0.5px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -537,7 +554,7 @@
 }
 
 .favSearchItem:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .favSearchItem img {
@@ -557,7 +574,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 10px;
   margin-bottom: 12px;
 }
@@ -622,7 +639,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   z-index: 200;
   align-items: center;
@@ -651,7 +668,7 @@
 .directorSearchInput {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 0.5px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -680,7 +697,7 @@
 }
 
 .directorItem:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .directorItem img {
@@ -725,28 +742,30 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: var(--text);
   font-size: 18px;
   cursor: pointer;
 }
 
-.importModal, .exportModal {
+.importModal,
+.exportModal {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   z-index: 200;
   align-items: center;
   justify-content: center;
 }
 
-.importModal.active, .exportModal.active {
+.importModal.active,
+.exportModal.active {
   display: flex;
 }
 
@@ -771,7 +790,7 @@
   height: 48px;
   border-radius: 10px;
   border: 1px dashed var(--border);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--muted);
   font-size: 13px;
   font-weight: 500;
@@ -782,7 +801,7 @@
   width: 100%;
   height: 100px;
   padding: 12px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 0.5px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -850,7 +869,7 @@
 }
 
 .exportTypeBtn.txt {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text);
 }
 
@@ -947,7 +966,7 @@
   }
 
   .settingsItem:active {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     transform: scale(0.98);
   }
 
@@ -1072,7 +1091,11 @@
 }
 
 .driveConnectBtn {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text);
   padding: 8px 16px;
@@ -1086,7 +1109,11 @@
 }
 
 .driveConnectBtn:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.1)
+  );
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
 }
@@ -1110,7 +1137,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 200;
@@ -1192,7 +1219,7 @@
 
 .modalInput:focus {
   outline: none !important;
-  border-color: rgba(255,255,255,0.15) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 .modalPasswordToggle {
@@ -1276,7 +1303,3 @@
     font-size: 15px !important;
   }
 }
-
-
-
-

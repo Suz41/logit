@@ -63,7 +63,7 @@
 
   .pcNavBtn:hover {
     color: rgba(255, 255, 255, 0.8);
-    background: rgba(255,255,255,0.04);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .pcNavBtn.active {
@@ -77,13 +77,13 @@
     margin-right: 16px;
   }
 
-  .library, .searchResults, .listSection {
+  .library,
+  .searchResults,
+  .listSection {
     max-width: none !important;
     margin: 0 !important;
     padding: 24px 30px !important;
   }
-
-
 
   /* Centered and scaled modals on PC */
   /* Centered and scaled modals on PC */
@@ -124,7 +124,7 @@
     max-height: 85vh;
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     -webkit-backdrop-filter: blur(40px);
     backdrop-filter: blur(40px);
     padding: 32px;
@@ -153,7 +153,9 @@
 
   .modal-content .result {
     border-radius: 8px !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease !important;
   }
 
   .modal-content .result:hover {
@@ -182,7 +184,9 @@
     gap: 8px;
     width: 240px;
     margin-left: 20px;
-    transition: width 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s;
+    transition:
+      width 0.2s cubic-bezier(0.2, 0, 0, 1),
+      border-color 0.2s;
   }
 
   .pcSearchBar:focus-within {
@@ -256,9 +260,11 @@
     padding: 24px;
     transform: scale(0.95) translateY(0);
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
-    border: 0.5px solid rgba(255,255,255,0.06);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+      opacity 0.3s;
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
   .metaModal.active .meta {
@@ -314,9 +320,11 @@
     border-radius: 20px;
     transform: scale(0.95) translateY(0);
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
-    border: 0.5px solid rgba(255,255,255,0.06);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+      opacity 0.3s;
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     left: auto;
     right: auto;
     bottom: auto;
@@ -349,7 +357,7 @@
     left: auto;
     right: auto;
     bottom: auto;
-    background: rgba(10,10,10,0.75);
+    background: rgba(10, 10, 10, 0.75);
     -webkit-backdrop-filter: blur(30px);
     backdrop-filter: blur(30px);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -359,12 +367,20 @@
     animation: sheetInPC 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
   }
   @keyframes sheetInPC {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   .sheet .rates button {
-    transition: background 0.2s, color 0.2s !important;
+    transition:
+      background 0.2s,
+      color 0.2s !important;
   }
 
   .sheet .rates button:hover {
@@ -378,7 +394,9 @@
   }
 
   .sheetAdd {
-    transition: background 0.2s, transform 0.1s !important;
+    transition:
+      background 0.2s,
+      transform 0.1s !important;
   }
 
   .sheetAdd:hover:not(:disabled) {
@@ -396,7 +414,9 @@
   .movie:hover img {
     transform: translateY(-4px) scale(1.02);
     border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.8),
+      0 0 12px rgba(255, 255, 255, 0.05);
   }
   .movieDate {
     font-size: 11px;
@@ -413,7 +433,7 @@
     display: none !important;
   }
 
-  .headerRow div[style*="width:32px"] {
+  .headerRow div[style*='width:32px'] {
     display: none !important;
   }
 
@@ -433,12 +453,14 @@
     bottom: auto;
     opacity: 0;
     pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.06);
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+      opacity 0.3s;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     background: #000000;
   }
-  
+
   .importModal.active {
     opacity: 1;
     pointer-events: auto;
@@ -453,82 +475,82 @@
     padding: 10px 40px !important;
     gap: 24px;
   }
-  
+
   #yearCard {
     grid-column: span 1 !important;
   }
-  
+
   .hero {
     gap: 16px;
     margin-bottom: 10px;
   }
-  
+
   .statBox {
     padding: 28px 16px;
     border-radius: 16px;
     background: #000000;
-    border: 1px solid rgba(255,255,255,0.08);
-    transition: border-color 0.2s, background-color 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
   }
-  
+
   .statBox:hover {
-    border-color: rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.02);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.02);
   }
-  
-  .statBox h2, #timeCount {
+
+  .statBox h2,
+  #timeCount {
     font-size: 38px;
     letter-spacing: -1px;
   }
-  
+
   .statBox p {
     font-size: 13px;
     margin-top: 4px;
   }
-  
+
   .timeSub {
     font-size: 10px;
   }
-  
-  .peopleGrid, .peopleGrid3 {
+
+  .peopleGrid,
+  .peopleGrid3 {
     grid-template-columns: 1fr 1fr;
   }
 
-  
-  
   .peopleCard {
     padding: 20px;
     border-radius: 16px;
     background: #000000;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  
+
   .person img {
     width: 40px;
     height: 40px;
   }
-  
+
   .metaGrid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .metaCard {
     padding: 20px;
     border-radius: 16px;
     background: #000000;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  
-  
-  
+
   .actionGrid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .actionBtn {
     background: #000000;
   }
-  
+
   .actionBtn.full {
     grid-column: span 1;
   }
@@ -560,7 +582,8 @@
     font-size: 15px;
     border-radius: 12px;
   }
-  .btnPrimary, .btnSecondary {
+  .btnPrimary,
+  .btnSecondary {
     height: 48px;
     border-radius: 12px;
     font-size: 15px;
@@ -630,19 +653,24 @@
   .settingsItem {
     padding: 16px 20px;
     font-size: 14px;
-    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.1s,
+      box-shadow 0.2s;
   }
 
   .settingsItem:hover {
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   .settingsItem:active {
     transform: scale(0.98);
   }
 
-  .importSheet, .exportSheet, .favSheet {
+  .importSheet,
+  .exportSheet,
+  .favSheet {
     max-width: 480px;
   }
 
@@ -721,7 +749,8 @@
   }
 
   /* Hide scrollbars completely and prevent side scrolling on PC */
-  html, body {
+  html,
+  body {
     overflow-x: hidden !important;
   }
   ::-webkit-scrollbar {
@@ -751,7 +780,9 @@
     gap: 16px !important;
   }
   .listItem {
-    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
+    transition:
+      transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+      box-shadow 0.2s ease;
   }
   .listItem:hover {
     transform: translateY(-4px) scale(1.02);
@@ -773,7 +804,8 @@
   .listItemMeta {
     font-size: 11px;
   }
-  .listImport, .listSkip {
+  .listImport,
+  .listSkip {
     height: 32px;
     font-size: 11px;
   }

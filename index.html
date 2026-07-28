@@ -1,230 +1,408 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="Log!t - Your movie journal.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="description" content="Log!t - Your movie journal." />
     <title>Log!t</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=58">
-<link rel="stylesheet" href="css/components.css?v=58">
-<link rel="stylesheet" href="css/library.css?v=58">
-<link rel="stylesheet" href="css/modal.css?v=58">
-<link rel="stylesheet" href="css/desktop.css?v=58">
-<link rel="stylesheet" href="css/animations.css?v=58">
-<link rel="stylesheet" href="css/auth.css?v=58">
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script defer src="https://accounts.google.com/gsi/client" async defer></script>
-</head>
-<body>
-
-<header class="header" id="header">
-  <div class="headerRow">
-    <div style="display:flex;align-items:center;gap:10px;flex:1;">
-      <a href="index.html" class="logo">Log!t</a>
-      <div class="pcSearchBar" id="pcSearchBar">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search library..." id="pcLibSearch" aria-label="Search library">
-        <button class="clearBtn" id="pcClearSearch" aria-label="Clear search">&times;</button>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css?v=58" />
+    <link rel="stylesheet" href="css/components.css?v=58" />
+    <link rel="stylesheet" href="css/library.css?v=58" />
+    <link rel="stylesheet" href="css/modal.css?v=58" />
+    <link rel="stylesheet" href="css/desktop.css?v=58" />
+    <link rel="stylesheet" href="css/animations.css?v=58" />
+    <link rel="stylesheet" href="css/auth.css?v=58" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ></script>
+    <script
+      defer
+      src="https://accounts.google.com/gsi/client"
+      async
+      defer
+    ></script>
+  </head>
+  <body>
+    <header class="header" id="header">
+      <div class="headerRow">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1">
+          <a href="index.html" class="logo">Log!t</a>
+          <div class="pcSearchBar" id="pcSearchBar">
+            <svg
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search library..."
+              id="pcLibSearch"
+              aria-label="Search library"
+            />
+            <button
+              class="clearBtn"
+              id="pcClearSearch"
+              aria-label="Clear search"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+        <div class="pcHeaderNav">
+          <button
+            class="pcNavBtn active"
+            onclick="location.href = 'index.html'"
+          >
+            Library
+          </button>
+          <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
+          <button class="pcNavBtn" onclick="location.href = 'stats.html'">
+            Stats
+          </button>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center">
+          <button
+            class="settingsIcon"
+            id="profileBtn"
+            title="Profile"
+            aria-label="Profile"
+          >
+            <svg
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </button>
+          <button class="settingsIcon" id="settingsBtn" aria-label="Settings">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="pcHeaderNav">
-      <button class="pcNavBtn active" onclick="location.href='index.html'">Library</button>
-      <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
-      <button class="pcNavBtn" onclick="location.href='stats.html'">Stats</button>
-    </div>
-    <div style="display:flex;gap:6px;align-items:center;">
-      <button class="settingsIcon" id="profileBtn" title="Profile" aria-label="Profile">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="settingsPanel" id="settingsPanel">
+        <div class="settingsRow">
+          <span class="settingsLabel">Dates</span>
+          <button
+            class="settingsToggle"
+            id="dateToggle"
+            aria-label="Toggle dates"
+          ></button>
+          <span class="settingsLabel" style="margin-left: 14px">Cols</span>
+          <div class="gridSlider">
+            <div class="gridTicks">
+              <span></span><span></span><span></span><span></span><span></span
+              ><span></span><span></span><span></span>
+            </div>
+            <input
+              type="range"
+              id="gridSlider"
+              min="4"
+              max="10"
+              step="any"
+              value="3"
+              aria-label="Grid size"
+            />
+            <span class="gridValue" id="gridValue">3</span>
+          </div>
+          <div class="searchBar" id="searchBar">
+            <svg
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search"
+              id="libSearch"
+              aria-label="Search library"
+            />
+            <button class="clearBtn" id="clearSearch" aria-label="Clear search">
+              &times;
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="posterBg" id="posterBg"></div>
+    <section class="library" id="library"></section>
+    <nav class="bottomNav" id="bottomNav">
+      <button class="navItem on" id="navLibrary">
+        <svg
+          class="navIcon"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <rect x="3" y="3" width="7" height="7" rx="1.5" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        </svg>
+        <span class="navLabel">Library</span>
       </button>
-      <button class="settingsIcon" id="settingsBtn" aria-label="Settings">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+      <button class="navAdd" id="navAdd" aria-label="Add movie">
+        <svg
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          viewBox="0 0 24 24"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
       </button>
-    </div>
-  </div>
-  <div class="settingsPanel" id="settingsPanel">
-    <div class="settingsRow">
-      <span class="settingsLabel">Dates</span>
-      <button class="settingsToggle" id="dateToggle" aria-label="Toggle dates"></button>
-      <span class="settingsLabel" style="margin-left:14px;">Cols</span>
-      <div class="gridSlider">
-        <div class="gridTicks"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-        <input type="range" id="gridSlider" min="4" max="10" step="any" value="3" aria-label="Grid size">
-        <span class="gridValue" id="gridValue">3</span>
-      </div>
-      <div class="searchBar" id="searchBar">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search" id="libSearch" aria-label="Search library">
-        <button class="clearBtn" id="clearSearch" aria-label="Clear search">&times;</button>
-      </div>
-    </div>
-  </div>
-</header>
+      <button
+        class="navItem"
+        id="navStats"
+        onclick="location.href = 'stats.html'"
+      >
+        <svg
+          class="navIcon"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 20V10" />
+          <path d="M18 20V4" />
+          <path d="M6 20v-4" />
+        </svg>
+        <span class="navLabel">Stats</span>
+      </button>
+    </nav>
 
-<div class="posterBg" id="posterBg"></div>
-<section class="library" id="library"></section>
-<nav class="bottomNav" id="bottomNav">
-  <button class="navItem on" id="navLibrary">
-    <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-    <span class="navLabel">Library</span>
-  </button>
-  <button class="navAdd" id="navAdd" aria-label="Add movie">
-    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="navItem" id="navStats" onclick="location.href='stats.html'">
-    <svg class="navIcon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-    <span class="navLabel">Stats</span>
-  </button>
-</nav>
-
-<!-- ========= ADD ========= -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <div class="top">
-      <h3>Add Movie</h3>
-      <button class="close" id="closeBtn" aria-label="Close">&times;</button>
-    </div>
-    <div class="searchBox">
-      <input type="text" placeholder="Movie name" id="query" aria-label="Search movies">
-      <button class="clearBtn" id="clearQuery" aria-label="Clear search">&times;</button>
-    </div>
-    <div class="searchRow">
-      <input type="number" placeholder="Year" id="year" aria-label="Year filter">
-      <input type="date" id="watchDate" aria-label="Watch date">
-    </div>
-    <div class="results" id="results"></div>
-  </div>
-</div>
-
-<!-- ========= META ========= -->
-<section class="metaModal" id="metaModal">
-  <div class="posterBg" id="posterBgModal"></div>
-  <div class="meta">
-    <button class="metaCloseBtn" onclick="Logit.Overlays.closeTop()" aria-label="Close modal">&times;</button>
-    <div class="metaHandle"></div>
-    <div class="metaHeader">
-      <div class="posterWrap">
-        <img class="poster" id="mPoster">
-        <button class="posterBtn" id="changePoster" aria-label="Change poster"></button>
-      </div>
-      <div class="metaInfo">
-        <div class="topRow">
-          <h2 id="mTitle"></h2>
-          <div class="ratingBox"><span id="mRating"></span></div>
-          <div class="ratingEdit" id="eRating"></div>
+    <!-- ========= ADD ========= -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="top">
+          <h3>Add Movie</h3>
+          <button class="close" id="closeBtn" aria-label="Close">
+            &times;
+          </button>
         </div>
-        <div class="chips">
-          <span id="mYear"></span>
-          <span id="mGenre"></span>
+        <div class="searchBox">
+          <input
+            type="text"
+            placeholder="Movie name"
+            id="query"
+            aria-label="Search movies"
+          />
+          <button class="clearBtn" id="clearQuery" aria-label="Clear search">
+            &times;
+          </button>
         </div>
-        <div class="info">
-          <div>
-            <p>Runtime</p>
-            <h4 id="mRun"></h4>
-            <input class="metaInput metaInputSmall" id="eRuntime" type="number" min="0" placeholder="minutes">
-          </div>
-          <div>
-            <p>Director</p>
-            <h4 id="mDirector"></h4>
-            <input class="metaInput" id="eDirector">
-          </div>
-          <div>
-            <p>Language</p>
-            <h4 id="mLang"></h4>
-            <input class="metaInput" id="eLang">
-          </div>
-          <div>
-            <p>Country</p>
-            <h4 id="mCountry"></h4>
-            <input class="metaInput" id="eCountry">
-          </div>
-          <div>
-            <p>Watch</p>
-            <h4 id="mWatch"></h4>
-            <label class="metaCheckbox" id="eWatchWrap">
-              <input type="checkbox" id="eWatch">
-              <div class="toggle-track"></div>
-              Rewatch
-            </label>
-          </div>
+        <div class="searchRow">
+          <input
+            type="number"
+            placeholder="Year"
+            id="year"
+            aria-label="Year filter"
+          />
+          <input type="date" id="watchDate" aria-label="Watch date" />
         </div>
+        <div class="results" id="results"></div>
       </div>
     </div>
-    <div class="logged">
-      <p>Logged</p>
-      <h4 id="mLogged"></h4>
-      <input class="metaInput" id="eLogged" type="date">
-    </div>
-    <div class="metaSection">
-      <p>Cast</p>
-      <h4 id="mCast"></h4>
-      <input class="metaInput" id="eCast">
-    </div>
-    <div class="metaSection" id="supportingWrap">
-      <p>Supporting</p>
-      <h4 id="mSupporting"></h4>
-      <input class="metaInput" id="eSupporting">
-    </div>
-    <div class="metaSection">
-      <p>Production</p>
-      <h4 id="mProduction"></h4>
-      <input class="metaInput" id="eProduction">
-    </div>
-    <div class="actions">
-      <button class="edit" id="editBtn">Edit</button>
-      <button class="deleteBtn" id="deleteBtn">Delete</button>
-      <button class="edit" id="saveBtn">Save</button>
-    </div>
-  </div>
-</section>
 
-<script defer src="js/constants.js?v=58"></script>
-<script defer src="js/config.js?v=58"></script>
-<script defer src="js/storage.js?v=58"></script>
-<script defer src="js/utils.js?v=58"></script>
-<script defer src="js/movieFactory.js?v=58"></script>
-<script defer src="js/movies.js?v=58"></script>
-<script defer src="js/overlays.js?v=58"></script>
-<script defer src="js/search.js?v=58"></script>
-<script defer src="js/posterPicker.js?v=58"></script>
-<script defer src="js/modals.js?v=58"></script>
-<script defer src="js/import.js?v=58"></script>
-<script defer src="js/ui.js?v=58"></script>
-<script defer src="js/supabase.js?v=58"></script>
-<script defer src="js/auth.js?v=58"></script>
-<script defer src="js/drive.js?v=58"></script>
-<script defer src="js/library.js?v=58"></script>
-<script defer src="js/app.js?v=58"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    Logit.Supabase.init();
+    <!-- ========= META ========= -->
+    <section class="metaModal" id="metaModal">
+      <div class="posterBg" id="posterBgModal"></div>
+      <div class="meta">
+        <button
+          class="metaCloseBtn"
+          onclick="Logit.Overlays.closeTop()"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+        <div class="metaHandle"></div>
+        <div class="metaHeader">
+          <div class="posterWrap">
+            <img class="poster" id="mPoster" />
+            <button
+              class="posterBtn"
+              id="changePoster"
+              aria-label="Change poster"
+            ></button>
+          </div>
+          <div class="metaInfo">
+            <div class="topRow">
+              <h2 id="mTitle"></h2>
+              <div class="ratingBox"><span id="mRating"></span></div>
+              <div class="ratingEdit" id="eRating"></div>
+            </div>
+            <div class="chips">
+              <span id="mYear"></span>
+              <span id="mGenre"></span>
+            </div>
+            <div class="info">
+              <div>
+                <p>Runtime</p>
+                <h4 id="mRun"></h4>
+                <input
+                  class="metaInput metaInputSmall"
+                  id="eRuntime"
+                  type="number"
+                  min="0"
+                  placeholder="minutes"
+                />
+              </div>
+              <div>
+                <p>Director</p>
+                <h4 id="mDirector"></h4>
+                <input class="metaInput" id="eDirector" />
+              </div>
+              <div>
+                <p>Language</p>
+                <h4 id="mLang"></h4>
+                <input class="metaInput" id="eLang" />
+              </div>
+              <div>
+                <p>Country</p>
+                <h4 id="mCountry"></h4>
+                <input class="metaInput" id="eCountry" />
+              </div>
+              <div>
+                <p>Watch</p>
+                <h4 id="mWatch"></h4>
+                <label class="metaCheckbox" id="eWatchWrap">
+                  <input type="checkbox" id="eWatch" />
+                  <div class="toggle-track"></div>
+                  Rewatch
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="logged">
+          <p>Logged</p>
+          <h4 id="mLogged"></h4>
+          <input class="metaInput" id="eLogged" type="date" />
+        </div>
+        <div class="metaSection">
+          <p>Cast</p>
+          <h4 id="mCast"></h4>
+          <input class="metaInput" id="eCast" />
+        </div>
+        <div class="metaSection" id="supportingWrap">
+          <p>Supporting</p>
+          <h4 id="mSupporting"></h4>
+          <input class="metaInput" id="eSupporting" />
+        </div>
+        <div class="metaSection">
+          <p>Production</p>
+          <h4 id="mProduction"></h4>
+          <input class="metaInput" id="eProduction" />
+        </div>
+        <div class="actions">
+          <button class="edit" id="editBtn">Edit</button>
+          <button class="deleteBtn" id="deleteBtn">Delete</button>
+          <button class="edit" id="saveBtn">Save</button>
+        </div>
+      </div>
+    </section>
 
-    // Check auth — redirect to welcome if not logged in
-    Logit.Supabase.getSession().then(function(session) {
-      if (!session) {
-        window.location.href = 'welcome.html';
-        return;
-      }
-      var userId = session.user && session.user.id;
-      if (userId) localStorage.setItem('logit_user_id', userId);
-    });
+    <script defer src="js/constants.js?v=58"></script>
+    <script defer src="js/config.js?v=58"></script>
+    <script defer src="js/storage.js?v=58"></script>
+    <script defer src="js/utils.js?v=58"></script>
+    <script defer src="js/movieFactory.js?v=58"></script>
+    <script defer src="js/movies.js?v=58"></script>
+    <script defer src="js/overlays.js?v=58"></script>
+    <script defer src="js/search.js?v=58"></script>
+    <script defer src="js/posterPicker.js?v=58"></script>
+    <script defer src="js/modals.js?v=58"></script>
+    <script defer src="js/import.js?v=58"></script>
+    <script defer src="js/ui.js?v=58"></script>
+    <script defer src="js/supabase.js?v=58"></script>
+    <script defer src="js/auth.js?v=58"></script>
+    <script defer src="js/drive.js?v=58"></script>
+    <script defer src="js/library.js?v=58"></script>
+    <script defer src="js/app.js?v=58"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Logit.Supabase.init();
 
-    var profileBtn = document.getElementById('profileBtn');
-    if (profileBtn) {
-      profileBtn.addEventListener('click', function() {
-        window.location.href = 'profile.html';
+        // Check auth — redirect to welcome if not logged in
+        Logit.Supabase.getSession().then(function (session) {
+          if (!session) {
+            window.location.href = 'welcome.html';
+            return;
+          }
+          var userId = session.user && session.user.id;
+          if (userId) localStorage.setItem('logit_user_id', userId);
+        });
+
+        var profileBtn = document.getElementById('profileBtn');
+        if (profileBtn) {
+          profileBtn.addEventListener('click', function () {
+            window.location.href = 'profile.html';
+          });
+        }
       });
-    }
-  });
-</script>
-</body>
+    </script>
+  </body>
 </html>
 <!-- build bump 25 -->
-
-
