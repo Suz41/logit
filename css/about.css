@@ -243,7 +243,7 @@
 .storageBar {
   height: 6px;
   background: #111;
-  border-radius: 999px;
+  border-radius: 6px;
   overflow: hidden;
   margin-bottom: 14px;
 }
@@ -251,7 +251,7 @@
 .storageFill {
   height: 100%;
   background: #fff;
-  border-radius: 999px;
+  border-radius: 6px;
 }
 
 /* ========= DATA FIELDS CHIPS ========= */
@@ -264,7 +264,7 @@
 .fieldChip {
   height: 28px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: 8px;
   border: 0.5px solid var(--border);
   display: flex;
   align-items: center;

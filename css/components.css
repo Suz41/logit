@@ -136,37 +136,14 @@
 .settingsRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  padding: 10px 16px;
-  box-sizing: border-box;
-}
-
-.settingsGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 99px;
-  padding: 4px 12px;
-}
-
-.settingsItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.settingsDivider {
-  width: 1px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.12);
+  padding: 10px 14px;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.06);
 }
 
 .settingsLabel {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -326,13 +303,9 @@
 
 .gridValue {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  padding: 1px 6px;
-  min-width: 18px;
+  min-width: 14px;
   text-align: center;
 }
 

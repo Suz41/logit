@@ -782,7 +782,7 @@
   right: 3px;
   bottom: 3px;
   height: 16px;
-  border-radius: 999px;
+  border-radius: 4px;
   background: rgba(0, 0, 0, 0.7);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
