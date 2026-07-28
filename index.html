@@ -137,28 +137,35 @@
       </div>
       <div class="settingsPanel" id="settingsPanel">
         <div class="settingsRow">
-          <span class="settingsLabel">Dates</span>
-          <button
-            class="settingsToggle"
-            id="dateToggle"
-            aria-label="Toggle dates"
-          ></button>
-          <span class="settingsLabel" style="margin-left: 14px">Cols</span>
-          <div class="gridSlider">
-            <div class="gridTicks">
-              <span></span><span></span><span></span><span></span><span></span
-              ><span></span><span></span><span></span>
+          <div class="settingsGroup">
+            <div class="settingsItem">
+              <span class="settingsLabel">Dates</span>
+              <button
+                class="settingsToggle"
+                id="dateToggle"
+                aria-label="Toggle dates"
+              ></button>
             </div>
-            <input
-              type="range"
-              id="gridSlider"
-              min="4"
-              max="10"
-              step="any"
-              value="3"
-              aria-label="Grid size"
-            />
-            <span class="gridValue" id="gridValue">3</span>
+            <div class="settingsDivider"></div>
+            <div class="settingsItem">
+              <span class="settingsLabel">Cols</span>
+              <div class="gridSlider">
+                <div class="gridTicks">
+                  <span></span><span></span><span></span><span></span
+                  ><span></span><span></span><span></span><span></span>
+                </div>
+                <input
+                  type="range"
+                  id="gridSlider"
+                  min="4"
+                  max="10"
+                  step="any"
+                  value="3"
+                  aria-label="Grid size"
+                />
+                <span class="gridValue" id="gridValue">3</span>
+              </div>
+            </div>
           </div>
           <div class="searchBar" id="searchBar">
             <svg
@@ -175,7 +182,7 @@
             </svg>
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search library..."
               id="libSearch"
               aria-label="Search library"
             />
