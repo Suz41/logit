@@ -7,11 +7,11 @@ Logit.StatsPage = {
       try {
         var session = await Logit.Supabase.getSession();
         if (!session) {
-          window.location.href = 'welcome.html';
+          Logit.Utils.navTo('welcome.html');
           return;
         }
       } catch (e) {
-        window.location.href = 'welcome.html';
+        Logit.Utils.navTo('welcome.html');
         return;
       }
     }
@@ -431,7 +431,7 @@ Logit.StatsPage = {
     const aboutBtn = document.querySelector('[data-action="about"]');
     if (aboutBtn)
       aboutBtn.addEventListener('click', function () {
-        window.location.href = 'about.html';
+        Logit.Utils.navTo('about.html');
       });
 
     // ========= IMPORT LOGIC =========

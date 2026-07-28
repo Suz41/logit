@@ -9,9 +9,23 @@
     <meta name="description" content="Log!t - Your movie journal." />
     <title>Log!t</title>
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/images/favicon-16x16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/images/apple-touch-icon.png"
+    />
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -72,12 +86,12 @@
         <div class="pcHeaderNav">
           <button
             class="pcNavBtn active"
-            onclick="location.href = 'index.html'"
+            onclick="Logit.Utils.navTo('index.html')"
           >
             Library
           </button>
           <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
-          <button class="pcNavBtn" onclick="location.href = 'stats.html'">
+          <button class="pcNavBtn" onclick="Logit.Utils.navTo('stats.html')">
             Stats
           </button>
         </div>
@@ -212,7 +226,7 @@
       <button
         class="navItem"
         id="navStats"
-        onclick="location.href = 'stats.html'"
+        onclick="Logit.Utils.navTo('stats.html')"
       >
         <svg
           class="navIcon"
@@ -388,7 +402,7 @@
         // Check auth — redirect to welcome if not logged in
         Logit.Supabase.getSession().then(function (session) {
           if (!session) {
-            window.location.href = 'welcome.html';
+            Logit.Utils.navTo('welcome.html');
             return;
           }
           var userId = session.user && session.user.id;
@@ -398,7 +412,7 @@
         var profileBtn = document.getElementById('profileBtn');
         if (profileBtn) {
           profileBtn.addEventListener('click', function () {
-            window.location.href = 'profile.html';
+            Logit.Utils.navTo('profile.html');
           });
         }
       });

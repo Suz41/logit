@@ -180,5 +180,23 @@ Logit.Utils = {
         fn.apply(context, args);
       }, ms);
     };
+  },
+
+  /** @param {string} targetPage @returns {string} */
+  getPageUrl(targetPage) {
+    var inPagesDir = window.location.pathname.indexOf('/pages/') !== -1;
+    if (targetPage === 'index.html' || targetPage === '../index.html') {
+      return inPagesDir ? '../index.html' : 'index.html';
+    }
+    var cleanPage = targetPage
+      .replace(/^pages\//, '')
+      .replace(/^\.\.\/pages\//, '')
+      .replace(/^\.\.\//, '');
+    return inPagesDir ? cleanPage : 'pages/' + cleanPage;
+  },
+
+  /** @param {string} targetPage */
+  navTo(targetPage) {
+    window.location.href = this.getPageUrl(targetPage);
   }
 };

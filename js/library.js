@@ -707,7 +707,7 @@ Logit.LibraryPage = {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     $('navStats').onclick = function () {
-      window.location.href = 'stats.html';
+      Logit.Utils.navTo('stats.html');
     };
   }
 };

@@ -21,11 +21,11 @@ Logit.ProfilePage = {
     try {
       await this.checkAuth();
       if (!this._user) {
-        window.location.href = 'welcome.html';
+        Logit.Utils.navTo('welcome.html');
         return;
       }
     } catch (e) {
-      window.location.href = 'welcome.html';
+      Logit.Utils.navTo('welcome.html');
       return;
     }
 
@@ -1311,7 +1311,7 @@ Logit.ProfilePage = {
       alert(
         'Account marked for deletion. Data will be permanently deleted after 30 days.'
       );
-      window.location.href = 'welcome.html';
+      Logit.Utils.navTo('welcome.html');
     } catch (e) {
       alert('Delete failed: ' + e.message);
     }

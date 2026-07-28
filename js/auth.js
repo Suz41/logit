@@ -286,7 +286,7 @@ Logit.Auth = {
     var client = Logit.Supabase.getClient();
     if (client) await client.auth.signOut();
     localStorage.removeItem('logit_user_id');
-    location.href = 'welcome.html';
+    Logit.Utils.navTo('welcome.html');
   },
 
   async initializeCloudUser() {
@@ -316,7 +316,7 @@ Logit.Auth = {
 
   redirectToLibrary() {
     setTimeout(function () {
-      window.location.href = 'index.html';
+      Logit.Utils.navTo('index.html');
     }, 300);
   }
 };
