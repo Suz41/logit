@@ -814,6 +814,20 @@
   margin-bottom: -24px;
 }
 
+@media (max-width: 768px) {
+  .modal-content,
+  .sheet,
+  .meta {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .metaModal .posterBgModal {
+    filter: blur(20px) saturate(1.1);
+    transform: scale(1.2) translateZ(0);
+  }
+}
+
 .metaCloseBtn:hover, .posterCloseBtn:hover {
   background: #ffffff;
   color: #000000;

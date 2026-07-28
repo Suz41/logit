@@ -156,6 +156,8 @@ body {
   gap: 2px;
   padding-top: 4px;
   align-items: start;
+  contain: content;
+  transform: translateZ(0);
 }
 
 .movie {
@@ -164,6 +166,7 @@ body {
   cursor: pointer;
   min-height: 0;
   position: relative;
+  contain: layout paint;
 }
 
 .movie img {
@@ -176,6 +179,10 @@ body {
   background: transparent;
   flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  content-visibility: auto;
+}
+
+.movie:hover img {
   will-change: transform;
 }
 
