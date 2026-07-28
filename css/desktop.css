@@ -37,11 +37,10 @@
   .pcHeaderNav {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.04);
-    border: 0.5px solid rgba(255, 255, 255, 0.06);
-    padding: 3px;
-    border-radius: 12px;
-    gap: 2px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    gap: 4px;
   }
 
   .pcNavBtn {
