@@ -135,6 +135,10 @@ Logit.Auth = {
     if (el) el.textContent = msg;
   },
 
+  isGmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test((email || '').trim());
+  },
+
   async handleSignIn() {
     var input = (document.getElementById('authEmail') || {}).value;
     var password = (document.getElementById('authPassword') || {}).value;
@@ -166,6 +170,9 @@ Logit.Auth = {
           return;
         }
       }
+    } else if (!this.isGmail(email)) {
+      this.setMessage('Only @gmail.com addresses are accepted');
+      return;
     }
     await this.signInWithEmail(email, password.trim());
   },
@@ -178,15 +185,16 @@ Logit.Auth = {
       this.setMessage('Fill all fields');
       return;
     }
-    if (!email.includes('@')) {
-      this.setMessage('Enter a valid email');
+    email = email.trim();
+    if (!this.isGmail(email)) {
+      this.setMessage('Only @gmail.com addresses are accepted');
       return;
     }
     if (password.length < 6) {
       this.setMessage('Password must be 6+ characters');
       return;
     }
-    await this.signUpWithEmail(email.trim(), password.trim(), username.trim());
+    await this.signUpWithEmail(email, password.trim(), username.trim());
   },
 
   async handleForgotPassword() {
@@ -195,13 +203,18 @@ Logit.Auth = {
       this.setMessage('Enter your email first');
       return;
     }
+    email = email.trim();
+    if (!this.isGmail(email)) {
+      this.setMessage('Only @gmail.com addresses are accepted');
+      return;
+    }
     var client = Logit.Supabase.getClient();
     if (!client) {
       this.setMessage('Cloud not configured');
       return;
     }
     try {
-      var { error } = await client.auth.resetPasswordForEmail(email.trim(), {
+      var { error } = await client.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + '/reset.html'
       });
       if (error) {
