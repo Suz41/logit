@@ -286,7 +286,11 @@ Logit.Auth = {
     var client = Logit.Supabase.getClient();
     if (client) await client.auth.signOut();
     localStorage.removeItem('logit_user_id');
-    Logit.Utils.navTo('welcome.html');
+    if (window.Logit && window.Logit.Utils && typeof window.Logit.Utils.navTo === 'function') {
+      Logit.Utils.navTo('welcome.html');
+    } else {
+      window.location.href = 'welcome.html';
+    }
   },
 
   async initializeCloudUser() {
@@ -316,7 +320,11 @@ Logit.Auth = {
 
   redirectToLibrary() {
     setTimeout(function () {
-      Logit.Utils.navTo('index.html');
+      if (window.Logit && window.Logit.Utils && typeof window.Logit.Utils.navTo === 'function') {
+        Logit.Utils.navTo('index.html');
+      } else {
+        window.location.href = 'index.html';
+      }
     }, 300);
   }
 };
