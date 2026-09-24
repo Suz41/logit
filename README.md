@@ -1,137 +1,111 @@
 # 🎬 Log!t
 
-Log!t is a lightweight movie tracking app for logging every movie you watch, rating it with half-point precision, and building a personal watch history with insightful stats.
+Log!t is a personal movie tracking app built for people who want a clean, fast, and thoughtful way to keep a record of everything they watch. Instead of relying on scattered notes or memory, you can search for a title, log your rating, track when you watched it, and build a history that becomes a richer picture of your viewing habits over time.
 
-Search for movies through TMDB, organize your library, track rewatches, and keep everything synced in the cloud.
+The app is designed around a simple idea: every movie should be easy to add, easy to rate, and easy to revisit later through meaningful statistics. It blends movie discovery via TMDB with a lightweight personal library so you can keep a catalogue that feels more like a digital movie journal than a spreadsheet.
 
 [Live Demo](https://suz41.github.io/logit) • [Setup Guide](docs/SETUP.md) • [FAQ](docs/FAQ.md)
 
-<p align="center">
-  <img alt="Log!t app preview" src="https://raw.githubusercontent.com/Suz41/logit/main/assets/preview.png" width="900" />
-</p>
+## Why this project exists
 
-## Why Log!t?
+Many people watch movies regularly but never really keep track of what they have seen, how they felt about it, or how their taste evolves over time. Log!t exists to solve that problem in a way that feels natural and enjoyable rather than tedious.
 
-Whether you're trying to remember what you watched last month or want a full statistical view of your movie habits, Log!t gives you a clean, fast way to track your viewing life.
+Instead of only storing a list of titles, Log!t helps you capture the context around each movie: the rating, the watch date, whether it was a first watch or a rewatch, and the metadata that gives the library more texture. Over time, that turns a simple collection into a personal archive with useful patterns and trends.
 
-- Search and add movies from TMDB instantly
-- Rate titles from 0.5 to 5.0 in half-point increments
-- Track first watches, rewatches, and total runtime
-- Explore genre, country, director, and decade stats
-- Sync your library securely with Supabase
-- Back up data to Google Drive
+## What you can do with Log!t
 
-## Features
+Log!t is built for people who want to track movies in a way that is both practical and expressive. You can search through TMDB for titles, add them to your library, and rate them using half-point precision from 0.5 to 5.0. This makes the rating system feel much closer to how people actually talk about movies, rather than forcing everything into broad integer values.
 
-### Movie Library
+As your library grows, the app also becomes more useful as a reflection tool. You can see patterns in your ratings, identify which directors or genres dominate your viewing habits, and track rewatch activity in a way that makes your watch history feel alive. It is not just a list of titles; it is a way to understand your own taste and habits.
 
-- Add movies from TMDB search
-- Maintain a personal watchlist and history
-- Track watch dates and rewatch counts
-- Update poster art and metadata when needed
+## Key features
 
-### Advanced Ratings
+### Movie discovery and personal library
 
-- Half-point precision ratings
-- Quick score logging for every viewing
-- Review your average rating and trends over time
+The app makes it easy to discover movies and add them to your own collection. Using TMDB search, you can quickly find a title, inspect basic metadata, and save it to your library with the information you care about most. This keeps the process smooth and fast, especially when you are adding a lot of films over time.
 
-### Insights & Stats
+Once saved, the movie remains part of your personal record. You can revisit it later, update details, and maintain a watch list that reflects your actual viewing history instead of a static archive.
 
-- Genre breakdowns
-- Director and country stats
-- Decade trends
-- Runtime and watch totals
-- Rewatch tracking and first-watch analytics
+### Precision ratings and watch tracking
 
-### Cloud Sync & Backup
+One of the defining features of Log!t is the rating system. Ratings can be recorded in half-point increments, which makes the app feel more intentional and realistic for movie fans. A 3.5 or 4.5 rating carries more nuance than a rounded number and better matches how people evaluate films in real life.
 
-- Secure cloud database with Supabase
-- User authentication and profile-based storage
-- Google Drive backup support for added safety
-- Export data as JSON or text
+The app also distinguishes between first watches and rewatches, allowing you to capture repeated viewings in a meaningful way. This helps you understand not only what you liked, but also how often you revisit certain movies and which ones continue to hold value over time.
 
-## Tech Stack
+### Statistics and trends
 
-- Frontend: Vanilla HTML, CSS, and JavaScript
-- Database & Auth: Supabase
-- Movie Metadata: TMDB API
-- Hosting: GitHub Pages
+Beyond simple tracking, Log!t gives you a sense of your viewing habits through built-in analytics. You can explore breakdowns by genre, director, country, and decade, which makes the app useful for discovering patterns in your taste. If you watch a lot of thrillers, revisit classics, or gravitate toward a particular region of cinema, the stats make those patterns visible.
 
-## Quick Start
+This turns the app into both a utility and a reflection tool. It is useful for personal organization, but it also helps you learn more about your own movie preferences over time.
 
-1. Open the app: [suz41.github.io/logit](https://suz41.github.io/logit)
-2. Create an account or sign in
-3. Add your TMDB API key in Settings
-4. Start searching and logging movies
+### Cloud sync and backups
 
-## Local Setup
+Log!t stores your viewing history in the cloud through Supabase, which means your library is tied to your account instead of just your browser. This makes the app feel much more complete and reliable, especially if you switch devices or want the ability to keep your collection accessible anywhere.
 
-This project does not require a build step. You can run it directly in a browser.
+The project also supports Google Drive backup, adding another layer of protection for your data. That means the app is designed not only for tracking but also for preserving your watch history in a durable way.
+
+## The technology behind it
+
+Log!t is intentionally built with simple web technologies instead of a heavy framework. The frontend uses vanilla HTML, CSS, and JavaScript, which keeps the project lightweight, easy to understand, and straightforward to modify.
+
+For storage and authentication, the app relies on Supabase, which gives it a strong backend foundation without introducing unnecessary complexity. Movie metadata comes from TMDB, which is the source for rich search results, posters, and movie information. GitHub Pages is used for hosting, making the app easy to deploy and share.
+
+## Quick start
+
+To start using the app, open the live demo and sign in or create an account. After that, add your TMDB API key in the settings so the app can fetch search results and movie metadata. Once that is in place, you can begin adding films, rating them, and building your tracking library.
+
+The process is intentionally simple: search, add, rate, and review. That makes the app approachable even for someone who just wants a clean movie journal without any complicated setup.
+
+## Local setup
+
+This project does not require a build step. Because the app is built with plain web files, you can run it directly in a browser or serve it locally if you prefer a local development flow.
 
 ### Prerequisites
 
-- A modern web browser
-- A Supabase account
-- A TMDB API key
-- Optional: Google account for Drive backup
+Before using the project locally, you should have a modern web browser, a Supabase account, and a TMDB API key. If you want Google Drive backup support, a Google account is also useful.
 
-### Steps
+### Development flow
 
-1. Clone the repository:
+1. Clone the repository to your machine.
+2. Open the project files in a browser or serve the folder locally.
+3. Configure the required app settings, including the TMDB API key and Supabase connection details if needed.
+4. Start adding movies, ratings, and watch data.
 
-   ```bash
-   git clone https://github.com/Suz41/logit.git
-   cd logit
-   ```
-
-2. Open the project in a browser, or serve it locally if preferred.
-
-3. Configure the required services in the app settings:
-   - TMDB API key
-   - Supabase connection details if applicable
-
-4. Start tracking your movies.
-
-For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md).
+For more detailed instructions, see the [Setup Guide](docs/SETUP.md).
 
 ## Documentation
 
-- [Setup Guide](docs/SETUP.md)
-- [FAQ](docs/FAQ.md)
+The project includes a small documentation set to help with setup and troubleshooting:
 
-## Project Structure
+- [Setup Guide](docs/SETUP.md) for configuration and environment details
+- [FAQ](docs/FAQ.md) for common questions and support topics
+
+## Project structure
 
 ```text
 logit/
-├── index.html         # Library/home screen
+├── index.html         # Library and home screen
 ├── profile.html       # User profile and settings
-├── stats.html         # Stats dashboard
+├── stats.html         # Statistics dashboard
 ├── about.html         # About page
 ├── welcome.html       # Authentication page
 ├── reset.html         # Password reset page
 ├── css/               # Stylesheets
-├── js/                # JavaScript logic and modules
-├── supabase/          # Database setup SQL scripts
-├── docs/              # Setup and FAQ docs
+├── js/                # JavaScript modules and app logic
+├── supabase/          # Database setup and SQL files
+├── docs/              # Setup and FAQ documentation
 ├── README.md          # Project overview
-└── LICENSE            # License file
+├── LICENSE            # Project license
+└── package.json       # Project metadata and scripts
 ```
 
-## Contributing
+## Contribution and licensing
 
-Contributions are welcome. If you'd like to improve the app, fix a bug, or add a feature, feel free to open an issue or submit a pull request.
+Contributions are welcome if you want to improve the experience, fix a bug, or add a feature. The project is open source and is intended to be easy to understand and extend, which makes it a good fit for collaborative improvements.
 
-## License
-
-This project is open source and licensed under the MIT license.
+The project is licensed under the MIT license.
 
 ## Credits
 
-Built with vanilla web technologies by [Suz41](https://github.com/Suz41).
-
-Special thanks to:
-
-- [TMDB](https://www.themoviedb.org/) for movie metadata
-- [Supabase](https://supabase.com/) for cloud storage and auth
+Log!t was built with vanilla web technologies by [Suz41](https://github.com/Suz41). The app relies on the movie metadata and search functionality provided by [TMDB](https://www.themoviedb.org/) and cloud infrastructure from [Supabase](https://supabase.com/).
 
