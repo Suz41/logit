@@ -57,3 +57,25 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_movies_user_tmdb_unique
 -- Settings: user_id is required
 ALTER TABLE settings
   ALTER COLUMN user_id SET NOT NULL;
+
+-- ============================================================
+-- Item 23: Pending Movies (Log!t Companion)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS pending_movies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL,
+  raw_input TEXT,
+  movie_title TEXT NOT NULL,
+  tmdb_id TEXT,
+  rating TEXT,
+  watch_date TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT chk_pending_status CHECK (status IN ('pending', 'matched', 'completed', 'removed'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_pending_movies_user_status ON pending_movies (user_id, status);
+CREATE INDEX IF NOT EXISTS idx_pending_movies_user_created ON pending_movies (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_pending_movies_user_tmdb ON pending_movies (user_id, tmdb_id);

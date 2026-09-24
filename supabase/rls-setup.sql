@@ -48,3 +48,22 @@ CREATE POLICY "Users can insert own profile"
 CREATE POLICY "Users can update own profile"
   ON users FOR UPDATE
   USING (auth.uid() = id);
+
+-- Pending Movies: users can only manage their own pending movies
+ALTER TABLE pending_movies ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own pending movies"
+  ON pending_movies FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own pending movies"
+  ON pending_movies FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own pending movies"
+  ON pending_movies FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own pending movies"
+  ON pending_movies FOR DELETE
+  USING (auth.uid() = user_id);

@@ -91,6 +91,13 @@
             Library
           </button>
           <button class="pcNavBtn" id="pcAddMovieBtn">Add Movie</button>
+          <button
+            class="pcNavBtn"
+            onclick="Logit.Utils.navTo('pending.html')"
+          >
+            Pending
+            <span class="listBadge pendingBadge" data-badge="pending" style="display: none;"></span>
+          </button>
           <button class="pcNavBtn" onclick="Logit.Utils.navTo('stats.html')">
             Stats
           </button>
@@ -208,6 +215,28 @@
           <rect x="14" y="14" width="7" height="7" rx="1.5" />
         </svg>
         <span class="navLabel">Library</span>
+      </button>
+      <button
+        class="navItem"
+        id="navPending"
+        onclick="Logit.Utils.navTo('pending.html')"
+      >
+        <svg
+          class="navIcon"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        <span class="listBadge pendingBadge" data-badge="pending" style="display: none;"></span>
+        <span class="navLabel">Pending</span>
       </button>
       <button class="navAdd" id="navAdd" aria-label="Add movie">
         <svg
@@ -378,23 +407,25 @@
       </div>
     </section>
 
-    <script defer src="js/constants.js?v=58"></script>
-    <script defer src="js/config.js?v=58"></script>
-    <script defer src="js/storage.js?v=58"></script>
-    <script defer src="js/utils.js?v=58"></script>
-    <script defer src="js/movieFactory.js?v=58"></script>
-    <script defer src="js/movies.js?v=58"></script>
-    <script defer src="js/overlays.js?v=58"></script>
-    <script defer src="js/search.js?v=58"></script>
-    <script defer src="js/posterPicker.js?v=58"></script>
-    <script defer src="js/modals.js?v=58"></script>
-    <script defer src="js/import.js?v=58"></script>
-    <script defer src="js/ui.js?v=58"></script>
-    <script defer src="js/supabase.js?v=58"></script>
-    <script defer src="js/auth.js?v=58"></script>
-    <script defer src="js/drive.js?v=58"></script>
-    <script defer src="js/library.js?v=58"></script>
-    <script defer src="js/app.js?v=58"></script>
+    <script defer src="js/constants.js?v=59"></script>
+    <script defer src="js/config.js?v=59"></script>
+    <script defer src="js/storage.js?v=59"></script>
+    <script defer src="js/utils.js?v=59"></script>
+    <script defer src="js/movieFactory.js?v=59"></script>
+    <script defer src="js/movies.js?v=59"></script>
+    <script defer src="js/overlays.js?v=59"></script>
+    <script defer src="js/search.js?v=59"></script>
+    <script defer src="js/posterPicker.js?v=59"></script>
+    <script defer src="js/modals.js?v=59"></script>
+    <script defer src="js/import.js?v=59"></script>
+    <script defer src="js/ui.js?v=59"></script>
+    <script defer src="js/supabase.js?v=59"></script>
+    <script defer src="js/auth.js?v=59"></script>
+    <script defer src="js/drive.js?v=59"></script>
+    <script defer src="js/parser.js?v=59"></script>
+    <script defer src="js/pending.js?v=59"></script>
+    <script defer src="js/library.js?v=59"></script>
+    <script defer src="js/app.js?v=59"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         Logit.Supabase.init();
@@ -407,6 +438,7 @@
           }
           var userId = session.user && session.user.id;
           if (userId) localStorage.setItem('logit_user_id', userId);
+          if (Logit.Pending) Logit.Pending.updateBadges();
         });
 
         var profileBtn = document.getElementById('profileBtn');

@@ -121,7 +121,7 @@ body.no-scroll {
   backdrop-filter: none;
   border-top: none;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom, 0);

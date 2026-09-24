@@ -8,3 +8,8 @@ Thumbs.db
 # Node
 node_modules/
 
+
+# Supabase temp
+.temp/
+supabase/.temp/
+.supabase/

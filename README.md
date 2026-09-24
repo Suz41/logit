@@ -20,6 +20,22 @@ As your library grows, the app also becomes more useful as a reflection tool. Yo
 
 ## Key features
 
+### ⚡ Log!t Companion (Quick Capture)
+
+Log!t Companion is a lightweight, mobile-first companion tool designed for instant movie capture on the go (*"I just watched a film; I want to record it in 2 seconds"*).
+
+- **Natural Language Parsing**: Type or paste freely (e.g. `Interstellar 5/5 yesterday`, `The Prestige 4.5`, `Dune Part Two`, `Whiplash ★★★★★ rewatch`) and let the client-side parser detect title, rating, date, and rewatch status in real-time.
+- **1-Tap Clipboard Paste**: Automatically read and convert multi-line lists or notes into structured preview cards.
+- **Android Share Target**: Integrates directly into Android's system share sheet to capture movies shared from IMDb, Letterboxd, YouTube, or your mobile browser.
+- **Offline Resilience**: Automatically caches captures to your local device when offline, syncing to Supabase when connected.
+
+### 📥 Pending Movies System
+
+The Pending Queue bridges rapid mobile captures with your full movie library.
+
+- Queued items automatically match TMDB posters, metadata, and crew details in the background.
+- Review pending films, change TMDB release matches if necessary, and log movies into your library in one click with pre-populated ratings and watch dates.
+
 ### Movie discovery and personal library
 
 The app makes it easy to discover movies and add them to your own collection. Using TMDB search, you can quickly find a title, inspect basic metadata, and save it to your library with the information you care about most. This keeps the process smooth and fast, especially when you are adding a lot of films over time.
@@ -67,7 +83,10 @@ Before using the project locally, you should have a modern web browser, a Supaba
 ### Development flow
 
 1. Clone the repository to your machine.
-2. Open the project files in a browser or serve the folder locally.
+2. Open the project files in a browser or serve the folder locally:
+   ```bash
+   node scripts/serve.js
+   ```
 3. Configure the required app settings, including the TMDB API key and Supabase connection details if needed.
 4. Start adding movies, ratings, and watch data.
 
@@ -75,7 +94,7 @@ For more detailed instructions, see the [Setup Guide](docs/SETUP.md).
 
 ## Documentation
 
-The project includes a small documentation set to help with setup and troubleshooting:
+The project includes documentation to help with setup and troubleshooting:
 
 - [Setup Guide](docs/SETUP.md) for configuration and environment details
 - [FAQ](docs/FAQ.md) for common questions and support topics
@@ -85,14 +104,16 @@ The project includes a small documentation set to help with setup and troublesho
 ```text
 logit/
 ├── index.html         # Library and home screen
+├── companion.html     # Log!t Companion (quick mobile capture)
+├── pending.html       # Pending movies queue
 ├── profile.html       # User profile and settings
 ├── stats.html         # Statistics dashboard
 ├── about.html         # About page
 ├── welcome.html       # Authentication page
 ├── reset.html         # Password reset page
-├── css/               # Stylesheets
-├── js/                # JavaScript modules and app logic
-├── supabase/          # Database setup and SQL files
+├── css/               # Stylesheets (main, companion, pending, etc.)
+├── js/                # JavaScript modules (parser, pending, library, etc.)
+├── supabase/          # Database migrations & RLS policies
 ├── docs/              # Setup and FAQ documentation
 ├── README.md          # Project overview
 ├── LICENSE            # Project license
@@ -108,4 +129,3 @@ The project is licensed under the MIT license.
 ## Credits
 
 Log!t was built with vanilla web technologies by [Suz41](https://github.com/Suz41). The app relies on the movie metadata and search functionality provided by [TMDB](https://www.themoviedb.org/) and cloud infrastructure from [Supabase](https://supabase.com/).
-

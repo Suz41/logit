@@ -1,0 +1,464 @@
+/* ========= Log!t Pending Page Styles ========= */
+
+.pendingContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+  min-height: calc(100vh - 120px);
+}
+
+.pendingHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pendingTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pendingPageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.pendingCountPill {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.pendingHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickCaptureBtn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.quickCaptureBtn:active {
+  transform: scale(0.97);
+}
+
+.iconOnlyBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.iconOnlyBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+/* ========= PENDING LIST & CARDS ========= */
+.pendingGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pendingCard {
+  background: var(--surface2);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.pendingCard:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Poster */
+.pendingPosterWrap {
+  width: 72px;
+  height: 108px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #181818;
+  flex-shrink: 0;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.pendingPosterImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Info */
+.pendingInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 6px;
+}
+
+.pendingTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pendingMovieTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.pendingYear {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.statusBadge {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.statusBadge.matched {
+  background: rgba(48, 209, 88, 0.15);
+  color: var(--green);
+  border: 0.5px solid rgba(48, 209, 88, 0.3);
+}
+
+.statusBadge.pending {
+  background: rgba(255, 149, 0, 0.15);
+  color: #ff9500;
+  border: 0.5px solid rgba(255, 149, 0, 0.3);
+}
+
+.pendingMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.metaItemChip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+.metaItemChip.ratingChip {
+  color: #ffd60a;
+  font-weight: 600;
+}
+
+.metaItemChip.rewatchChip {
+  color: var(--pink);
+}
+
+.rawInputQuote {
+  font-size: 11px;
+  color: var(--dim);
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Actions in Card */
+.pendingActionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.logMovieBtn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: #fff;
+  color: #000;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.logMovieBtn:hover {
+  opacity: 0.9;
+}
+
+.changeMatchBtn {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid var(--border);
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.changeMatchBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.removePendingBtn {
+  height: 32px;
+  width: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0.5px solid transparent;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.removePendingBtn:hover {
+  background: rgba(255, 69, 58, 0.15);
+  color: var(--red);
+  border-color: rgba(255, 69, 58, 0.25);
+}
+
+/* ========= EMPTY STATE ========= */
+.pendingEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--surface2);
+  border: 0.5px dashed var(--border);
+  border-radius: 16px;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.pendingEmptyIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+}
+
+.pendingEmptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pendingEmptySubtitle {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ========= MATCH SEARCH MODAL ========= */
+.matchModal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.matchModal.active {
+  display: flex;
+}
+
+.matchModalContent {
+  background: #141414;
+  border: 0.5px solid var(--border);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+.matchModalHeader {
+  padding: 16px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.matchModalHeader h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.matchModalBody {
+  padding: 14px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.matchSearchInput {
+  height: 42px;
+  background: #202020;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.matchSearchInput:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.matchResultsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.matchResultItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.5px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.matchResultItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.matchResultPoster {
+  width: 36px;
+  height: 54px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #111;
+  flex-shrink: 0;
+}
+
+.matchResultInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.matchResultTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matchResultYear {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Auto responsive layout for mobile */
+@media (max-width: 600px) {
+  .pendingCard {
+    gap: 10px;
+    padding: 10px;
+  }
+  .pendingPosterWrap {
+    width: 60px;
+    height: 90px;
+  }
+  .pendingMovieTitle {
+    font-size: 14.5px;
+  }
+}
