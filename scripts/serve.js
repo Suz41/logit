@@ -3,6 +3,31 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const dnsPromises = require('dns').promises;
+
+// Use Cloudflare and Google DNS to bypass ISP DNS tampering
+dnsPromises.setServers(['1.1.1.1', '8.8.8.8', '1.0.0.1']);
+
+const secureDnsLookup = (hostname, options, cb) => {
+  const callback = typeof options === 'function' ? options : cb;
+  const opts = typeof options === 'object' ? options : {};
+  dnsPromises
+    .resolve4(hostname)
+    .then((addrs) => {
+      if (addrs && addrs.length > 0) {
+        if (opts.all) {
+          callback(null, addrs.map((a) => ({ address: a, family: 4 })));
+        } else {
+          callback(null, addrs[0], 4);
+        }
+      } else {
+        require('dns').lookup(hostname, options, callback);
+      }
+    })
+    .catch(() => {
+      require('dns').lookup(hostname, options, callback);
+    });
+};
 
 const PORT = process.env.PORT || 3000;
 const ROOT = path.resolve(__dirname, '..');
@@ -90,7 +115,10 @@ function proxyWithFlareSolverr(flareUrl, targetUrl, res) {
             if (data.status === 'ok' && data.solution) {
               const sol = data.solution;
               res.writeHead(sol.status || 200, {
-                'Content-Type': sol.headers && sol.headers['content-type'] ? sol.headers['content-type'] : 'text/html; charset=utf-8',
+                'Content-Type':
+                  sol.headers && sol.headers['content-type']
+                    ? sol.headers['content-type']
+                    : 'text/html; charset=utf-8',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
                 'Access-Control-Allow-Headers': '*'
@@ -101,7 +129,6 @@ function proxyWithFlareSolverr(flareUrl, targetUrl, res) {
           } catch (e) {
             // parsing failed, fallback below
           }
-          // If FlareSolverr failed, fallback to native fetch
           fetchDirect(targetUrl, res);
         });
       }
@@ -120,7 +147,7 @@ function proxyWithFlareSolverr(flareUrl, targetUrl, res) {
 }
 
 /**
- * Proxy request directly using Node https/http
+ * Proxy request directly using Node https/http with Secure DNS lookup
  * @param {string} targetUrl
  * @param {http.ServerResponse} res
  */
@@ -134,6 +161,7 @@ function fetchDirect(targetUrl, res) {
       port: u.port || (u.protocol === 'http:' ? 80 : 443),
       path: u.pathname + (u.search || ''),
       method: 'GET',
+      lookup: secureDnsLookup,
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -225,6 +253,7 @@ const server = http.createServer(async (req, res) => {
       JSON.stringify({
         status: 'online',
         server: 'Log!t Local Dev Server',
+        dns: 'Cloudflare/Google DoH Direct',
         flaresolverr: {
           configuredUrl: FLARESOLVERR_DEFAULT_URL,
           reachable: hasFlareSolverr
