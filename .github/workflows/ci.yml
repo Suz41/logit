@@ -29,10 +29,12 @@ jobs:
 
       - name: Syntax check JS files
         run: |
-          node -c js/*.js scripts/*.js
+          for f in js/*.js scripts/*.js; do
+            node -c "$f"
+          done
 
-      - name: Check code formatting
-        run: npx prettier --check "js/**/*.js"
+      - name: Lint JavaScript
+        run: npm run lint
 
       - name: Run automated test suite
         run: npm test
