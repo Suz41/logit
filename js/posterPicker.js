@@ -67,8 +67,7 @@ Logit.PosterPicker = {
       imgEl.src = Logit.Utils.esc(Logit.Utils.img(p.u, 'w780'));
       imgEl.loading = 'lazy';
       imgEl.onerror = function () {
-        this.onerror = null;
-        this.src = Logit.POSTER_FALLBACK;
+        Logit.Utils.handleImgError(this);
       };
 
       var langEl = document.createElement('div');

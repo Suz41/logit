@@ -38,11 +38,28 @@ Logit.Search = {
   },
 
   async _fetchWithRetry(url, retries) {
+    const isLocalhost =
+      typeof window !== 'undefined' &&
+      window.location &&
+      (window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1');
+
+    const mode =
+      typeof Logit.Config !== 'undefined' && Logit.Config.getProxyMode
+        ? Logit.Config.getProxyMode()
+        : 'auto';
+
     for (let i = 0; i <= retries; i++) {
       try {
+        let fetchUrl = url;
+        // On localhost, if mode is local or if previous attempt failed, use the built-in server proxy
+        if (isLocalhost && (mode === 'local' || i > 0)) {
+          fetchUrl = '/api/proxy?url=' + encodeURIComponent(url);
+        }
+
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 10000);
-        const r = await fetch(url, { signal: controller.signal });
+        const r = await fetch(fetchUrl, { signal: controller.signal });
         clearTimeout(timeout);
 
         // Handle 429 rate limit
@@ -54,7 +71,13 @@ Logit.Search = {
           continue;
         }
 
-        if (!r.ok) return null;
+        if (!r.ok) {
+          // If direct returned 403 on localhost, retry via local proxy immediately
+          if (r.status === 403 && isLocalhost && fetchUrl === url) {
+            continue;
+          }
+          return null;
+        }
 
         const data = await r.json();
         this.cache[url] = data;

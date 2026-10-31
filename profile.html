@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -290,6 +291,72 @@
                     stroke-width="2"
                     viewBox="0 0 24 24"
                   >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            
+            <!-- TMDB & POSTER PROXY -->
+            <div class="contentBlock">
+              <h3 class="blockTitle">TMDB & POSTER PROXY</h3>
+              <div class="settingsList">
+                <div class="settingsItem" style="cursor: default">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <rect x="2" y="2" width="20" height="20" rx="4" />
+                    <circle cx="8" cy="8" r="2" />
+                    <path d="M21 15l-5-5L5 21" />
+                  </svg>
+                  <span>TMDB API Key</span>
+                  <input
+                    type="text"
+                    id="profileTmdbKey"
+                    class="settingsInput"
+                    placeholder="Enter TMDB API Key"
+                    style="text-align: right; max-width: 180px"
+                  />
+                </div>
+                <div class="settingsItem" style="cursor: default">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                  <span>Poster Proxy Mode</span>
+                  <select
+                    id="profileProxyMode"
+                    style="background: rgba(255, 255, 255, 0.08); border: 0.5px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer;"
+                  >
+                    <option value="auto">Auto Fallback (Cloudflare / wsrv.nl)</option>
+                    <option value="always">Always Proxy (Bypass ISP block)</option>
+                    <option value="local">Local Dev Server (/api/proxy)</option>
+                    <option value="custom">Custom Proxy / FlareSolverr</option>
+                    <option value="direct">Direct TMDB (No proxy)</option>
+                  </select>
+                </div>
+                <div class="settingsItem" id="customProxyRow" style="display: none; cursor: default">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                  </svg>
+                  <span>FlareSolverr / Proxy URL</span>
+                  <input
+                    type="text"
+                    id="profileCustomProxy"
+                    class="settingsInput"
+                    placeholder="e.g. http://localhost:8191/v1"
+                    style="text-align: right; max-width: 200px"
+                  />
+                </div>
+                <button class="settingsItem" id="saveProxySettingsBtn">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  <span>Save TMDB & Proxy Settings</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>

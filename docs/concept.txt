@@ -1,0 +1,306 @@
+# Build: Log!t Companion
+
+## Overview
+
+Upgrade the existing Log!t movie-tracking ecosystem by creating a lightweight companion app for quickly capturing movies.
+
+The existing Log!t web application should remain the primary movie library and tracking interface. Do not redesign or replace the existing application unnecessarily.
+
+The companion app should act as a fast "capture" tool:
+
+**Capture → Sync → Pending → Complete in Log!t**
+
+## Existing Log!t
+
+Log!t is a framework-free movie tracker using:
+
+- Vanilla HTML
+- CSS
+- ES6 JavaScript
+- Supabase/PostgreSQL
+- TMDB API
+
+The existing functionality includes movie search, metadata, ratings, watch tracking, statistics, and cloud synchronization.
+
+## New Companion App
+
+Create a minimal companion application focused specifically on quickly adding movies.
+
+The app should support:
+
+1. Manual movie entry
+2. Multiple movies in one input
+3. Paste from clipboard
+4. Android share-sheet style capture where possible
+5. Natural-language movie input
+6. Movie title detection
+7. Optional rating detection
+8. Optional watch-date detection
+9. Preview before submission
+10. Send entries to the user's Log!t account
+
+Example input:
+
+```text
+Interstellar 5/5 yesterday
+The Prestige 4.5
+Dune Part Two
+Arrival tomorrow
+```
+
+The app should convert this into structured pending entries.
+
+## Pending System
+
+Add a new `Pending` concept to Log!t.
+
+Each pending movie should contain information such as:
+
+```text
+pending_movie
+├── id
+├── user_id
+├── raw_input
+├── movie_title
+├── tmdb_id
+├── rating
+├── watch_date
+├── status
+├── created_at
+└── metadata
+```
+
+Possible states:
+
+```text
+pending
+matched
+completed
+removed
+```
+
+## TMDB Integration
+
+When a movie is submitted:
+
+1. Search TMDB using the detected title.
+2. Attempt to identify the correct movie.
+3. Store the TMDB ID.
+4. Retrieve metadata such as:
+   - Poster
+   - Backdrop
+   - Title
+   - Release year
+   - Runtime
+   - Genres
+   - Overview
+   - Director
+   - Cast
+   - Country
+5. Show the matched movie in Pending.
+
+If the match is uncertain, allow the user to manually select the correct movie.
+
+## Log!t Pending Page
+
+Add a new navigation item:
+
+```text
+Movies
+Lists
+Stats
+Pending
+Search
+```
+
+The Pending page should display movie cards containing:
+
+- Poster
+- Title
+- Year
+- Genres
+- Detected rating
+- Detected watch date
+- Pending status
+- `Log Movie`
+- `Remove`
+
+Opening `Log Movie` should take the user into the existing Log!t logging workflow.
+
+The user should be able to:
+
+- Confirm the movie
+- Change the TMDB match
+- Set rating
+- Set watch date
+- Add review
+- Add tags
+- Mark favorite
+- Add rewatch information
+- Save as a normal Log!t entry
+
+After completion:
+
+```text
+Pending Movie
+      ↓
+Normal Log!t Movie
+```
+
+The pending record should then be marked completed or removed from the active Pending list.
+
+## Natural Language Input
+
+Support simple natural-language input without requiring a complicated AI system.
+
+Examples:
+
+```text
+Interstellar 5/5 yesterday
+The Prestige 4.5
+Arrival
+Dune Part Two watched today
+```
+
+Extract:
+
+```text
+title
+rating
+watch_date
+```
+
+Anything that cannot be confidently parsed should remain editable by the user.
+
+## Authentication
+
+Use the existing Supabase authentication system.
+
+The companion app should authenticate the user and associate pending entries with:
+
+```text
+user_id
+```
+
+A user must only be able to access their own pending movies and Log!t data.
+
+## Backend
+
+Prefer extending the existing Supabase backend rather than introducing another database.
+
+Suggested tables:
+
+```text
+movies
+watches
+pending_movies
+lists
+users
+```
+
+Do not duplicate complete movie metadata unnecessarily.
+
+Use `tmdb_id` as the primary external movie identifier.
+
+## API
+
+Create a clean API/interface between the companion app and Log!t.
+
+Example:
+
+```text
+POST /pending-movies
+GET  /pending-movies
+PATCH /pending-movies/:id
+DELETE /pending-movies/:id
+POST /pending-movies/:id/complete
+```
+
+The exact implementation can use Supabase directly if that is more appropriate for the existing architecture.
+
+## Design Direction
+
+The companion app should be:
+
+- Minimal
+- Extremely fast
+- Mobile-first
+- Dark-themed
+- Low resource usage
+- Easy to use with one hand
+- Optimized for low-end Android devices
+
+Avoid turning the companion app into another full movie-management application.
+
+Its purpose is:
+
+> "I just watched a movie. I want to record it in two seconds."
+
+## Important Principle
+
+Keep the responsibilities separated.
+
+### Companion App
+
+```text
+Capture
+Parse
+Preview
+Send
+```
+
+### Log!t
+
+```text
+Library
+Metadata
+Watch history
+Ratings
+Reviews
+Lists
+Statistics
+Wrapped
+```
+
+### Backend
+
+```text
+Authentication
+Synchronization
+Pending entries
+Movie relationships
+TMDB integration
+```
+
+The companion app should complement Log!t rather than replace its existing workflow.
+
+## Final User Experience
+
+The ideal workflow should feel like:
+
+```text
+Watched movie
+     ↓
+Open Quick Notes
+     ↓
+Type:
+"Interstellar 5/5"
+     ↓
+Send
+     ↓
+Done
+     ↓
+Later open Log!t
+     ↓
+Pending
+     ↓
+Interstellar
+     ↓
+Log Movie
+     ↓
+Complete
+```
+
+The result should be a seamless two-part Log!t ecosystem:
+
+**Quick capture on mobile + full movie management on the web.**

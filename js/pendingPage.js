@@ -156,7 +156,7 @@ Logit.PendingPage = {
 
       card.innerHTML = `
         <div class="pendingPosterWrap">
-          <img class="pendingPosterImg" src="${esc(posterUrl)}" alt="${esc(displayTitle)}" onerror="this.onerror=null;this.src='${Logit.POSTER_FALLBACK}'" loading="lazy" />
+          <img class="pendingPosterImg" src="${esc(posterUrl)}" alt="${esc(displayTitle)}" onerror="Logit.Utils.handleImgError(this)" loading="lazy" />
         </div>
         <div class="pendingInfo">
           <div class="pendingTitleRow">
@@ -278,7 +278,7 @@ Logit.PendingPage = {
     sheet.innerHTML = `
       <div class="sheetBg" aria-hidden="true"></div>
       <div class="sheet">
-        <img src="${Logit.Utils.esc(Logit.Utils.img(detail.poster_path))}" onerror="this.onerror=null;this.src='${Logit.POSTER_FALLBACK}'" alt="${Logit.Utils.esc(detail.title)} poster">
+        <img src="${Logit.Utils.esc(Logit.Utils.img(detail.poster_path))}" onerror="Logit.Utils.handleImgError(this)" alt="${Logit.Utils.esc(detail.title)} poster">
         <h3>${Logit.Utils.esc(detail.title)} <span style="font-weight:400;color:#888;">(${(detail.release_date || '').slice(0, 4)})</span></h3>
         
         <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -417,7 +417,7 @@ Logit.PendingPage = {
         const year = (m.release_date || '').slice(0, 4);
 
         itemEl.innerHTML = `
-          <img class="matchResultPoster" src="${Logit.Utils.esc(posterUrl)}" alt="" onerror="this.onerror=null;this.src='${Logit.POSTER_FALLBACK}'" />
+          <img class="matchResultPoster" src="${Logit.Utils.esc(posterUrl)}" alt="" onerror="Logit.Utils.handleImgError(this)" />
           <div class="matchResultInfo">
             <div class="matchResultTitle">${Logit.Utils.esc(m.title)}</div>
             <div class="matchResultYear">${year ? year : 'Unknown year'}</div>

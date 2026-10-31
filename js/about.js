@@ -24,12 +24,28 @@ Logit.AboutPage = {
     // Load existing API keys
     if ($('tmdbApiKey')) $('tmdbApiKey').value = Logit.Config.getApiKey() || '';
 
+    var proxySelect = $('proxyModeSelect');
+    var customItem = $('customProxyItem');
+    var customInput = $('customProxyUrl');
+
+    if (proxySelect) {
+      proxySelect.value = Logit.Config.getProxyMode();
+      var updateAboutCustom = function() {
+        if (customItem) customItem.style.display = proxySelect.value === 'custom' ? 'flex' : 'none';
+      };
+      proxySelect.addEventListener('change', updateAboutCustom);
+      updateAboutCustom();
+    }
+    if (customInput) customInput.value = Logit.Config.getCustomProxy() || '';
+
     // Save keys
     if ($('saveAllKeys'))
       $('saveAllKeys').addEventListener('click', function () {
         var tmdb = ($('tmdbApiKey') || {}).value.trim();
 
         if (tmdb) Logit.Config.setApiKey(tmdb);
+        if ($('proxyModeSelect')) Logit.Config.setProxyMode($('proxyModeSelect').value);
+        if ($('customProxyUrl')) Logit.Config.setCustomProxy($('customProxyUrl').value);
 
         alert('Settings saved!');
         location.reload();

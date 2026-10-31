@@ -347,7 +347,7 @@ Logit.ProfilePage = {
         item.dataset.title = m.title;
         item.dataset.poster = m.poster_path || '';
         var poster = m.poster_path
-          ? '<img src="https://image.tmdb.org/t/p/w185' +
+          ? '<img src="' + Logit.Utils.img(m.poster_path, 'w185') + '" onerror="Logit.Utils.handleImgError(this)" ' +
             m.poster_path +
             '" alt="' +
             Logit.Utils.esc(m.title) +
@@ -365,7 +365,7 @@ Logit.ProfilePage = {
             id: item.dataset.id,
             t: item.dataset.title,
             poster: item.dataset.poster
-              ? 'https://image.tmdb.org/t/p/w342' + item.dataset.poster
+              ? Logit.Utils.img(item.dataset.poster, 'w342')
               : ''
           };
           var sel = document.getElementById('favSelected');
@@ -426,7 +426,7 @@ Logit.ProfilePage = {
     Logit.PosterPicker.open(movie, API, async function (newPoster) {
       var favs = self._favorites || [];
       if (favs[index]) {
-        favs[index].poster = 'https://image.tmdb.org/t/p/w342' + newPoster;
+        favs[index].poster = Logit.Utils.img(newPoster, 'w342');
         self._favorites = favs;
         await self.syncFavoritesToCloud(favs);
         self.loadFavorites();
@@ -1130,6 +1130,38 @@ Logit.ProfilePage = {
         }
       });
 
+    
+    // Setup TMDB & Proxy settings
+    var tmdbKeyInput = $('profileTmdbKey');
+    var proxyModeSelect = $('profileProxyMode');
+    var customProxyRow = $('customProxyRow');
+    var customProxyInput = $('profileCustomProxy');
+    var saveProxyBtn = $('saveProxySettingsBtn');
+
+    if (tmdbKeyInput) tmdbKeyInput.value = Logit.Config.getApiKey() || '';
+    if (proxyModeSelect) {
+      proxyModeSelect.value = Logit.Config.getProxyMode();
+      var updateCustomRow = function () {
+        if (customProxyRow) {
+          customProxyRow.style.display =
+            proxyModeSelect.value === 'custom' ? 'flex' : 'none';
+        }
+      };
+      proxyModeSelect.addEventListener('change', updateCustomRow);
+      updateCustomRow();
+    }
+    if (customProxyInput)
+      customProxyInput.value = Logit.Config.getCustomProxy() || '';
+
+    if (saveProxyBtn) {
+      saveProxyBtn.addEventListener('click', function () {
+        if (tmdbKeyInput) Logit.Config.setApiKey(tmdbKeyInput.value);
+        if (proxyModeSelect) Logit.Config.setProxyMode(proxyModeSelect.value);
+        if (customProxyInput) Logit.Config.setCustomProxy(customProxyInput.value);
+        alert('TMDB & Proxy settings saved!');
+      });
+    }
+
     if ($('signOutBtn'))
       $('signOutBtn').addEventListener('click', function () {
         if (confirm('Sign out?')) Logit.Auth.signOut();
@@ -1247,7 +1279,7 @@ Logit.ProfilePage = {
       var fragment = document.createDocumentFragment();
       for (var i = 0; i < Math.min(directors.length, 8); i++) {
         var p = directors[i];
-        var imgUrl = 'https://image.tmdb.org/t/p/w185' + p.profile_path;
+        var imgUrl = Logit.Utils.img(p.profile_path, 'w185');
         var item = document.createElement('div');
         item.className = 'directorItem';
         item.setAttribute('data-url', imgUrl);

@@ -70,7 +70,7 @@ Logit.StatsPage = {
         const data = await res.json();
         const path = data.results?.[0]?.profile_path;
         return path
-          ? `https://image.tmdb.org/t/p/w185${path}`
+          ? Logit.Utils.img(path, 'w185')
           : 'https://placehold.co/80x80/111/666?text=%20';
       } catch (e) {
         return 'https://placehold.co/80x80/111/666?text=%20';
@@ -85,7 +85,7 @@ Logit.StatsPage = {
         const data = await res.json();
         const path = data.results?.[0]?.logo_path;
         return path
-          ? `https://image.tmdb.org/t/p/original${path}`
+          ? Logit.Utils.img(path, 'original')
           : 'https://placehold.co/80x80/111/666?text=%20';
       } catch (e) {
         return 'https://placehold.co/80x80/111/666?text=%20';

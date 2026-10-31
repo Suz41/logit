@@ -41,8 +41,7 @@ Logit.LibraryPage = {
     Logit.Overlays.setupListeners();
 
     function handleImgError(e) {
-      e.target.onerror = null;
-      e.target.src = Logit.POSTER_FALLBACK;
+      Logit.Utils.handleImgError(e);
     }
 
     function getMissingFields(movie) {
@@ -73,9 +72,7 @@ Logit.LibraryPage = {
       card.innerHTML =
         '<img src="' +
         esc(img(movie.sp)) +
-        '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' +
-        Logit.POSTER_FALLBACK +
-        '\'">' +
+        '" loading="lazy" decoding="async" onerror="Logit.Utils.handleImgError(this)">' +
         '<div class="movieDate"><span class="day">' +
         formatted.day +
         '</span> ' +

@@ -2,8 +2,7 @@ window.Logit = window.Logit || {};
 
 Logit.Modals = {
   _handleImgError(e) {
-    e.target.onerror = null;
-    e.target.src = Logit.POSTER_FALLBACK;
+    Logit.Utils.handleImgError(e);
   },
 
   _renderChips(el, text) {
@@ -39,9 +38,7 @@ Logit.Modals = {
       '<div class="sheet">' +
       '<img src="' +
       Logit.Utils.esc(Logit.Utils.img(movie.poster_path)) +
-      '" onerror="this.onerror=null;this.src=\'' +
-      Logit.POSTER_FALLBACK +
-      '\'" alt="' +
+      '" onerror="Logit.Utils.handleImgError(this)" alt="' +
       Logit.Utils.esc(movie.title) +
       ' poster">' +
       '<h3>' +

@@ -16,10 +16,134 @@ Logit.Utils = {
       .replace(/'/g, '&#39;');
   },
 
-  /** @param {string} path @param {string} [size] @returns {string} */
+  _directTmdbBlocked: false,
+
+  /**
+   * Transforms an image URL into a proxied URL
+   * @param {string} url
+   * @returns {string}
+   */
+  toProxyUrl(url) {
+    if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
+
+    const mode =
+      typeof Logit.Config !== 'undefined' && Logit.Config.getProxyMode
+        ? Logit.Config.getProxyMode()
+        : 'auto';
+    const custom =
+      typeof Logit.Config !== 'undefined' && Logit.Config.getCustomProxy
+        ? Logit.Config.getCustomProxy()
+        : '';
+
+    if (mode === 'custom' && custom) {
+      if (custom.includes('{url}')) {
+        return custom.replace('{url}', encodeURIComponent(url));
+      }
+      return custom.replace(/\/+$/, '') + '/?url=' + encodeURIComponent(url);
+    }
+
+    const isLocalhost =
+      typeof window !== 'undefined' &&
+      window.location &&
+      (window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1');
+
+    if (mode === 'local' || (isLocalhost && mode === 'auto')) {
+      return '/api/proxy?url=' + encodeURIComponent(url);
+    }
+
+    // Default fast Cloudflare-backed proxy: wsrv.nl (supports HTTPS, CORS, caching, strips referer)
+    return 'https://wsrv.nl/?url=' + encodeURIComponent(url);
+  },
+
+  /**
+   * Generates poster/photo URLs with proxy and fallback intelligence
+   * @param {string} path TMDB relative path or full URL
+   * @param {string} [size] e.g. 'w185', 'w342', 'w500', 'w780', 'original'
+   * @returns {string}
+   */
   img(path, size) {
     if (!path) return '';
-    return 'https://image.tmdb.org/t/p/' + (size || 'original') + path;
+    if (path.startsWith('data:') || path.startsWith('blob:')) return path;
+
+    const targetSize = size || 'original';
+    let fullUrl = '';
+
+    if (/^https?:\/\//i.test(path)) {
+      fullUrl = path;
+    } else {
+      const cleanPath = path.startsWith('/') ? path : '/' + path;
+      fullUrl = 'https://image.tmdb.org/t/p/' + targetSize + cleanPath;
+    }
+
+    const mode =
+      typeof Logit.Config !== 'undefined' && Logit.Config.getProxyMode
+        ? Logit.Config.getProxyMode()
+        : 'auto';
+
+    if (
+      mode === 'always' ||
+      mode === 'custom' ||
+      mode === 'local' ||
+      this._directTmdbBlocked
+    ) {
+      return this.toProxyUrl(fullUrl);
+    }
+
+    return fullUrl;
+  },
+
+  /**
+   * Resilient error handler for <img> elements displaying TMDB posters/photos.
+   * Seamlessly falls back to Cloudflare/wsrv proxy or local proxy when direct TMDB is blocked.
+   * @param {HTMLImageElement|Event} target
+   */
+  handleImgError(target) {
+    const imgEl = target && target.target ? target.target : target;
+    if (!imgEl || !(imgEl instanceof HTMLElement)) return;
+
+    const currentSrc = imgEl.src || '';
+    if (currentSrc.startsWith('data:image/svg')) return;
+
+    const originalSrc =
+      (imgEl.getAttribute && imgEl.getAttribute('data-original-src')) ||
+      currentSrc;
+    const attempt = parseInt(
+      (imgEl.getAttribute && imgEl.getAttribute('data-proxy-attempt')) || '0',
+      10
+    );
+
+    // If an image failed on direct image.tmdb.org, remember for future images in this session
+    if (currentSrc.indexOf('image.tmdb.org') !== -1) {
+      Logit.Utils._directTmdbBlocked = true;
+    }
+
+    if (attempt === 0) {
+      if (imgEl.setAttribute) {
+        imgEl.setAttribute('data-original-src', originalSrc);
+        imgEl.setAttribute('data-proxy-attempt', '1');
+      }
+      const proxyUrl = Logit.Utils.toProxyUrl(originalSrc);
+      if (proxyUrl && proxyUrl !== currentSrc) {
+        imgEl.src = proxyUrl;
+        return;
+      }
+    } else if (attempt === 1) {
+      if (imgEl.setAttribute) {
+        imgEl.setAttribute('data-proxy-attempt', '2');
+      }
+      // Secondary fallback proxy (images.weserv.nl)
+      const secondaryUrl =
+        'https://images.weserv.nl/?url=' + encodeURIComponent(originalSrc);
+      if (secondaryUrl !== currentSrc) {
+        imgEl.src = secondaryUrl;
+        return;
+      }
+    }
+
+    // All fallbacks exhausted, show standard SVG fallback
+    imgEl.onerror = null;
+    imgEl.src = Logit.POSTER_FALLBACK;
   },
 
   /** @param {Date} date @returns {{ day: number, month: string }} */
@@ -83,12 +207,7 @@ Logit.Utils = {
     imgEl.src = imgUrl;
     imgEl.alt = name;
     imgEl.onerror = function () {
-      this.onerror = null;
-      this.src =
-        'data:image/svg+xml,' +
-        encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="%23111"><rect width="80" height="80"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">?</text></svg>'
-        );
+      Logit.Utils.handleImgError(this);
     };
 
     var info = document.createElement('div');
