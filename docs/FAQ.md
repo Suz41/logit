@@ -9,7 +9,7 @@ Log!t is a personal movie logger. Search any movie via TMDB, rate it, track rewa
 
 <details>
 <summary><strong>Is it free?</strong></summary>
-Yes. Log!t is completely free and open source under the MIT license.
+Yes. Log!t is completely free and open source under the GNU General Public License v3.0 (GPL-3.0).
 </details>
 
 <details>
