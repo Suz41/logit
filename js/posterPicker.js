@@ -37,7 +37,7 @@ Logit.PosterPicker = {
     if (tmdbId) {
       try {
         var d = await Logit.Search.tmdb(
-          'https://api.themoviedb.org/3/movie/' +
+          'https://api.tmdb.org/3/movie/' +
             tmdbId +
             '/images?api_key=' +
             (apiKey || Logit.Config.getApiKey())

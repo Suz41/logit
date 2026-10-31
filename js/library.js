@@ -474,7 +474,7 @@ Logit.LibraryPage = {
       var imdbMatch = q.match(/(tt\d{7,})/i);
       if (imdbMatch) {
         var findData = await Logit.Search.tmdb(
-          'https://api.themoviedb.org/3/find/' +
+          'https://api.tmdb.org/3/find/' +
             imdbMatch[1] +
             '?api_key=' +
             API +
@@ -497,7 +497,7 @@ Logit.LibraryPage = {
       var data;
       try {
         var url =
-          'https://api.themoviedb.org/3/search/movie?api_key=' +
+          'https://api.tmdb.org/3/search/movie?api_key=' +
           API +
           '&query=' +
           encodeURIComponent(q);

@@ -294,7 +294,7 @@ Logit.Pending = {
   async searchBestMatch(title, year, apiKey) {
     if (!title || !apiKey) return null;
     let url =
-      'https://api.themoviedb.org/3/search/movie?api_key=' +
+      'https://api.tmdb.org/3/search/movie?api_key=' +
       apiKey +
       '&query=' +
       encodeURIComponent(title.trim());

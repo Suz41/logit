@@ -65,7 +65,7 @@ Logit.StatsPage = {
     async function fetchPersonImage(name) {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/search/person?api_key=${API}&query=${encodeURIComponent(name)}`
+          `https://api.tmdb.org/3/search/person?api_key=${API}&query=${encodeURIComponent(name)}`
         );
         const data = await res.json();
         const path = data.results?.[0]?.profile_path;
@@ -80,7 +80,7 @@ Logit.StatsPage = {
     async function fetchCompanyImage(name) {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/search/company?api_key=${API}&query=${encodeURIComponent(name)}`
+          `https://api.tmdb.org/3/search/company?api_key=${API}&query=${encodeURIComponent(name)}`
         );
         const data = await res.json();
         const path = data.results?.[0]?.logo_path;
@@ -501,7 +501,7 @@ Logit.StatsPage = {
 
                 try {
                   const detail = await Logit.Search.tmdb(
-                    'https://api.themoviedb.org/3/movie/' +
+                    'https://api.tmdb.org/3/movie/' +
                       entry.tmdb_id +
                       '?api_key=' +
                       API +
@@ -624,7 +624,7 @@ Logit.StatsPage = {
                 continue;
               }
               detail = await Logit.Search.tmdb(
-                'https://api.themoviedb.org/3/movie/' +
+                'https://api.tmdb.org/3/movie/' +
                   entry.tmdbId +
                   '?api_key=' +
                   API +
@@ -635,7 +635,7 @@ Logit.StatsPage = {
                 continue;
               }
               const findData = await Logit.Search.tmdb(
-                'https://api.themoviedb.org/3/find/' +
+                'https://api.tmdb.org/3/find/' +
                   entry.imdbId +
                   '?api_key=' +
                   API +
@@ -648,7 +648,7 @@ Logit.StatsPage = {
               ) {
                 const foundId = findData.movie_results[0].id;
                 detail = await Logit.Search.tmdb(
-                  'https://api.themoviedb.org/3/movie/' +
+                  'https://api.tmdb.org/3/movie/' +
                     foundId +
                     '?api_key=' +
                     API +
@@ -657,7 +657,7 @@ Logit.StatsPage = {
               }
             } else {
               let searchUrl =
-                'https://api.themoviedb.org/3/search/movie?api_key=' +
+                'https://api.tmdb.org/3/search/movie?api_key=' +
                 API +
                 '&query=' +
                 encodeURIComponent(entry.title);
@@ -698,7 +698,7 @@ Logit.StatsPage = {
                 }
               }
               detail = await Logit.Search.tmdb(
-                'https://api.themoviedb.org/3/movie/' +
+                'https://api.tmdb.org/3/movie/' +
                   result.id +
                   '?api_key=' +
                   API +

@@ -88,7 +88,7 @@ Logit.Modals = {
 
       try {
         var d = await Logit.Search.tmdb(
-          'https://api.themoviedb.org/3/movie/' +
+          'https://api.tmdb.org/3/movie/' +
             movie.id +
             '?api_key=' +
             apiKey +

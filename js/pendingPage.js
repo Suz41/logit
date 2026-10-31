@@ -232,7 +232,7 @@ Logit.PendingPage = {
     let movieDetail;
     try {
       movieDetail = await Logit.Search.tmdb(
-        'https://api.themoviedb.org/3/movie/' +
+        'https://api.tmdb.org/3/movie/' +
           tmdbId +
           '?api_key=' +
           API +
@@ -398,7 +398,7 @@ Logit.PendingPage = {
 
     try {
       const url =
-        'https://api.themoviedb.org/3/search/movie?api_key=' +
+        'https://api.tmdb.org/3/search/movie?api_key=' +
         API +
         '&query=' +
         encodeURIComponent(q);

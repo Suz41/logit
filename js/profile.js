@@ -331,7 +331,7 @@ Logit.ProfilePage = {
 
     try {
       var data = await Logit.Search.tmdb(
-        'https://api.themoviedb.org/3/search/movie?api_key=' +
+        'https://api.tmdb.org/3/search/movie?api_key=' +
           API +
           '&query=' +
           encodeURIComponent(query),
@@ -812,7 +812,7 @@ Logit.ProfilePage = {
                     'Fetching ' + (i + 1) + '/' + arr.length;
                 try {
                   var detail = await Logit.Search.tmdb(
-                    'https://api.themoviedb.org/3/movie/' +
+                    'https://api.tmdb.org/3/movie/' +
                       entry.tmdb_id +
                       '?api_key=' +
                       API +
@@ -915,7 +915,7 @@ Logit.ProfilePage = {
             var tmdbId = entry2.tmdbId || '';
             if (!tmdbId && entry2.imdbId) {
               var fd = await Logit.Search.tmdb(
-                'https://api.themoviedb.org/3/find/' +
+                'https://api.tmdb.org/3/find/' +
                   entry2.imdbId +
                   '?api_key=' +
                   API +
@@ -926,7 +926,7 @@ Logit.ProfilePage = {
             }
             if (!tmdbId && entry2.title) {
               var sUrl =
-                'https://api.themoviedb.org/3/search/movie?api_key=' +
+                'https://api.tmdb.org/3/search/movie?api_key=' +
                 API +
                 '&query=' +
                 encodeURIComponent(entry2.title);
@@ -944,7 +944,7 @@ Logit.ProfilePage = {
               continue;
             }
             var detail2 = await Logit.Search.tmdb(
-              'https://api.themoviedb.org/3/movie/' +
+              'https://api.tmdb.org/3/movie/' +
                 tmdbId +
                 '?api_key=' +
                 API +
@@ -1266,7 +1266,7 @@ Logit.ProfilePage = {
 
     try {
       var data = await Logit.Search.tmdb(
-        'https://api.themoviedb.org/3/search/person?api_key=' +
+        'https://api.tmdb.org/3/search/person?api_key=' +
           API +
           '&query=' +
           encodeURIComponent(query),

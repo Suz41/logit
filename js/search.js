@@ -38,6 +38,11 @@ Logit.Search = {
   },
 
   async _fetchWithRetry(url, retries) {
+    // Automatically rewrite blocked api.themoviedb.org to working api.tmdb.org
+    if (url && typeof url === 'string') {
+      url = url.replace(/api\.themoviedb\.org/g, 'api.tmdb.org');
+    }
+
     const isLocalhost =
       typeof window !== 'undefined' &&
       window.location &&
@@ -58,7 +63,7 @@ Logit.Search = {
         }
 
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
+        const timeout = setTimeout(() => controller.abort(), 6000);
         const r = await fetch(fetchUrl, { signal: controller.signal });
         clearTimeout(timeout);
 
