@@ -6,6 +6,7 @@ var Logit = typeof window !== 'undefined' ? window.Logit : {};
 /**
  * Natural language movie parser for Log!t Companion.
  * Extracts movie title, optional rating, optional watch date, and rewatch status.
+ * Hardened with strict calendar rollover validation and comprehensive rating format handling.
  */
 Logit.Parser = {
   /**
@@ -51,21 +52,23 @@ Logit.Parser = {
       working = working.replace(rewatchRegex, ' ').trim();
     }
 
-    // 2. Detect & extract explicit rating formats (/5, /10, stars, symbols)
+    // 2. Detect & extract explicit rating formats
     let rating = null;
 
-    // Pattern 2a: Star symbols e.g. ★★★★☆ or ★★★★★ or 4★
-    const starSymbolMatch = working.match(/([★☆]{1,5})/);
-    if (starSymbolMatch) {
-      const stars = starSymbolMatch[1];
-      const filled = (stars.match(/★/g) || []).length;
-      if (filled > 0) {
-        rating = String(Math.min(5, Math.max(0.5, filled)));
-        working = working.replace(starSymbolMatch[0], ' ').trim();
+    // Pattern 2a: Explicit numeric star / word notation e.g. 4.5★, 4★, 4.5*, 4*, 4.5 stars, ★4.5, ★ 4.5
+    const explicitStarMatch = working.match(/(?:★\s*([0-5](?:\.[0-9])?)|([0-5](?:\.[0-9])?)\s*(?:★|\*|stars?\b))/i);
+    if (explicitStarMatch) {
+      const numStr = explicitStarMatch[1] || explicitStarMatch[2];
+      if (numStr) {
+        const val = this._normalizeRating(parseFloat(numStr));
+        if (val !== null) {
+          rating = String(val);
+          working = working.replace(explicitStarMatch[0], ' ').trim();
+        }
       }
     }
 
-    // Pattern 2b: X/5 or X/10 or X/5.0 e.g. 4.5/5, 5/5, 9/10, 8.5/10
+    // Pattern 2b: X/5 or X/10 e.g. 4.5/5, 5/5, 9/10, 8.5/10
     if (!rating) {
       const slashMatch = working.match(/\b([0-9](?:\.[0-9])?)\s*\/\s*(5|10)\b/i);
       if (slashMatch) {
@@ -80,14 +83,15 @@ Logit.Parser = {
       }
     }
 
-    // Pattern 2c: Explicit star notation e.g. 4.5* or 4.5 stars or 5 stars
+    // Pattern 2c: Pure repeated star symbols alone e.g. ★★★★☆ or ★★★★★ or ★★★
     if (!rating) {
-      const starsMatch = working.match(/\b([0-5](?:\.[0-9])?)\s*(?:\*|stars?)\b/i);
-      if (starsMatch) {
-        const val = this._normalizeRating(parseFloat(starsMatch[1]));
-        if (val !== null) {
-          rating = String(val);
-          working = working.replace(starsMatch[0], ' ').trim();
+      const starSymbolMatch = working.match(/([★☆]{1,5})/);
+      if (starSymbolMatch) {
+        const stars = starSymbolMatch[1];
+        const filled = (stars.match(/★/g) || []).length;
+        if (filled > 0) {
+          rating = String(Math.min(5, Math.max(0.5, filled)));
+          working = working.replace(starSymbolMatch[0], ' ').trim();
         }
       }
     }
@@ -162,6 +166,28 @@ Logit.Parser = {
   },
 
   /**
+   * Validate that year, month index (0-11), and day (1-31) form a real calendar date.
+   * Rejects JavaScript Date rollover (e.g. Feb 30, April 31, Feb 29 in non-leap years).
+   * @param {number} year
+   * @param {number} monthIdx
+   * @param {number} day
+   * @returns {boolean}
+   */
+  _isValidCalendarDate(year, monthIdx, day) {
+    if (isNaN(year) || isNaN(monthIdx) || isNaN(day)) return false;
+    if (year < 1888 || year > 2100) return false;
+    if (monthIdx < 0 || monthIdx > 11) return false;
+    if (day < 1 || day > 31) return false;
+
+    const d = new Date(year, monthIdx, day);
+    return (
+      d.getFullYear() === year &&
+      d.getMonth() === monthIdx &&
+      d.getDate() === day
+    );
+  },
+
+  /**
    * Extract relative or explicit date expressions and return date string + remainder text.
    * @param {string} text
    * @returns {{ dateStr: string, remainingText: string }}
@@ -173,8 +199,11 @@ Logit.Parser = {
     // Pattern 1: ISO date YYYY-MM-DD
     const isoMatch = working.match(/(?:(?:watched|viewed|saw)\s+)?(?:on\s+)?\b(\d{4})-(\d{1,2})-(\d{1,2})\b/i);
     if (isoMatch) {
-      const d = new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10));
-      if (!isNaN(d.getTime())) {
+      const yr = parseInt(isoMatch[1], 10);
+      const mo = parseInt(isoMatch[2], 10) - 1;
+      const da = parseInt(isoMatch[3], 10);
+      if (this._isValidCalendarDate(yr, mo, da)) {
+        const d = new Date(yr, mo, da);
         return {
           dateStr: this._formatDate(d),
           remainingText: working.replace(isoMatch[0], ' ').trim()
@@ -185,8 +214,11 @@ Logit.Parser = {
     // Pattern 2: DD/MM/YYYY or DD-MM-YYYY
     const slashDateMatch = working.match(/(?:(?:watched|viewed|saw)\s+)?(?:on\s+)?\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/i);
     if (slashDateMatch) {
-      const d = new Date(parseInt(slashDateMatch[3], 10), parseInt(slashDateMatch[2], 10) - 1, parseInt(slashDateMatch[1], 10));
-      if (!isNaN(d.getTime())) {
+      const yr = parseInt(slashDateMatch[3], 10);
+      const mo = parseInt(slashDateMatch[2], 10) - 1;
+      const da = parseInt(slashDateMatch[1], 10);
+      if (this._isValidCalendarDate(yr, mo, da)) {
+        const d = new Date(yr, mo, da);
         return {
           dateStr: this._formatDate(d),
           remainingText: working.replace(slashDateMatch[0], ' ').trim()
@@ -240,7 +272,7 @@ Logit.Parser = {
       const monthIdx = this._monthNameToIndex(mdMatch[1]);
       const day = parseInt(mdMatch[2], 10);
       const year = mdMatch[3] ? parseInt(mdMatch[3], 10) : now.getFullYear();
-      if (monthIdx !== -1 && day >= 1 && day <= 31) {
+      if (monthIdx !== -1 && this._isValidCalendarDate(year, monthIdx, day)) {
         const d = new Date(year, monthIdx, day);
         return {
           dateStr: this._formatDate(d),
@@ -256,7 +288,7 @@ Logit.Parser = {
       const day = parseInt(dmMatch[1], 10);
       const monthIdx = this._monthNameToIndex(dmMatch[2]);
       const year = dmMatch[3] ? parseInt(dmMatch[3], 10) : now.getFullYear();
-      if (monthIdx !== -1 && day >= 1 && day <= 31) {
+      if (monthIdx !== -1 && this._isValidCalendarDate(year, monthIdx, day)) {
         const d = new Date(year, monthIdx, day);
         return {
           dateStr: this._formatDate(d),
@@ -283,7 +315,7 @@ Logit.Parser = {
       }
     }
 
-    // Default to today's date if no date was explicitly stated
+    // Default to today's date if no valid date expression was recognized
     return {
       dateStr: this._formatDate(now),
       remainingText: working

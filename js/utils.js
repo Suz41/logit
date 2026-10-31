@@ -312,5 +312,20 @@ Logit.Utils = {
   /** @param {string} targetPage */
   navTo(targetPage) {
     window.location.href = this.getPageUrl(targetPage);
+  },
+
+  /** Register service worker for offline PWA functionality */
+  registerServiceWorker() {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function (err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+      });
+    }
   }
 };
+
+if (typeof window !== 'undefined') {
+  Logit.Utils.registerServiceWorker();
+}

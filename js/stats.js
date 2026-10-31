@@ -27,11 +27,7 @@ Logit.StatsPage = {
 
     // ========= HERO BOX =========
     $('movieCount').innerText = movies.length;
-    $('ratingAvg').innerText = movies.length
-      ? (
-          movies.reduce((a, b) => a + (Number(b.r) || 0), 0) / movies.length
-        ).toFixed(1)
-      : '0.0';
+    $('ratingAvg').innerText = Logit.StatUtils.getAverageRating(movies);
 
     const totalRuntime = movies.reduce((a, b) => a + (Number(b.rt) || 0), 0);
     const timeData = Logit.StatUtils.formatTime(totalRuntime);

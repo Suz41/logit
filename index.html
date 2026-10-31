@@ -440,6 +440,11 @@
           var userId = session.user && session.user.id;
           if (userId) localStorage.setItem('logit_user_id', userId);
           if (Logit.Pending) Logit.Pending.updateBadges();
+
+          // Initialize Google Drive for background auto-backup if previously connected
+          if (Logit.Drive && (localStorage.getItem('logit_drive_connected') === 'true' || localStorage.getItem('logit_drive_token'))) {
+            Logit.Drive.init();
+          }
         });
 
         var profileBtn = document.getElementById('profileBtn');

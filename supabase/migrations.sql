@@ -1,6 +1,8 @@
--- Log!t Database Migrations
+-- ============================================================
+-- Log!t Database Migrations & Constraints
 -- Run these in your Supabase SQL Editor (https://supabase.com/dashboard)
--- These add indexes and constraints to prevent bad data at the database level.
+-- Idempotent: Can be safely executed repeatedly on fresh or existing databases.
+-- ============================================================
 
 -- ============================================================
 -- Item 21: Performance Indexes
@@ -10,10 +12,10 @@
 -- Movies: lookup by user (every query filters on this)
 CREATE INDEX IF NOT EXISTS idx_movies_user_id ON movies (user_id);
 
--- Movies: incremental sync (downloadRemoteChanges filters by updated_at)
+-- Movies: incremental sync (filters by updated_at)
 CREATE INDEX IF NOT EXISTS idx_movies_user_updated ON movies (user_id, updated_at);
 
--- Movies: conflict detection (syncItem checks id + user_id)
+-- Movies: conflict detection (checks id + user_id)
 CREATE INDEX IF NOT EXISTS idx_movies_id_user ON movies (id, user_id);
 
 -- Settings: one row per user (upsert target)
@@ -23,40 +25,63 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_settings_user_id ON settings (user_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
 -- ============================================================
--- Item 22: Database Constraints
--- Prevents malformed/duplicate data even if JS validation is bypassed.
+-- Item 22: Database Constraints (Valid Idempotent PostgreSQL)
+-- Prevents malformed or duplicate data at the database level.
 -- ============================================================
 
--- Movies: required fields
-ALTER TABLE movies
-  ALTER COLUMN id SET NOT NULL,
-  ALTER COLUMN user_id SET NOT NULL,
-  ALTER COLUMN t SET NOT NULL;
+-- Movies: required columns
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'movies' AND column_name = 'id' AND is_nullable = 'YES') THEN
+    ALTER TABLE movies ALTER COLUMN id SET NOT NULL;
+  END IF;
 
--- Movies: rating must be between 0.5 and 5 (stored as text, soCHECK via pg)
-ALTER TABLE movies
-  ADD CONSTRAINT IF NOT EXISTS chk_rating_range
-  CHECK (r IS NULL OR (CAST(r AS numeric) >= 0.5 AND CAST(r AS numeric) <= 5));
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'movies' AND column_name = 'user_id' AND is_nullable = 'YES') THEN
+    ALTER TABLE movies ALTER COLUMN user_id SET NOT NULL;
+  END IF;
 
--- Movies: runtime must be non-negative
-ALTER TABLE movies
-  ADD CONSTRAINT IF NOT EXISTS chk_runtime_positive
-  CHECK (rt IS NULL OR rt >= 0);
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'movies' AND column_name = 't' AND is_nullable = 'YES') THEN
+    ALTER TABLE movies ALTER COLUMN t SET NOT NULL;
+  END IF;
+END $$;
 
--- Movies: year must be reasonable
-ALTER TABLE movies
-  ADD CONSTRAINT IF NOT EXISTS chk_year_range
-  CHECK (yr IS NULL OR (CAST(yr AS integer) >= 1880 AND CAST(yr AS integer) <= 2100));
+-- Movies: check constraints (rating range, runtime positive, year range)
+DO $$
+BEGIN
+  -- Rating check
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_rating_range') THEN
+    ALTER TABLE movies
+      ADD CONSTRAINT chk_rating_range
+      CHECK (r IS NULL OR (r ~ '^[0-9]+(\.[0-9]+)?$' AND CAST(r AS numeric) >= 0.5 AND CAST(r AS numeric) <= 5.0));
+  END IF;
+
+  -- Runtime check
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_runtime_positive') THEN
+    ALTER TABLE movies
+      ADD CONSTRAINT chk_runtime_positive
+      CHECK (rt IS NULL OR rt >= 0);
+  END IF;
+
+  -- Year check
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_year_range') THEN
+    ALTER TABLE movies
+      ADD CONSTRAINT chk_year_range
+      CHECK (yr IS NULL OR (yr ~ '^[0-9]{4}$' AND CAST(yr AS integer) >= 1880 AND CAST(yr AS integer) <= 2100));
+  END IF;
+END $$;
 
 -- Prevent duplicate movies for the same user by tmdb_id (unless rewatch)
--- This is a partial unique index — only enforces uniqueness for non-rewatch entries
 CREATE UNIQUE INDEX IF NOT EXISTS idx_movies_user_tmdb_unique
   ON movies (user_id, tmdb_id)
   WHERE tmdb_id IS NOT NULL AND tmdb_id != '' AND (w IS NULL OR w NOT LIKE 'Rewatch%');
 
 -- Settings: user_id is required
-ALTER TABLE settings
-  ALTER COLUMN user_id SET NOT NULL;
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'settings' AND column_name = 'user_id' AND is_nullable = 'YES') THEN
+    ALTER TABLE settings ALTER COLUMN user_id SET NOT NULL;
+  END IF;
+END $$;
 
 -- ============================================================
 -- Item 23: Pending Movies (Log!t Companion)

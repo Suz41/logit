@@ -18,9 +18,18 @@ Logit.Companion = {
       Logit.Supabase.init();
       Logit.Supabase.getSession().then((session) => {
         if (session && session.user) {
+          const prevId = localStorage.getItem('logit_user_id');
           localStorage.setItem('logit_user_id', session.user.id);
+          // If anon items exist from before signing in, prompt user before importing
+          const anonCount = Logit.Pending.getAnonOfflineCount();
+          if (anonCount > 0 && (!prevId || prevId !== session.user.id)) {
+            if (confirm('You have ' + anonCount + ' offline pending movie(s) saved on this device. Would you like to import them into your account?')) {
+              Logit.Pending.importAnonOfflineItems(session.user.id);
+            }
+          }
         }
         this.updateSyncStatus();
+        Logit.Pending.updateBadges();
       });
     }
   },
@@ -280,6 +289,7 @@ Logit.Companion = {
     try {
       const itemsToSave = this.parsedItems.map((item) => ({
         title: item.title,
+        movie_title: item.title,
         rating: item.rating,
         watch_date: item.watchDate,
         raw_input: item.raw || item.title,
@@ -287,10 +297,32 @@ Logit.Companion = {
         is_rewatch: item.isRewatch
       }));
 
-      await Logit.Pending.savePendingBulk(itemsToSave);
+      const results = await Logit.Pending.savePendingBulk(itemsToSave);
+      const cloudCount = results.filter((r) => r && r._syncStatus === 'cloud').length;
+      const localCount = results.length - cloudCount;
 
-      // Show success modal
-      this.toastCount.textContent = itemsToSave.length;
+      const toastTitle = document.querySelector('.toastTitle');
+      const toastSubtitle = document.querySelector('.toastSubtitle');
+
+      if (this.toastCount) this.toastCount.textContent = results.length;
+
+      if (cloudCount === results.length && results.length > 0) {
+        if (toastTitle) toastTitle.textContent = 'Queued to Pending!';
+        if (toastSubtitle) {
+          toastSubtitle.innerHTML = '<span id="toastCount">' + results.length + '</span> movie(s) synced to your cloud account. Complete and log them in your library anytime.';
+        }
+      } else if (localCount === results.length && results.length > 0) {
+        if (toastTitle) toastTitle.textContent = 'Saved to Device (Offline)';
+        if (toastSubtitle) {
+          toastSubtitle.innerHTML = '<span id="toastCount">' + results.length + '</span> movie(s) saved locally to this device. They will synchronize when connected.';
+        }
+      } else {
+        if (toastTitle) toastTitle.textContent = 'Queued to Pending!';
+        if (toastSubtitle) {
+          toastSubtitle.innerHTML = '<span id="toastCount">' + results.length + '</span> movie(s) saved (' + cloudCount + ' synced to cloud, ' + localCount + ' saved locally).';
+        }
+      }
+
       this.successToast.classList.add('active');
 
       // Vibrate if mobile device supports it

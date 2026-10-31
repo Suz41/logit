@@ -5,6 +5,8 @@ Logit.Auth = {
   _mode: 'signin',
   _SESSION_TIMEOUT_KEY: 'logit_session_timeout',
   _SESSION_TIMEOUT: 60 * 60 * 1000, // 60 minutes
+  _activityTimer: null,
+  _lastActivityUpdate: 0,
 
   initWelcomePage() {
     this.checkExistingSession();
@@ -17,9 +19,10 @@ Logit.Auth = {
       var lastActivity = localStorage.getItem(this._SESSION_TIMEOUT_KEY);
       if (
         lastActivity &&
-        Date.now() - parseInt(lastActivity) > this._SESSION_TIMEOUT
+        Date.now() - parseInt(lastActivity, 10) > this._SESSION_TIMEOUT
       ) {
         localStorage.removeItem(this._SESSION_TIMEOUT_KEY);
+        localStorage.removeItem('logit_user_id');
         return; // Session expired
       }
 
@@ -36,8 +39,63 @@ Logit.Auth = {
     }
   },
 
+  /**
+   * Update the user activity timestamp. Debounced to avoid excessive localStorage writes.
+   */
   updateActivity() {
-    localStorage.setItem(this._SESSION_TIMEOUT_KEY, String(Date.now()));
+    var now = Date.now();
+    if (now - this._lastActivityUpdate > 15000) { // at most once every 15s
+      this._lastActivityUpdate = now;
+      localStorage.setItem(this._SESSION_TIMEOUT_KEY, String(now));
+    }
+  },
+
+  /**
+   * Check if the client session has exceeded the inactivity limit.
+   * @returns {boolean}
+   */
+  isSessionExpired() {
+    var lastActivity = localStorage.getItem(this._SESSION_TIMEOUT_KEY);
+    if (!lastActivity) return false;
+    return Date.now() - parseInt(lastActivity, 10) > this._SESSION_TIMEOUT;
+  },
+
+  /**
+   * Initialize inactivity tracking on authenticated pages.
+   */
+  initActivityTracker() {
+    var self = this;
+    var uid = this.getUserId();
+    if (!uid) return;
+
+    // Check if session is already expired
+    if (this.isSessionExpired()) {
+      console.warn('Session expired due to inactivity');
+      this.signOut('timeout');
+      return;
+    }
+
+    // Set initial activity
+    this.updateActivity();
+
+    // Attach user activity listeners
+    var events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
+    var onUserActivity = function () {
+      self.updateActivity();
+    };
+
+    events.forEach(function (evt) {
+      window.addEventListener(evt, onUserActivity, { passive: true });
+    });
+
+    // Periodic heartbeat check for expiration
+    if (this._activityTimer) clearInterval(this._activityTimer);
+    this._activityTimer = setInterval(function () {
+      if (self.isSessionExpired()) {
+        console.warn('Session expired during inactivity check');
+        self.signOut('timeout');
+      }
+    }, 60000);
   },
 
   /**
@@ -86,6 +144,11 @@ Logit.Auth = {
           else self.handleCreateAccount();
         }
       });
+    }
+
+    // Check query params for timeout message
+    if (window.location.search.includes('reason=timeout')) {
+      this.setMessage('Your session timed out due to inactivity. Please sign in again.');
     }
   },
 
@@ -148,21 +211,30 @@ Logit.Auth = {
     }
 
     var email = input.trim();
-    // If input doesn't look like an email, look up by username
+    // If input doesn't look like an email, look up by username using secure RPC
     if (!email.includes('@')) {
       var client = Logit.Supabase.getClient();
       if (client) {
         try {
-          var { data } = await client
-            .from('users')
-            .select('email')
-            .eq('username', email)
-            .maybeSingle();
-          if (data && data.email) {
-            email = data.email;
+          var { data: rpcEmail, error: rpcErr } = await client.rpc('get_email_for_username', {
+            lookup_username: email
+          });
+
+          if (!rpcErr && rpcEmail) {
+            email = rpcEmail;
           } else {
-            this.setMessage('Username not found');
-            return;
+            // Graceful fallback for legacy database deployments before migration
+            var { data: row } = await client
+              .from('users')
+              .select('email')
+              .eq('username', email)
+              .maybeSingle();
+            if (row && row.email) {
+              email = row.email;
+            } else {
+              this.setMessage('Username not found');
+              return;
+            }
           }
         } catch (e) {
           console.warn('Username lookup error:', e);
@@ -244,6 +316,7 @@ Logit.Auth = {
       }
       this._currentUser = data.user;
       localStorage.setItem('logit_user_id', data.user.id);
+      localStorage.setItem(this._SESSION_TIMEOUT_KEY, String(Date.now()));
       await this.initializeCloudUser();
       this.redirectToLibrary();
     } catch (e) {
@@ -259,14 +332,25 @@ Logit.Auth = {
     }
 
     try {
-      var { data: existing } = await client
-        .from('users')
-        .select('id')
-        .eq('username', username)
-        .limit(1);
-      if (existing && existing.length > 0) {
+      // Secure check via RPC first to avoid reading other users' rows
+      var { data: isAvailable, error: rpcErr } = await client.rpc('check_username_available', {
+        check_username: username
+      });
+      if (!rpcErr && isAvailable === false) {
         this.setMessage('Username already taken');
         return;
+      }
+      if (rpcErr) {
+        // Fallback for pre-migration databases
+        var { data: existing } = await client
+          .from('users')
+          .select('id')
+          .eq('username', username)
+          .limit(1);
+        if (existing && existing.length > 0) {
+          this.setMessage('Username already taken');
+          return;
+        }
       }
     } catch (e) {
       /* table might not exist yet */
@@ -295,14 +379,31 @@ Logit.Auth = {
     }
   },
 
-  async signOut() {
+  async signOut(reason) {
+    if (this._activityTimer) clearInterval(this._activityTimer);
     var client = Logit.Supabase.getClient();
-    if (client) await client.auth.signOut();
+    if (client) {
+      try {
+        await client.auth.signOut();
+      } catch (e) {
+        /* silent */
+      }
+    }
     localStorage.removeItem('logit_user_id');
+    localStorage.removeItem(this._SESSION_TIMEOUT_KEY);
+
+    // Clear Drive tokens on sign-out to prevent account mix-ups
+    if (Logit.Drive && typeof Logit.Drive.clearToken === 'function') {
+      Logit.Drive.clearToken();
+    }
+
+    var target = 'welcome.html';
+    if (reason === 'timeout') target += '?reason=timeout';
+
     if (window.Logit && window.Logit.Utils && typeof window.Logit.Utils.navTo === 'function') {
-      Logit.Utils.navTo('welcome.html');
+      Logit.Utils.navTo(target);
     } else {
-      window.location.href = 'welcome.html';
+      window.location.href = target;
     }
   },
 
@@ -341,3 +442,12 @@ Logit.Auth = {
     }, 300);
   }
 };
+
+// Initialize activity tracking when DOM is ready on authenticated pages
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!window.location.pathname.endsWith('welcome.html') && !window.location.pathname.endsWith('reset.html')) {
+      Logit.Auth.initActivityTracker();
+    }
+  });
+}

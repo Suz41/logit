@@ -3,15 +3,18 @@ window.Logit = window.Logit || {};
 /**
  * Google Drive Integration Module for Logit
  * Provides authentication, automated backup, restore, and profile info capabilities.
+ * Hardened with least-privilege OAuth scope (drive.file), payload validation, and full settings restore.
  */
 Logit.Drive = {
   _CLIENT_ID:
     '526761149863-6hd6eg1mqjnj41ajtesr2k8g7ch70ail.apps.googleusercontent.com',
+  // Least-privilege scope: drive.file only accesses files created/opened by Log!t
   _SCOPE:
-    'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
   _FOLDER_NAME: 'Logit',
   _FOLDER_KEY: 'logit_drive_folder_id',
   _TOKEN_KEY: 'logit_drive_token',
+  _CONNECTED_KEY: 'logit_drive_connected',
   _USER_EMAIL_KEY: 'logit_drive_user_email',
   _USER_NAME_KEY: 'logit_drive_user_name',
 
@@ -22,7 +25,7 @@ Logit.Drive = {
    * Initialize Google Auth Token Client & load stored credentials.
    */
   init() {
-    const savedToken = localStorage.getItem(this._TOKEN_KEY);
+    const savedToken = sessionStorage.getItem(this._TOKEN_KEY) || localStorage.getItem(this._TOKEN_KEY);
     if (savedToken) {
       this._accessToken = savedToken;
     }
@@ -41,14 +44,15 @@ Logit.Drive = {
             return;
           }
           this._accessToken = response.access_token;
+          sessionStorage.setItem(this._TOKEN_KEY, response.access_token);
           localStorage.setItem(this._TOKEN_KEY, response.access_token);
+          localStorage.setItem(this._CONNECTED_KEY, 'true');
         }
       });
     } else if (retries < 10) {
-      console.warn('[Drive] Google SDK not loaded yet, retrying...');
       setTimeout(() => this._waitForSDK(retries + 1), 500);
     } else {
-      console.error('[Drive] Google SDK failed to load after 10 attempts.');
+      console.warn('[Drive] Google SDK not loaded.');
     }
   },
 
@@ -83,7 +87,9 @@ Logit.Drive = {
       }
 
       this._accessToken = response.access_token;
+      sessionStorage.setItem(this._TOKEN_KEY, response.access_token);
       localStorage.setItem(this._TOKEN_KEY, response.access_token);
+      localStorage.setItem(this._CONNECTED_KEY, 'true');
       console.log('[Drive] Authentication successful');
 
       try {
@@ -168,11 +174,13 @@ Logit.Drive = {
   },
 
   /**
-   * Clear access token and cached folder ID & user info from local storage.
+   * Clear access token and cached folder ID & user info.
    */
   clearToken() {
     this._accessToken = null;
+    sessionStorage.removeItem(this._TOKEN_KEY);
     localStorage.removeItem(this._TOKEN_KEY);
+    localStorage.removeItem(this._CONNECTED_KEY);
     localStorage.removeItem(this._FOLDER_KEY);
     localStorage.removeItem(this._USER_EMAIL_KEY);
     localStorage.removeItem(this._USER_NAME_KEY);
@@ -196,7 +204,8 @@ Logit.Drive = {
 
   /**
    * Perform backup to Google Drive.
-   * @returns {Promise<{success: boolean, message: string}>}
+   * Safeguarded: Never overwrites a valid backup with empty or incomplete data on query error.
+   * @returns {Promise<{success: boolean, message: string, backupTime?: number}>}
    */
   async backup() {
     if (!this._accessToken) {
@@ -205,10 +214,42 @@ Logit.Drive = {
 
     try {
       const result = await Logit.Storage.loadMovies();
-      const movies = result.movies || [];
+
+      // Safeguard 1: Abort if load error occurred
+      if (result.error) {
+        throw new Error(`Database fetch failed (${result.error}). Backup aborted to protect existing data.`);
+      }
+
+      if (!result.movies || !Array.isArray(result.movies)) {
+        throw new Error('Invalid movie data retrieved from storage. Backup aborted.');
+      }
+
+      const movies = result.movies;
       const settings = await this._loadSettings();
+
+      const folderId = await this._getOrCreateFolder();
+      const existingFile = await this._findAndCleanBackupFiles(folderId);
+
+      // Safeguard 2: Never overwrite a populated backup with an empty library
+      if (movies.length === 0 && existingFile) {
+        try {
+          const rawExisting = await this._downloadFileContent(existingFile.id);
+          const parsedExisting = JSON.parse(rawExisting);
+          if (parsedExisting && Array.isArray(parsedExisting.movies) && parsedExisting.movies.length > 0) {
+            console.warn('[Drive] Attempted to overwrite populated backup with 0 movies. Aborted.');
+            return {
+              success: false,
+              message: `Backup aborted: current library is empty but existing backup contains ${parsedExisting.movies.length} movies. Refusing to overwrite.`
+            };
+          }
+        } catch (checkErr) {
+          console.warn('[Drive] Could not check existing backup content:', checkErr);
+        }
+      }
+
       const backupData = {
-        version: 1,
+        version: 2,
+        app: 'Log!t',
         created: new Date().toISOString(),
         moviesCount: movies.length,
         movies: movies,
@@ -225,23 +266,17 @@ Logit.Drive = {
         String(now.getDate()).padStart(2, '0');
       const fileName = `logit-${movies.length}-movies-${dateStr}.json`;
 
-      const folderId = await this._getOrCreateFolder();
-      const existingFile = await this._findAndCleanBackupFiles(folderId);
-
       console.log('[Drive] Target backup filename:', fileName);
       if (existingFile) {
         console.log(
-          '[Drive] Found existing backup file to update & rename:',
+          '[Drive] Updating existing backup file:',
           existingFile.name,
           '->',
           fileName
         );
         await this._updateAndRenameFile(existingFile.id, fileName, content);
       } else {
-        console.log(
-          '[Drive] No existing backup found. Creating new file:',
-          fileName
-        );
+        console.log('[Drive] Creating new backup file:', fileName);
         await this._createFile(fileName, content, folderId);
       }
 
@@ -259,7 +294,7 @@ Logit.Drive = {
 
   /**
    * Restore movies and settings from latest Google Drive backup.
-   * @returns {Promise<{success: boolean, count?: number, message: string}>}
+   * @returns {Promise<{success: boolean, count?: number, restoredSettings?: boolean, message: string}>}
    */
   async restore() {
     if (!this._accessToken) {
@@ -294,12 +329,19 @@ Logit.Drive = {
       const validMovies = backupData.movies.filter(function (movie) {
         return movie && (movie.id || movie.t);
       });
-      let restoredCount = await Logit.Storage.saveMoviesBulk(validMovies);
+      const restoredCount = await Logit.Storage.saveMoviesBulk(validMovies);
+
+      // Restore user settings if present in backup (Finding 8)
+      let restoredSettings = false;
+      if (backupData.settings && typeof backupData.settings === 'object') {
+        restoredSettings = await this._restoreSettings(backupData.settings);
+      }
 
       return {
         success: true,
         count: restoredCount,
-        message: `${restoredCount} movies restored from ${latestFile.name}`
+        restoredSettings: restoredSettings,
+        message: `${restoredCount} movies ${restoredSettings ? 'and settings ' : ''}restored from ${latestFile.name}`
       };
     } catch (err) {
       console.error('[Drive] Restore failed:', err);
@@ -345,7 +387,7 @@ Logit.Drive = {
   async _loadSettings() {
     if (!Logit.Supabase || !Logit.Supabase.getClient) return {};
     const client = Logit.Supabase.getClient();
-    const userId = Logit.Auth.getUserId();
+    const userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) return {};
     try {
       const { data } = await client
@@ -356,6 +398,31 @@ Logit.Drive = {
       return data || {};
     } catch (e) {
       return {};
+    }
+  },
+
+  async _restoreSettings(settingsData) {
+    if (!Logit.Supabase || !Logit.Supabase.getClient) return false;
+    const client = Logit.Supabase.getClient();
+    const userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
+    if (!client || !userId || !settingsData) return false;
+
+    try {
+      const payload = {
+        user_id: userId,
+        updated_at: new Date().toISOString()
+      };
+      if (Array.isArray(settingsData.favorites)) {
+        payload.favorites = settingsData.favorites;
+      }
+      if (settingsData.avatar !== undefined) {
+        payload.avatar = settingsData.avatar;
+      }
+      const { error } = await client.from('settings').upsert(payload, { onConflict: 'user_id' });
+      return !error;
+    } catch (e) {
+      console.warn('[Drive] Failed restoring settings from backup:', e);
+      return false;
     }
   },
 
@@ -371,9 +438,6 @@ Logit.Drive = {
           return cachedId;
         }
       } catch (e) {
-        console.warn(
-          '[Drive] Cached folder invalid or deleted, searching again...'
-        );
         localStorage.removeItem(this._FOLDER_KEY);
       }
     }
@@ -406,17 +470,6 @@ Logit.Drive = {
     const newFolder = await createRes.json();
     localStorage.setItem(this._FOLDER_KEY, newFolder.id);
     return newFolder.id;
-  },
-
-  async _findFileByName(fileName, folderId) {
-    const q = encodeURIComponent(
-      `'${folderId}' in parents and name = '${fileName}' and trashed = false`
-    );
-    const res = await this._apiFetch(
-      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`
-    );
-    const data = await res.json();
-    return data.files && data.files.length > 0 ? data.files[0].id : null;
   },
 
   async _listBackupFiles(folderId) {
@@ -489,21 +542,6 @@ Logit.Drive = {
     return await res.json();
   },
 
-  async _updateFileContent(fileId, contentText) {
-    const res = await this._apiFetch(
-      `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: contentText
-      }
-    );
-
-    return await res.json();
-  },
-
   async _downloadFileContent(fileId) {
     const res = await this._apiFetch(
       `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
@@ -526,23 +564,18 @@ Logit.Drive = {
     );
     if (backups.length === 0) return null;
 
-    // Sort so the newest is first
     backups.sort((a, b) =>
       (b.createdTime || '').localeCompare(a.createdTime || '')
     );
 
-    // The first one is the one we will keep and update
     const targetFile = backups[0];
 
-    // Delete any others to keep folder clean
+    // Clean up older duplicate backup files to keep folder orderly
     for (let i = 1; i < backups.length; i++) {
       try {
         await this._deleteFile(backups[i].id);
-        console.log(
-          `[Drive] Cleaned up legacy backup file: ${backups[i].name}`
-        );
       } catch (e) {
-        console.warn('[Drive] Failed to delete old backup file:', e);
+        console.warn('[Drive] Failed to delete older backup file:', e);
       }
     }
 

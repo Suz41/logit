@@ -1,52 +1,102 @@
-window.Logit = window.Logit || {};
+if (typeof window !== 'undefined') {
+  window.Logit = window.Logit || {};
+}
+var Logit = typeof window !== 'undefined' ? window.Logit : {};
 
+/**
+ * Log!t Import Module
+ * Parses exported TXT / pipe-delimited files, unstructured text, and JSON exports.
+ */
 Logit.Import = {
-  /** @param {string} line @returns {Object|null} */
+  /**
+   * Parse a single line from an imported file.
+   * Supports canonical 7-field format, legacy 5-field format, and natural language.
+   * @param {string} line
+   * @returns {Object|null}
+   */
   parseLine(line) {
+    if (!line || typeof line !== 'string') return null;
     line = line.trim();
     if (!line) return null;
 
-    // Pipe-delimited format: Movie Name | Rating | IMDb/TMDb_ID | Date | RewatchStatus
+    // 1. Pipe-delimited format
     if (line.includes('|')) {
       const parts = line.split('|').map(function (p) {
         return p.trim();
       });
-      if (parts.length >= 3) {
+
+      // Format A: Canonical 7-part format:
+      // Title | Rating | Watch Date | Watch Status | Year | TMDB ID | IMDb ID
+      if (parts.length >= 6) {
         const title = parts[0] || '';
-        const rating = parts[1] ? parseFloat(parts[1]) : null;
-        const idField = parts[2] || '';
-        const date = parts[3] || null;
-        const rewatch = parts[4] || null;
-
-        let tmdbId = null;
-        let imdbId = null;
-
-        const tmdbMatch = idField.match(/tmdb[:\s]*(\d+)/i);
-        if (tmdbMatch) tmdbId = tmdbMatch[1];
-        const imdbMatch = idField.match(/\b(tt\d{7,8})\b/i);
-        if (imdbMatch) imdbId = imdbMatch[1];
-        if (!tmdbId && !imdbId && /^\d+$/.test(idField)) tmdbId = idField;
-
-        let year = null;
-        if (date) {
-          const dp = date.match(/\d{4}/);
-          if (dp) year = dp[0];
+        let rating = null;
+        if (parts[1]) {
+          const rMatch = parts[1].match(/([0-9](?:\.[0-9])?)/);
+          if (rMatch) rating = parseFloat(rMatch[1]);
         }
+        const date = parts[2] || null;
+        const watchStatus = parts[3] || '';
+        const year = parts[4] || (date ? (date.match(/\b(19\d{2}|20\d{2})\b/) || [])[0] : null);
+        const tmdbId = parts[5] ? String(parts[5]).replace(/^tmdb[:\s]*/i, '') : null;
+        const imdbId = parts[6] || null;
+
+        const isRewatch = Boolean(watchStatus && /rewatch|re|rw|yes|y/i.test(watchStatus));
 
         if (!title && !tmdbId && !imdbId) return null;
 
-        let isRewatch = false;
-        if (rewatch) {
-          const rw = rewatch.toLowerCase();
-          if (
-            rw === 'rewatch' ||
-            rw === 're' ||
-            rw === 'rw' ||
-            rw === 'yes' ||
-            rw === 'y'
-          )
-            isRewatch = true;
+        return {
+          title: title,
+          rating: rating,
+          date: date,
+          year: year,
+          tmdbId: tmdbId && /^\d+$/.test(tmdbId) ? tmdbId : null,
+          imdbId: imdbId && /^tt\d+$/i.test(imdbId) ? imdbId : null,
+          rewatch: isRewatch
+        };
+      }
+
+      // Format B: 3-5 part lines (supports legacy and partial formats)
+      if (parts.length >= 3) {
+        const title = parts[0] || '';
+        let rating = null;
+        if (parts[1]) {
+          const rMatch = parts[1].match(/([0-9](?:\.[0-9])?)/);
+          if (rMatch) rating = parseFloat(rMatch[1]);
         }
+
+        let date = null;
+        let tmdbId = null;
+        let imdbId = null;
+        let year = null;
+        let isRewatch = false;
+
+        const p2 = parts[2] || '';
+        const p3 = parts[3] || '';
+        const p4 = parts[4] || '';
+
+        // Check if parts[2] is a date (YYYY-MM-DD or MM/DD/YYYY)
+        if (/\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(p2) || /\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/.test(p2)) {
+          date = p2;
+          isRewatch = Boolean(p3 && /rewatch|re|rw|yes|y/i.test(p3));
+          if (p4 && /\b(19\d{2}|20\d{2})\b/.test(p4)) year = p4;
+        } else {
+          // Legacy format: Title | Rating | ID | Date | Rewatch
+          const tmdbMatch = p2.match(/tmdb[:\s]*(\d+)/i);
+          if (tmdbMatch) tmdbId = tmdbMatch[1];
+          const imdbMatch = p2.match(/\b(tt\d{7,8})\b/i);
+          if (imdbMatch) imdbId = imdbMatch[1];
+          if (!tmdbId && !imdbId && /^\d+$/.test(p2)) tmdbId = p2;
+
+          date = p3 || null;
+          isRewatch = Boolean(p4 && /rewatch|re|rw|yes|y/i.test(p4));
+        }
+
+        if (date && !year) {
+          const ym = date.match(/\b(19\d{2}|20\d{2})\b/);
+          if (ym) year = ym[0];
+        }
+
+        if (!title && !tmdbId && !imdbId) return null;
 
         return {
           title: title,
@@ -60,6 +110,7 @@ Logit.Import = {
       }
     }
 
+    // 2. Unstructured natural language line
     let date = null;
     let rating = null;
     let year = null;
@@ -193,6 +244,7 @@ Logit.Import = {
   /** @param {Array} parsed @returns {boolean} */
   isSlimExport(parsed) {
     return (
+      Array.isArray(parsed) &&
       parsed.length > 0 &&
       parsed[0].tmdb_id !== undefined &&
       !parsed[0].p &&
@@ -200,3 +252,7 @@ Logit.Import = {
     );
   }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Logit.Import;
+}

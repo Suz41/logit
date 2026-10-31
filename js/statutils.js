@@ -1,6 +1,29 @@
-window.Logit = window.Logit || {};
+if (typeof window !== 'undefined') {
+  window.Logit = window.Logit || {};
+}
+var Logit = typeof window !== 'undefined' ? window.Logit : {};
 
 Logit.StatUtils = {
+  /**
+   * Calculate average rating considering only rated movies (r > 0).
+   * Excludes unrated records so empty ratings do not falsely penalize average.
+   * @param {Array} movies
+   * @returns {string} Average formatted to 1 decimal place, e.g. "4.2" or "0.0"
+   */
+  getAverageRating(movies) {
+    if (!Array.isArray(movies) || movies.length === 0) return '0.0';
+    const rated = movies.filter(function (m) {
+      if (!m || m.r === null || m.r === undefined || m.r === '') return false;
+      const val = Number(m.r);
+      return !isNaN(val) && val > 0;
+    });
+    if (rated.length === 0) return '0.0';
+    const sum = rated.reduce(function (acc, m) {
+      return acc + Number(m.r);
+    }, 0);
+    return (sum / rated.length).toFixed(1);
+  },
+
   /** @param {Array} movies @returns {Object} Aggregated statistics */
   aggregate(movies) {
     const data = {
@@ -20,6 +43,8 @@ Logit.StatUtils = {
       decadeMovies: {},
       rewatchMap: {}
     };
+
+    if (!Array.isArray(movies)) return data;
 
     movies.forEach((movie) => {
       /* COUNTRY */
@@ -142,3 +167,7 @@ Logit.StatUtils = {
     };
   }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Logit.StatUtils;
+}

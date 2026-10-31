@@ -154,17 +154,9 @@ Logit.ProfilePage = {
     var filmsEl = document.getElementById('statFilms');
     if (filmsEl) filmsEl.textContent = movies.length;
 
-    var ratedMovies = movies.filter(function (m) {
-      return Number(m.r) > 0;
-    });
-    var avgRating =
-      ratedMovies.length > 0
-        ? (
-            ratedMovies.reduce(function (a, b) {
-              return a + Number(b.r);
-            }, 0) / ratedMovies.length
-          ).toFixed(1)
-        : '0.0';
+    var avgRating = Logit.StatUtils && typeof Logit.StatUtils.getAverageRating === 'function'
+      ? Logit.StatUtils.getAverageRating(movies)
+      : (movies.filter(m => Number(m.r) > 0).length > 0 ? (movies.filter(m => Number(m.r) > 0).reduce((a, b) => a + Number(b.r), 0) / movies.filter(m => Number(m.r) > 0).length).toFixed(1) : '0.0');
     var ratingEl = document.getElementById('statRating');
     if (ratingEl) ratingEl.textContent = avgRating;
 
@@ -1174,15 +1166,41 @@ Logit.ProfilePage = {
 
     if ($('clearDataBtn'))
       $('clearDataBtn').addEventListener('click', async function () {
-        if (!confirm('Delete ALL data from cloud?')) return;
-        if (!confirm('This cannot be undone. Continue?')) return;
+        if (!confirm('Clear all your movie data and pending queues?')) return;
+        if (!confirm('This will permanently delete all your movies, pending captures, and local queues. Continue?')) return;
         var client = Logit.Supabase.getClient();
-        var userId = Logit.Auth.getUserId();
-        if (client && userId) {
-          await client.from('movies').delete().eq('user_id', userId);
+        var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
+        if (!client || !userId) {
+          alert('Not authenticated.');
+          return;
         }
-        alert('All movie data cleared.');
-        location.reload();
+
+        try {
+          var btn = $('clearDataBtn');
+          if (btn) btn.disabled = true;
+
+          // 1. Delete all movies for this user
+          var { error: movieErr } = await client.from('movies').delete().eq('user_id', userId);
+          if (movieErr) throw new Error('Movies deletion failed: ' + movieErr.message);
+
+          // 2. Delete all pending movies for this user
+          var { error: pendingErr } = await client.from('pending_movies').delete().eq('user_id', userId);
+          if (pendingErr) console.warn('Pending movies deletion warning:', pendingErr.message);
+
+          // 3. Clear user offline queues
+          if (Logit.Pending && typeof Logit.Pending.setOfflinePending === 'function') {
+            Logit.Pending.setOfflinePending([], userId);
+          }
+
+          alert('All movie and pending data successfully cleared.');
+          location.reload();
+        } catch (e) {
+          console.error('Clear data failed:', e);
+          alert('Failed to clear data: ' + e.message);
+        } finally {
+          var btn2 = $('clearDataBtn');
+          if (btn2) btn2.disabled = false;
+        }
       });
 
     // Favorite movies
@@ -1316,36 +1334,64 @@ Logit.ProfilePage = {
   },
 
   async deleteAccount() {
-    if (
-      !confirm(
-        'Delete your account? Your data will be kept for 30 days for recovery.'
-      )
-    )
+    var client = Logit.Supabase.getClient();
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
+    if (!client || !userId || !this._user) {
+      alert('You must be signed in to request account deletion.');
       return;
-    if (
-      !confirm('After 30 days, all data will be permanently deleted. Continue?')
-    )
+    }
+
+    var password = prompt('To confirm account deletion, please enter your current password:');
+    if (!password) {
+      alert('Account deletion cancelled.');
       return;
+    }
+
+    // Verify password via reauthentication
     try {
-      var client = Logit.Supabase.getClient();
-      var userId = localStorage.getItem('logit_user_id');
-      if (client && userId) {
-        await client.from('users').upsert(
-          {
-            id: userId,
-            deleted_at: new Date().toISOString()
-          },
-          { onConflict: 'id' }
-        );
+      var { error: authErr } = await client.auth.signInWithPassword({
+        email: this._user.email,
+        password: password
+      });
+      if (authErr) {
+        alert('Incorrect password. Account deletion aborted.');
+        return;
       }
+    } catch (reauthErr) {
+      alert('Verification failed: ' + reauthErr.message);
+      return;
+    }
+
+    var confirmation = prompt("WARNING: This will delete all your movies, pending items, settings, and profile data.\n\nType 'DELETE' to confirm:");
+    if (confirmation !== 'DELETE') {
+      alert('Confirmation text did not match. Account deletion cancelled.');
+      return;
+    }
+
+    try {
+      // 1. Delete user data across all tables
+      await client.from('movies').delete().eq('user_id', userId);
+      await client.from('pending_movies').delete().eq('user_id', userId);
+      await client.from('settings').delete().eq('user_id', userId);
+      await client.from('users').delete().eq('id', userId);
+
+      // 2. Disconnect Google Drive if linked
+      if (Logit.Drive && typeof Logit.Drive.signOut === 'function') {
+        Logit.Drive.signOut();
+      }
+
+      // 3. Clear local storage
       localStorage.clear();
-      if (client) await client.auth.signOut();
-      alert(
-        'Account marked for deletion. Data will be permanently deleted after 30 days.'
-      );
+      sessionStorage.clear();
+
+      // 4. Sign out auth session
+      await client.auth.signOut();
+
+      alert('Your account and all associated user data have been permanently deleted.');
       Logit.Utils.navTo('welcome.html');
     } catch (e) {
-      alert('Delete failed: ' + e.message);
+      console.error('Account deletion failed:', e);
+      alert('Account deletion encountered an error: ' + e.message);
     }
   }
 };

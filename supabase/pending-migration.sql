@@ -1,6 +1,7 @@
 -- ============================================================
 -- Log!t Companion & Pending Movies Migration
 -- Run this in your Supabase SQL Editor (https://supabase.com/dashboard)
+-- Idempotent: Safe to execute on new or existing installations.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS pending_movies (
@@ -27,18 +28,23 @@ CREATE INDEX IF NOT EXISTS idx_pending_movies_user_tmdb ON pending_movies (user_
 ALTER TABLE pending_movies ENABLE ROW LEVEL SECURITY;
 
 -- Row Level Security Policies
+DROP POLICY IF EXISTS "Users can view own pending movies" ON pending_movies;
 CREATE POLICY "Users can view own pending movies"
   ON pending_movies FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own pending movies" ON pending_movies;
 CREATE POLICY "Users can insert own pending movies"
   ON pending_movies FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own pending movies" ON pending_movies;
 CREATE POLICY "Users can update own pending movies"
   ON pending_movies FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own pending movies" ON pending_movies;
 CREATE POLICY "Users can delete own pending movies"
   ON pending_movies FOR DELETE
   USING (auth.uid() = user_id);

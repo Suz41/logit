@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node scripts/test-all.js",
     "lint": "node ./node_modules/eslint/bin/eslint.js \"js/**/*.js\"",
     "format:check": "node ./node_modules/prettier/bin/prettier.cjs --check \"js/**/*.js\"",
     "format": "node ./node_modules/prettier/bin/prettier.cjs --write \"js/**/*.js\"",
@@ -19,7 +19,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Suz41/Logit/issues"

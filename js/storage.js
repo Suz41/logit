@@ -1,11 +1,12 @@
 window.Logit = window.Logit || {};
 
 /**
- * Storage layer — Supabase only. No localStorage.
+ * Storage layer — Supabase with robust range-based pagination and automated backup integration.
  * All reads/writes go to the cloud. Requires authentication.
  */
 Logit.Storage = {
   _autoBackupTimer: null,
+  _PAGE_SIZE: 1000,
 
   /** @param {number} bytes @returns {{ val: string, unit: string }} */
   formatBytes(bytes) {
@@ -15,28 +16,46 @@ Logit.Storage = {
   },
 
   /**
-   * Load all movies from Supabase for the current user.
+   * Load all movies from Supabase for the current user using stable pagination.
+   * Handles libraries exceeding PostgREST's default 1,000 row query limit.
    * @returns {Promise<{ movies: Array, error: string|null }>}
    */
   async loadMovies() {
-    var client = Logit.Supabase.getClient();
-    var userId = Logit.Auth.getUserId();
+    var client = Logit.Supabase ? Logit.Supabase.getClient() : null;
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) return { movies: [], error: 'Not signed in' };
 
     try {
-      var { data, error } = await client
-        .from('movies')
-        .select('*')
-        .eq('user_id', userId)
-        .order('d', { ascending: false });
+      var allMovies = [];
+      var from = 0;
+      var pageSize = this._PAGE_SIZE;
 
-      if (error) throw new Error(error.message);
-      return { movies: data || [], error: null };
+      while (true) {
+        var { data, error } = await client
+          .from('movies')
+          .select('*')
+          .eq('user_id', userId)
+          .order('d', { ascending: false })
+          .order('id', { ascending: true })
+          .range(from, from + pageSize - 1);
+
+        if (error) throw new Error(error.message);
+        if (!data || data.length === 0) break;
+
+        allMovies = allMovies.concat(data);
+
+        // If returned rows are fewer than the page size, we have retrieved all records
+        if (data.length < pageSize) break;
+
+        from += pageSize;
+      }
+
+      return { movies: allMovies, error: null };
     } catch (e) {
       console.error('Failed to load movies:', e);
       var msg = 'Failed to load movies';
       if (!navigator.onLine) msg = 'You are offline';
-      else if (e.message.includes('Failed to fetch'))
+      else if (e.message && e.message.includes('Failed to fetch'))
         msg = 'Unable to connect to cloud';
       return { movies: [], error: msg };
     }
@@ -50,8 +69,8 @@ Logit.Storage = {
    */
   async saveMovie(movie, action) {
     action = action || 'create';
-    var client = Logit.Supabase.getClient();
-    var userId = Logit.Auth.getUserId();
+    var client = Logit.Supabase ? Logit.Supabase.getClient() : null;
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) throw new Error('Not authenticated');
 
     var now = new Date().toISOString();
@@ -61,7 +80,7 @@ Logit.Storage = {
     });
 
     if (action === 'create') {
-      if (!record.id) record.id = Logit.MovieFactory.generateUUID();
+      if (!record.id) record.id = Logit.MovieFactory ? Logit.MovieFactory.generateUUID() : ('m_' + Date.now());
       if (!record.created_at) record.created_at = now;
       var { error } = await client.from('movies').insert([record]);
       if (error) throw new Error(error.message);
@@ -79,13 +98,13 @@ Logit.Storage = {
   },
 
   /**
-   * Save multiple movies in bulk (insert only).
+   * Save multiple movies in bulk (insert/upsert).
    * @param {Array} movies
    * @returns {Promise<number>} the number of saved movies
    */
   async saveMoviesBulk(movies) {
-    var client = Logit.Supabase.getClient();
-    var userId = Logit.Auth.getUserId();
+    var client = Logit.Supabase ? Logit.Supabase.getClient() : null;
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) throw new Error('Not authenticated');
 
     var now = new Date().toISOString();
@@ -94,7 +113,7 @@ Logit.Storage = {
         user_id: userId,
         updated_at: now
       });
-      if (!record.id) record.id = Logit.MovieFactory.generateUUID();
+      if (!record.id) record.id = Logit.MovieFactory ? Logit.MovieFactory.generateUUID() : ('m_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
       if (!record.created_at) record.created_at = now;
       return record;
     });
@@ -116,8 +135,8 @@ Logit.Storage = {
    * @returns {Promise<void>}
    */
   async deleteMovie(movieId) {
-    var client = Logit.Supabase.getClient();
-    var userId = Logit.Auth.getUserId();
+    var client = Logit.Supabase ? Logit.Supabase.getClient() : null;
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) throw new Error('Not authenticated');
 
     var { error } = await client
@@ -136,29 +155,33 @@ Logit.Storage = {
   _scheduleAutoBackup() {
     if (this._autoBackupTimer) clearTimeout(this._autoBackupTimer);
     this._autoBackupTimer = setTimeout(async function () {
-      if (Logit.Drive && Logit.Drive._accessToken) {
-        await Logit.Drive.backup();
+      if (Logit.Drive) {
+        if (!Logit.Drive.isAuthenticated() && localStorage.getItem('logit_drive_connected') === 'true') {
+          Logit.Drive.init();
+        }
+        if (Logit.Drive.isAuthenticated()) {
+          try {
+            await Logit.Drive.backup();
+          } catch (e) {
+            console.warn('[Drive] Background auto-backup failed:', e);
+          }
+        }
       }
     }, 5000);
   },
 
   /**
-   * Get cloud storage usage for the current user.
+   * Get cloud storage usage for the current user across paginated library.
    * @returns {Promise<{ count: number, bytes: number, formatted: string }>}
    */
   async getCloudStorageUsage() {
-    var client = Logit.Supabase.getClient();
-    var userId = Logit.Auth.getUserId();
+    var client = Logit.Supabase ? Logit.Supabase.getClient() : null;
+    var userId = Logit.Auth ? Logit.Auth.getUserId() : localStorage.getItem('logit_user_id');
     if (!client || !userId) return { count: 0, bytes: 0, formatted: '0 B' };
 
     try {
-      var { data } = await client
-        .from('movies')
-        .select(
-          'id, t, sp, g, c, sc, pc, dr, r, w, d, yr, rt, lg, ct, tmdb_id, imdb_id'
-        )
-        .eq('user_id', userId);
-      if (!data) return { count: 0, bytes: 0, formatted: '0 B' };
+      var res = await this.loadMovies();
+      var data = res.movies || [];
       var bytes = new TextEncoder().encode(JSON.stringify(data)).length;
       var fmt = this.formatBytes(bytes);
       return {

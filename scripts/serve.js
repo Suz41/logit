@@ -30,7 +30,47 @@ const secureDnsLookup = (hostname, options, cb) => {
 };
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 const ROOT = path.resolve(__dirname, '..');
+
+/**
+ * Safely resolves and validates a requested file path against the project root.
+ * Protects against path traversal, URL-encoding tricks, null bytes, and sibling directory attacks.
+ * @param {string} reqPath
+ * @param {string} rootDir
+ * @returns {string|null} Resolved file path or null if forbidden
+ */
+function resolveSafePath(reqPath, rootDir = ROOT) {
+  if (typeof reqPath !== 'string') return null;
+
+  // Reject null bytes
+  if (reqPath.includes('\0')) return null;
+
+  let decoded;
+  try {
+    decoded = decodeURIComponent(reqPath);
+  } catch (e) {
+    return null;
+  }
+
+  if (decoded.includes('\0')) return null;
+
+  // Explicitly reject directory traversal sequences
+  if (/(?:^|[\\/])\.\.(?:[\\/]|$)/.test(decoded)) {
+    return null;
+  }
+
+  let target = decoded;
+  if (target === '/' || target === '') target = '/index.html';
+
+  const resolved = path.resolve(rootDir, '.' + (target.startsWith('/') || target.startsWith('\\') ? target : '/' + target));
+
+  // Strict boundary check using path.relative
+  const rel = path.relative(rootDir, resolved);
+  const isInside = rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
+
+  return isInside ? resolved : null;
+}
 const FLARESOLVERR_DEFAULT_URL = process.env.FLARESOLVERR_URL || 'http://127.0.0.1:8191/v1';
 
 const MIME_TYPES = {
@@ -297,14 +337,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 3. Static File Serving
-  let reqUrl = pathname;
-  if (reqUrl === '/') reqUrl = '/index.html';
+  const filePath = resolveSafePath(pathname, ROOT);
 
-  const filePath = path.join(ROOT, reqUrl);
-
-  // Prevent path traversal
-  if (!filePath.startsWith(ROOT)) {
-    res.writeHead(403);
+  // Prevent path traversal & sibling directory attacks
+  if (!filePath) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
     res.end('Forbidden');
     return;
   }
@@ -329,10 +366,16 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Log!t local server running at http://localhost:${PORT}/`);
-  console.log(`- Inbuilt Proxy: http://localhost:${PORT}/api/proxy?url=...`);
-  console.log(`- Companion:     http://localhost:${PORT}/companion.html`);
-  console.log(`- Pending:       http://localhost:${PORT}/pending.html`);
-  console.log(`- Library:       http://localhost:${PORT}/index.html`);
-});
+if (require.main === module) {
+  server.listen(PORT, HOST, () => {
+    console.log(`Log!t local server running at http://${HOST}:${PORT}/`);
+    console.log(`- Inbuilt Proxy: http://localhost:${PORT}/api/proxy?url=...`);
+    console.log(`- Companion:     http://localhost:${PORT}/companion.html`);
+    console.log(`- Pending:       http://localhost:${PORT}/pending.html`);
+    console.log(`- Library:       http://localhost:${PORT}/index.html`);
+  });
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { server, resolveSafePath, ROOT, PORT, HOST };
+}
