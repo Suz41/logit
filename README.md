@@ -132,7 +132,7 @@ logit/
 - A modern standards-compliant web browser.
 - A free Supabase project for database and authentication services.
 - A TMDB API key for movie searches and metadata.
-- Node.js (version 18 or newer) for running the local server and test suite.
+- Node.js (version 20 or newer) for running the local server and test suite.
 
 ### Quick Start
 
